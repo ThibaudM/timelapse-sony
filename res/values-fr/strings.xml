@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">TimeLapse</string>
+    
+    <string name="device_connected">L\'appareil photo est connecté</string>
+    <string name="device_disconnected">L\'appareil photo n\'est pas connecté</string>
+    <string name="device_connection_refresh">Rafraichir la connection</string>
+    
+    <string name="form_initial_delay">Délai initial (s)</string>
+    <string name="form_interval_time">Intervalle entre les captures (s)</string>
+    <string name="form_frames_count">Nombre de captures</string>
+    <string name="start_timelapse">Commencer</string>
+    <string name="form_positive_integer_error">Ce chiffre doit être un entier positif</string>
+    <string name="minimum_time_error">Le temps minimum entre 2 captures doit être de %1$d secondes minimum</string>
+    <string name="show_last_image_review">Afficher la dernière photo prise</string>
+
+
+    <string name="begin_time">Début</string>
+    <string name="begin_time_default">00:00</string>
+    
+    <string name="end_time">Fin</string>
+    <string name="end_time_default">00:00</string>
+    
+    <string name="progress">Avancement</string>
+    <string name="progress_default">0%</string>
+    
+    <string name="duration">Durée</string>
+    <string name="duration_default">0s</string>
+
+    <string name="frames_count_down">Nb restant</string>
+    <string name="frames_count_down_default">0</string>
+    
+    <string name="battery_life">Batterie Tel</string>
+    <string name="battery_life_default">100%</string>
+    
+    <string name="last_image_preview">Dernière photo prise</string>
+    <string name="stop_timelapse">Arrêter la capture</string>
+
+    <string name="timelapse_countdown_before_start_message">Le timelapse commence dans %1$d secondes</string>
+    <string name="timelapse_finished">Timelapse terminé</string>
+</resources>

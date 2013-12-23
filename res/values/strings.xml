@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">TimeLapse</string>
+    
+    <string name="device_connected">Camera is connected</string>
+    <string name="device_disconnected">Camera is not connected</string>
+    <string name="device_connection_refresh">Refresh connection</string>
+    
+    <string name="form_initial_delay">Initial delay (s)</string>
+    <string name="form_interval_time">Interval between frames (s)</string>
+    <string name="form_frames_count">Frames count</string>
+    <string name="start_timelapse">Start</string>
+    <string name="form_positive_integer_error">It has to be a positive integer</string>
+    <string name="minimum_time_error">Minimum time between 2 frames has to be at least %1$d seconds</string>
+    <string name="show_last_image_review">Show last picture taken</string>
+
+
+    <string name="begin_time">Start</string>
+    <string name="begin_time_default">00:00</string>
+    
+    <string name="end_time">End</string>
+    <string name="end_time_default">00:00</string>
+    
+    <string name="progress">Progress</string>
+    <string name="progress_default">0%</string>
+    
+    <string name="duration">Duration</string>
+    <string name="duration_default">0s</string>
+
+    <string name="frames_count_down">Frames remaining</string>
+    <string name="frames_count_down_default">0</string>
+    
+    <string name="battery_life">Phone Battery</string>
+    <string name="battery_life_default">100%</string>
+    
+    <string name="last_image_preview">Last picture taken</string>
+    <string name="stop_timelapse">Stop timelapse</string>
+
+    <string name="timelapse_countdown_before_start_message">Timelapse starts in %1$d seconds</string>
+    <string name="timelapse_finished">Timelapse ended</string>
+</resources>
