@@ -243,8 +243,9 @@ public class TimelapseActivity extends Activity {
 	}
 
 	@Override
-	protected void onStop() {
-		super.onStop();
+	protected void onDestroy() {
+		super.onDestroy();
+
 
 		if(mInitialCountDown != null) {
 			mInitialCountDown.cancel();
@@ -253,12 +254,7 @@ public class TimelapseActivity extends Activity {
 		if(mCountDownPictures != null) {
 			mCountDownPictures.cancel();
 		}
-	}
-
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-
+		
 		this.unregisterReceiver(myBatteryReceiver);
 
 	}
