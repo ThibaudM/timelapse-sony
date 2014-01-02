@@ -14,6 +14,7 @@
         android:paddingTop="@dimen/activity_vertical_margin" >
 
         <LinearLayout
+            android:id="@+id/normalModeLine1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:baselineAligned="false" >
@@ -124,7 +125,120 @@
             </RelativeLayout>
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/unlimitedModeLine1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false" >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                tools:ignore="UseCompoundDrawables" >
+
+                <ImageView
+                    android:id="@+id/beginUnlimitedModeImageView"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:contentDescription="@string/begin_time"
+                    android:src="@drawable/ic_time" />
+
+                <TextView
+                    android:id="@+id/beginUnlimitedModeTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="18dp"
+                    android:layout_alignBottom="@+id/beginUnlimitedModeImageView"
+                    android:layout_marginLeft="2dp"
+                    android:layout_toRightOf="@+id/beginUnlimitedModeImageView"
+                    android:text="@string/begin_time"
+                    android:textAllCaps="true"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/beginUnlimitedModeValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/beginUnlimitedModeImageView"
+                    android:text="@string/begin_time_default"
+                    android:textSize="32sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                tools:ignore="UseCompoundDrawables" >
+
+                <ImageView
+                    android:id="@+id/framesCountUnlimitedModeImageView"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:contentDescription="@string/frames_count"
+                    android:src="@drawable/ic_frames_count_down" />
+
+                <TextView
+                    android:id="@+id/framesCountUnlimitedModeTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="18dp"
+                    android:layout_alignBottom="@+id/framesCountUnlimitedModeImageView"
+                    android:layout_marginLeft="2dp"
+                    android:layout_toRightOf="@+id/framesCountUnlimitedModeImageView"
+                    android:text="@string/frames_count"
+                    android:textAllCaps="true"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/framesCountUnlimitedModeValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/framesCountUnlimitedModeImageView"
+                    android:text="@string/frames_count_default"
+                    android:textSize="32sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                tools:ignore="UseCompoundDrawables" >
+
+                <ImageView
+                    android:id="@+id/batteryUnlimitedModeImageView"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:contentDescription="@string/battery_life"
+                    android:src="@drawable/ic_battery_life" />
+
+                <TextView
+                    android:id="@+id/batteryUnlimitedModeTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="18dp"
+                    android:layout_alignBottom="@+id/batteryUnlimitedModeImageView"
+                    android:layout_marginLeft="2dp"
+                    android:layout_toRightOf="@+id/batteryUnlimitedModeImageView"
+                    android:text="@string/battery_life"
+                    android:textAllCaps="true"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/batteryUnlimitedModeValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/batteryUnlimitedModeImageView"
+                    android:text="@string/battery_life_default"
+                    android:textSize="32sp" />
+            </RelativeLayout>
+        </LinearLayout>
+
         <RelativeLayout
+            android:id="@+id/normalModeLine2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -169,6 +283,7 @@
         </RelativeLayout>
 
         <LinearLayout
+            android:id="@+id/normalModeLine3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -258,11 +373,11 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:visibility="gone"
         android:background="#FFf3f3f3"
         android:gravity="center"
         android:padding="16dp"
-        android:text="@string/timelapse_countdown_before_start_message" >
+        android:text="@string/timelapse_countdown_before_start_message"
+        android:visibility="gone" >
     </TextView>
 
 </RelativeLayout>

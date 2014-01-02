@@ -8,12 +8,22 @@
     <string name="device_connection_refresh">Refresh connection</string>
     
     <string name="form_initial_delay">Initial delay (s)</string>
+    <string name="form_initial_delay_default">0</string>
+    
     <string name="form_interval_time">Interval between frames (s)</string>
+    <string name="form_interval_time_default">10</string>
+    
     <string name="form_frames_count">Frames count</string>
+    <string name="form_frames_count_unlimited">Unlimited</string>
+
+    <string name="show_last_image_review">Show last picture taken</string>
+    <string name="show_last_image_review_on">Show</string>
+   	<string name="show_last_image_review_off">Hide</string>
+    
+    
     <string name="start_timelapse">Start</string>
     <string name="form_positive_integer_error">It has to be a positive integer</string>
     <string name="minimum_time_error">Minimum time between 2 frames has to be at least %1$d seconds</string>
-    <string name="show_last_image_review">Show last picture taken</string>
 
 
     <string name="begin_time">Start</string>
@@ -30,6 +40,9 @@
 
     <string name="frames_count_down">Frames remaining</string>
     <string name="frames_count_down_default">0</string>
+    
+    <string name="frames_count">Frames count</string>
+    <string name="frames_count_default">0</string>
     
     <string name="battery_life">Phone Battery</string>
     <string name="battery_life_default">100%</string>

@@ -42,32 +42,35 @@ public class TimelapseActivity extends Activity {
 
 	public static int INITIAL_DELAY_DEFAULT = 0; 
 	public static int INTERVAL_TIME_DEFAULT = 10; 
-	public static int INTERVAL_FRAMES_COUNT = 100; 
-	public static boolean INTERVAL_LAST_IMAGE_REVIEW = true;
+	public static int FRAMES_COUNT_DEFAULT = 100; 
+	public static boolean USE_LAST_IMAGE_REVIEW_DEFAULT = true;
 
-	private final static String TIME_FORMAT = "hh:mm";
+	private final static String TIME_FORMAT = "HH:mm";
 
 	private CameraManager mCameraManager;
-	
+
+	private TextView batteryValue;
 	private TextView framesCountDownValue;
+	private TextView framesCountValue;
 	private ProgressBar progressBar;
 	private TextView progressValue;
-	
+
 	private MyCountDownTicks mCountDownPictures;
 	private MyCountDownTicks mInitialCountDown;
-	
+
 	private boolean showLastFramePreview;
 	private int timeLapseDuration;
 	private int initialDelay;
 	private int intervalTime;
 	private int framesCount;
+	private boolean isUnlimitedMode;
 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mCameraManager = ((TimelapseApplication) getApplication()).getCameraManager();
-		
+
 		setContentView(R.layout.activity_timelapse);
 
 		Intent currentIntent = getIntent();
@@ -75,13 +78,15 @@ public class TimelapseActivity extends Activity {
 			finish();
 			return;
 		}
-		
+
 		// Retrieve and calculate data
 		initialDelay = currentIntent.getIntExtra(EXTRA_INITIAL_DELAY, INITIAL_DELAY_DEFAULT);
 		intervalTime = currentIntent.getIntExtra(EXTRA_INTERVAL_TIME, INTERVAL_TIME_DEFAULT);
-		framesCount = currentIntent.getIntExtra(EXTRA_FRAMES_COUNT, INTERVAL_FRAMES_COUNT);
+		framesCount = currentIntent.getIntExtra(EXTRA_FRAMES_COUNT, FRAMES_COUNT_DEFAULT);
 		timeLapseDuration = intervalTime * (framesCount - 1);
-		showLastFramePreview = currentIntent.getBooleanExtra(EXTRA_LAST_IMAGE_REVIEW, INTERVAL_LAST_IMAGE_REVIEW);
+		showLastFramePreview = currentIntent.getBooleanExtra(EXTRA_LAST_IMAGE_REVIEW, USE_LAST_IMAGE_REVIEW_DEFAULT);
+
+		isUnlimitedMode = framesCount == -1;
 
 		/*
 		 * Set activity fields
@@ -89,28 +94,43 @@ public class TimelapseActivity extends Activity {
 		Calendar beginEndCalendar = Calendar.getInstance();
 		beginEndCalendar.add(Calendar.SECOND, initialDelay);
 		String beginTime = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault()).format(beginEndCalendar.getTime());
-		((TextView) findViewById(R.id.beginValue)).setText(beginTime);
-		
-		((TextView) findViewById(R.id.durationValue)).setText(String.valueOf(timeLapseDuration)+"s");
-		
-		beginEndCalendar.add(Calendar.SECOND, timeLapseDuration);
-		String endTime = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault()).format(beginEndCalendar.getTime());
-		((TextView) findViewById(R.id.endValue)).setText(endTime);
 
-		progressBar = (ProgressBar) findViewById(R.id.progressBar);
-		progressBar.setProgress(0);
-		progressBar.setMax(framesCount);
-		
-		progressValue = (TextView) findViewById(R.id.progressValue);
-		progressValue.setText(getString(R.string.progress_default));
+		if(!isUnlimitedMode) {
+			switchUIToNormalMode();
 
-		framesCountDownValue = (TextView) findViewById(R.id.framesCountDownValue);
-		framesCountDownValue.setText(String.valueOf(framesCount));
+			((TextView) findViewById(R.id.beginValue)).setText(beginTime);
+
+			((TextView) findViewById(R.id.durationValue)).setText(String.valueOf(timeLapseDuration)+"s");
+
+			beginEndCalendar.add(Calendar.SECOND, timeLapseDuration);
+			String endTime = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault()).format(beginEndCalendar.getTime());
+			((TextView) findViewById(R.id.endValue)).setText(endTime);
+
+			progressBar = (ProgressBar) findViewById(R.id.progressBar);
+			progressBar.setProgress(0);
+			progressBar.setMax(framesCount);
+
+			progressValue = (TextView) findViewById(R.id.progressValue);
+			progressValue.setText(getString(R.string.progress_default));
+
+			framesCountDownValue = (TextView) findViewById(R.id.framesCountDownValue);
+			framesCountDownValue.setText(String.valueOf(framesCount));
+
+			batteryValue = ((TextView) findViewById(R.id.batteryValue));
+
+		} else {
+			switchUIToUnlimitedMode();
+
+			((TextView) findViewById(R.id.beginUnlimitedModeValue)).setText(beginTime);
+
+			framesCountValue = ((TextView) findViewById(R.id.framesCountUnlimitedModeValue));
+			batteryValue = ((TextView) findViewById(R.id.batteryUnlimitedModeValue));
+		}
 
 		final TextView timelapseCountdownBeforeStart = (TextView) findViewById(R.id.timelapseCountdownBeforeStartText);
 
 		this.registerReceiver(this.myBatteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-		
+
 		/*
 		 * Show start in message 
 		 */
@@ -137,7 +157,7 @@ public class TimelapseActivity extends Activity {
 					Animation hideAnimation = AnimationUtils.loadAnimation(TimelapseActivity.this, R.anim.message_from_bottom_hide);
 					timelapseCountdownBeforeStart.setAnimation(hideAnimation);
 				}
-				
+
 				// Start timelapse
 				startTimeLapse();
 			}
@@ -153,8 +173,8 @@ public class TimelapseActivity extends Activity {
 		@Override
 		public void onReceive(Context arg0, Intent arg1) {
 			int bLevel = arg1.getIntExtra("level", 0);
-			
-			((TextView) findViewById(R.id.batteryValue)).setText(String.valueOf(bLevel)+"%");
+
+			batteryValue.setText(String.valueOf(bLevel)+"%");
 		} 
 	};
 
@@ -163,18 +183,18 @@ public class TimelapseActivity extends Activity {
 
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.timelapse_actions, menu);
-		
-	    MenuItem endMenuItem = menu.findItem(R.id.stop_timelapse);
 
-	    endMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-			
+		MenuItem endMenuItem = menu.findItem(R.id.stop_timelapse);
+
+		endMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
 				finish();
 				return true;
 			}
 		});
-		
+
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -185,16 +205,21 @@ public class TimelapseActivity extends Activity {
 
 			public void onTick(int remainingFrames) {
 
-				/*
-				 * Update activity fields
-				 */
-				framesCountDownValue.setText(String.valueOf(remainingFrames));
+				if(!isUnlimitedMode) {
+					/*
+					 * Update activity fields for normal mode
+					 */
+					framesCountDownValue.setText(String.valueOf(remainingFrames));
 
-				int progress = framesCount - remainingFrames;
-				float progressPercent = (float) progress / framesCount * 100;
-				progressBar.setProgress(progress);
-				progressValue.setText(new DecimalFormat("#.##").format(progressPercent) + "%" );
-
+					int progress = framesCount - remainingFrames;
+					float progressPercent = (float) progress / framesCount * 100;
+					progressBar.setProgress(progress);
+					progressValue.setText(new DecimalFormat("#.##").format(progressPercent) + "%" );
+				
+				} else {
+					framesCountValue.setText(String.valueOf(remainingFrames));	
+				}
+				
 				takePicture();
 			}
 
@@ -250,13 +275,27 @@ public class TimelapseActivity extends Activity {
 		if(mInitialCountDown != null) {
 			mInitialCountDown.cancel();
 		}
-		
+
 		if(mCountDownPictures != null) {
 			mCountDownPictures.cancel();
 		}
-		
+
 		this.unregisterReceiver(myBatteryReceiver);
 
+	}
+
+	private void switchUIToUnlimitedMode() {
+		((View) findViewById(R.id.normalModeLine1)).setVisibility(View.GONE);						
+		((View) findViewById(R.id.normalModeLine2)).setVisibility(View.GONE);						
+		((View) findViewById(R.id.normalModeLine3)).setVisibility(View.GONE);						
+		((View) findViewById(R.id.unlimitedModeLine1)).setVisibility(View.VISIBLE);						
+	}
+
+	private void switchUIToNormalMode() {
+		((View) findViewById(R.id.normalModeLine1)).setVisibility(View.VISIBLE);						
+		((View) findViewById(R.id.normalModeLine2)).setVisibility(View.VISIBLE);						
+		((View) findViewById(R.id.normalModeLine3)).setVisibility(View.VISIBLE);						
+		((View) findViewById(R.id.unlimitedModeLine1)).setVisibility(View.GONE);						
 	}
 
 }

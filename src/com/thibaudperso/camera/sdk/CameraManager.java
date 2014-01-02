@@ -14,7 +14,7 @@ import com.thibaudperso.camera.core.TestConnectionListener;
  */
 public class CameraManager {
 
-	public static int MIN_TIME_BETWEEN_CAPTURE = 7;
+	public static int MIN_TIME_BETWEEN_CAPTURE = 1;
 
 	private CameraIO mCameraIO;
 

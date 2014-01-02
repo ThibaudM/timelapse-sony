@@ -12,8 +12,11 @@ import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,24 +36,28 @@ public class MainActivity extends Activity {
 	private EditText initialDelay;
 	private EditText intervalTime;
 	private EditText framesCount;
-	private CheckBox showImageReview;
+	private Switch showImageReview;
 	private MenuItem startMenuItem;
-
+	private CheckBox framesCountUnlimited;
+	private TextView framesCountUnlimitedText;
+	
 	private CameraManager mCameraManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mCameraManager = ((TimelapseApplication) getApplication()).getCameraManager();
-		
+
 		setContentView(R.layout.activity_main);
-		
+
 		deviceConnectionRefresh = (ImageView) findViewById(R.id.deviceConnectionRefresh);
 		initialDelay = (EditText) findViewById(R.id.initialDelay);
-		intervalTime = (EditText) findViewById(R.id.interval);
+		intervalTime = (EditText) findViewById(R.id.intervalTime);
 		framesCount = (EditText) findViewById(R.id.framesCount);
-		showImageReview = (CheckBox) findViewById(R.id.showImageReview);
-		
+		framesCountUnlimited = (CheckBox) findViewById(R.id.framesCountUnlimited);
+		framesCountUnlimitedText = (TextView) findViewById(R.id.framesCountUnlimitedText);
+		showImageReview = (Switch) findViewById(R.id.showImageReview);
+
 		initialDelay.addTextChangedListener(new TextWatcher() {
 
 			@Override
@@ -64,7 +71,7 @@ public class MainActivity extends Activity {
 				checkInitialDelay();
 			}
 		});
-		
+
 		intervalTime.addTextChangedListener(new TextWatcher() {
 
 			@Override
@@ -78,7 +85,7 @@ public class MainActivity extends Activity {
 				checkIntervalTime();
 			}
 		});
-		
+
 		framesCount.addTextChangedListener(new TextWatcher() {
 
 			@Override
@@ -93,44 +100,63 @@ public class MainActivity extends Activity {
 			}
 		});		
 		
-		deviceConnectionRefresh.setOnClickListener(new OnClickListener() {
+		framesCountUnlimited.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+				 framesCount.setEnabled(!isChecked);
+				
+			}
+		});
+
+		deviceConnectionRefresh.setOnClickListener(new OnClickListener() {
+
 			@Override
 			public void onClick(View v) {
 				checkConnection();
 			}
 		});
 		
+		framesCountUnlimitedText.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				framesCountUnlimited.toggle();
+				framesCount.setEnabled(!framesCountUnlimited.isChecked());
+			}
+		});
+
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.main_actions, menu);
-	    
-	    startMenuItem = menu.findItem(R.id.start_timelapse);
-	    
-	    startMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-			
+
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main_actions, menu);
+
+		startMenuItem = menu.findItem(R.id.start_timelapse);
+
+		startMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
 				startTimelapse();
 				return true;
 			}
 		});
-	    
-	    return super.onCreateOptionsMenu(menu);
+
+		return super.onCreateOptionsMenu(menu);
 	}
-	
+
 	private void startTimelapse() {
-		
+
 		if(!checkAllFormValidity()) {
 			return;
 		}
-		
+
 		mCameraManager.testConnection(500, new TestConnectionListener() {
-			
+
 			@Override
 			public void cameraConnected(boolean isConnected) {
 
@@ -138,43 +164,44 @@ public class MainActivity extends Activity {
 					Intent timelapseIntent = new Intent(getApplicationContext(), TimelapseActivity.class);
 					timelapseIntent.putExtra(TimelapseActivity.EXTRA_INITIAL_DELAY, Integer.parseInt(initialDelay.getText().toString()));
 					timelapseIntent.putExtra(TimelapseActivity.EXTRA_INTERVAL_TIME, Integer.parseInt(intervalTime.getText().toString()));
-					timelapseIntent.putExtra(TimelapseActivity.EXTRA_FRAMES_COUNT, Integer.parseInt(framesCount.getText().toString()));
+					timelapseIntent.putExtra(TimelapseActivity.EXTRA_FRAMES_COUNT, framesCountUnlimited.isChecked() ? -1 : 
+							Integer.parseInt(framesCount.getText().toString()));
 					timelapseIntent.putExtra(TimelapseActivity.EXTRA_LAST_IMAGE_REVIEW, showImageReview.isChecked());
 					startActivity(timelapseIntent);
-					
+
 					return;
 				}
-				
+
 				runOnUiThread(new Runnable() {
-					
+
 					@Override
 					public void run() {
 						Toast.makeText(getApplicationContext(), R.string.device_disconnected, Toast.LENGTH_SHORT).show();	
 					}
 				});
-				
+
 			}
 		});
-		
+
 		return;
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
 		checkConnection();
-		
+
 	}
 
-	
+
 	private void checkConnection() {
 		mCameraManager.testConnection(500, new TestConnectionListener() {
-			
+
 			@Override
 			public void cameraConnected(final boolean isConnected) {
-				
+
 				runOnUiThread(new Runnable() {
-					
+
 					@Override
 					public void run() {
 						TextView deviceConnectedMessage = (TextView) findViewById(R.id.deviceConnectedMessage);
@@ -184,7 +211,7 @@ public class MainActivity extends Activity {
 			}
 		});
 	}
-	
+
 	private boolean checkInitialDelay() {
 		try {
 			if(Integer.valueOf(initialDelay.getText().toString()) < 0) {
@@ -195,12 +222,12 @@ public class MainActivity extends Activity {
 			initialDelay.setError(getString(R.string.form_positive_integer_error));
 			return false;
 		}
-		
+
 		initialDelay.setError(null);
 		return true;
 	}
-	
-	
+
+
 	private boolean checkIntervalTime() {
 		try {
 			int value = Integer.valueOf(intervalTime.getText().toString());
@@ -216,12 +243,17 @@ public class MainActivity extends Activity {
 			intervalTime.setError(getString(R.string.form_positive_integer_error));
 			return false;
 		}
-		
+
 		intervalTime.setError(null);
 		return true;
 	}
-	
+
 	private boolean checkFramesCount() {
+		
+		if(framesCountUnlimited.isChecked()) {
+			return true;
+		}
+		
 		try {
 			if(Integer.valueOf(framesCount.getText().toString()) <= 0) {
 				framesCount.setError(getString(R.string.form_positive_integer_error));
@@ -231,7 +263,7 @@ public class MainActivity extends Activity {
 			framesCount.setError(getString(R.string.form_positive_integer_error));
 			return false;
 		}
-		
+
 		framesCount.setError(null);
 		return true;
 	}
@@ -239,7 +271,7 @@ public class MainActivity extends Activity {
 	private boolean checkAllFormValidity() {
 
 		return checkInitialDelay() && checkFramesCount() && checkIntervalTime();
-		
+
 	}
 
 }

@@ -13,72 +13,166 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:textSize="16sp"
         android:layout_margin="16dp"
-        android:text="@string/device_disconnected" />
+        android:gravity="center"
+        android:text="@string/device_disconnected"
+        android:textSize="16sp" />
 
     <ImageView
         android:id="@+id/deviceConnectionRefresh"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_toRightOf="@+id/deviceConnectedMessage"
         android:layout_alignBottom="@+id/deviceConnectedMessage"
+        android:layout_toRightOf="@+id/deviceConnectedMessage"
         android:contentDescription="@string/device_connection_refresh"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_connection_refresh" />
+
+    <!-- Initial Delay -->
+
+    <ImageView
+        android:id="@+id/initialDelayImage"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_below="@+id/deviceConnectedMessage"
+        android:layout_marginTop="20dp"
+        android:contentDescription="@string/form_initial_delay"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_time" />
+
+    <TextView
+        android:id="@+id/initialDelayText"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_alignBottom="@+id/initialDelayImage"
+        android:layout_marginLeft="3dp"
+        android:layout_toRightOf="@+id/initialDelayImage"
+        android:text="@string/form_initial_delay"
+        android:textSize="16sp" />
 
     <EditText
         android:id="@+id/initialDelay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/deviceConnectedMessage"
+        android:layout_below="@+id/initialDelayImage"
         android:layout_centerHorizontal="true"
-        android:drawableLeft="@drawable/ic_time"
-        android:drawablePadding="15dp"
         android:ems="10"
-        android:hint="@string/form_initial_delay"
-        android:inputType="numberDecimal" />
+        android:inputType="numberDecimal"
+        android:text="@string/form_initial_delay_default" />
+
+    <!-- Interval time -->
+
+    <ImageView
+        android:id="@+id/intervalTimeImage"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_below="@+id/initialDelay"
+        android:layout_marginTop="20dp"
+        android:contentDescription="@string/form_interval_time"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_interval" />
+
+    <TextView
+        android:id="@+id/intervalTimeText"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_alignBottom="@+id/intervalTimeImage"
+        android:layout_marginLeft="3dp"
+        android:layout_toRightOf="@+id/intervalTimeImage"
+        android:text="@string/form_interval_time"
+        android:textSize="16sp" />
 
     <EditText
-        android:id="@+id/interval"
+        android:id="@+id/intervalTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/initialDelay"
+        android:layout_below="@+id/intervalTimeImage"
         android:layout_centerHorizontal="true"
-        android:drawableLeft="@drawable/ic_interval"
-        android:drawablePadding="15dp"
         android:ems="10"
-        android:hint="@string/form_interval_time"
-        android:inputType="numberDecimal" />
+        android:inputType="numberDecimal"
+        android:text="@string/form_interval_time_default" />
+
+    <!-- Frames count -->
+
+    <ImageView
+        android:id="@+id/framesCountImage"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_below="@+id/intervalTime"
+        android:layout_marginTop="20dp"
+        android:contentDescription="@string/form_frames_count"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_frames_count_down" />
+
+    <TextView
+        android:id="@+id/framesCountText"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_alignBottom="@+id/framesCountImage"
+        android:layout_marginLeft="3dp"
+        android:layout_toRightOf="@+id/framesCountImage"
+        android:text="@string/form_frames_count"
+        android:textSize="16sp" />
+
+    <CheckBox
+        android:id="@+id/framesCountUnlimited"
+        android:layout_width="wrap_content"
+        android:layout_height="18dp"
+        android:layout_alignBottom="@+id/framesCountImage"
+        android:layout_toLeftOf="@+id/framesCountUnlimitedText"
+        android:checked="true" />
+
+    <TextView
+        android:id="@+id/framesCountUnlimitedText"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_alignBottom="@+id/framesCountImage"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="3dp"
+        android:text="@string/form_frames_count_unlimited"
+        android:textSize="16sp" />
 
     <EditText
         android:id="@+id/framesCount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/interval"
+        android:layout_below="@+id/framesCountImage"
         android:layout_centerHorizontal="true"
-        android:drawableLeft="@drawable/ic_frames_count_down"
-        android:drawablePadding="15dp"
         android:ems="10"
-        android:hint="@string/form_frames_count"
+        android:enabled="false"
         android:inputType="numberDecimal" />
 
+    <!-- Show last picture -->
+
     <ImageView
-        android:id="@+id/showImageReviewIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/framesCount"
+        android:id="@+id/showImageReviewImage"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_below="@+id/framesCount"
+        android:layout_marginTop="20dp"
         android:contentDescription="@string/show_last_image_review"
-        android:paddingLeft="10dp"
+        android:scaleType="fitCenter"
         android:src="@drawable/ic_review_image" />
 
-    <CheckBox
+    <TextView
+        android:id="@+id/showImageReviewText"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_alignBottom="@+id/showImageReviewImage"
+        android:layout_marginLeft="3dp"
+        android:layout_toRightOf="@+id/showImageReviewImage"
+        android:text="@string/show_last_image_review"
+        android:textSize="16sp" />
+
+    <Switch
         android:id="@+id/showImageReview"
         android:layout_width="wrap_content"
-        android:layout_height="48dip"
-        android:layout_below="@id/framesCount"
-        android:layout_toRightOf="@id/showImageReviewIcon"
-        android:text="@string/show_last_image_review" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/showImageReviewImage"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:checked="true"
+        android:textOff="@string/show_last_image_review_off"
+        android:textOn="@string/show_last_image_review_on" />
 
 </RelativeLayout>

@@ -22,15 +22,32 @@ public abstract class MyCountDownTicks {
 	 */
 	private final long mCountdownInterval;
 
+	
 
+	
+	/**
+	 * If set to true, it will works has a normal counter with interval time
+	 */
+	private boolean isUnlimited;
+	
+	/**
+	 * The number of ticks in the future when unlimited
+	 */
+	private int mNumberOfTicks;
+	
 	/**
 	 * @param numberOfTicks The number of ticks in the future from the call
 	 *   to {@link #start()} until the countdown is done and {@link #onFinish()}
-	 *   is called.
+	 *   is called. If set to -1, countdown is an unlimited normal counter, you 
+	 *   have to call {@link #cancel()} to stop it.
 	 * @param countDownInterval The interval along the way to receive
 	 *   {@link #onTick(long)} callbacks.
 	 */
 	public MyCountDownTicks(int numberOfTicks, long countDownInterval) {
+		
+		isUnlimited = numberOfTicks == -1;
+		mNumberOfTicks = 0;
+		
 		mRemainingTicks = numberOfTicks;
 		mCountdownInterval = countDownInterval;
 	}
@@ -46,7 +63,7 @@ public abstract class MyCountDownTicks {
 	 * Start the countdown.
 	 */
 	public synchronized final MyCountDownTicks start() {
-		if (mRemainingTicks <= 0) {
+		if (!isUnlimited && mRemainingTicks <= 0) {
 			onFinish();
 			return this;
 		}
@@ -78,6 +95,13 @@ public abstract class MyCountDownTicks {
 		public void handleMessage(Message msg) {
 
 			synchronized (MyCountDownTicks.this) {
+				
+				if(isUnlimited) {
+					mNumberOfTicks++;
+					onTick(mNumberOfTicks);
+					sendMessageDelayed(obtainMessage(MSG), mCountdownInterval);
+					return;
+				}
 				
 				mRemainingTicks--;
 

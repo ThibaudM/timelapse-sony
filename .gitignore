@@ -30,3 +30,6 @@ proguard/
 
 # Exclude OS X folder attributes
 .DS_Store
+
+# Exclude Dist Keys
+*.key
