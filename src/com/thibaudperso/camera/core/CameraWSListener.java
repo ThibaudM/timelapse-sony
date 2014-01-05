@@ -8,7 +8,7 @@ import org.json.JSONObject;
  * @author Thibaud Michel
  *
  */
-public interface CameraIOListener {
+public interface CameraWSListener {
 
 	void cameraResponse(JSONArray jsonResponse);
 

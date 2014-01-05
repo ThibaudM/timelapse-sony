@@ -3,8 +3,8 @@ package com.thibaudperso.camera.sdk;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.thibaudperso.camera.core.CameraIO;
-import com.thibaudperso.camera.core.CameraIOListener;
+import com.thibaudperso.camera.core.CameraWS;
+import com.thibaudperso.camera.core.CameraWSListener;
 import com.thibaudperso.camera.core.TestConnectionListener;
 
 /**
@@ -14,20 +14,20 @@ import com.thibaudperso.camera.core.TestConnectionListener;
  */
 public class CameraManager {
 
-	public static int MIN_TIME_BETWEEN_CAPTURE = 1;
+	public static int MIN_TIME_BETWEEN_CAPTURE = 5;
 
-	private CameraIO mCameraIO;
+	private CameraWS mCameraWS;
 
 	public CameraManager() {
 
-		mCameraIO = new CameraIO();
+		mCameraWS = new CameraWS();
 
 	}
 
 
 	public void takePicture(final TakePictureListener listener) {
 
-		mCameraIO.sendRequest("actTakePicture", new JSONArray(), new CameraIOListener() {
+		mCameraWS.sendRequest("actTakePicture", new JSONArray(), new CameraWSListener() {
 
 			@Override
 			public void cameraResponse(JSONArray jsonResponse) {
@@ -51,7 +51,7 @@ public class CameraManager {
 
 	public void testConnection(int timeout, TestConnectionListener listener) {
 		
-		mCameraIO.testConnection(timeout, listener);
+		mCameraWS.testConnection(timeout, listener);
 	
 	}
 

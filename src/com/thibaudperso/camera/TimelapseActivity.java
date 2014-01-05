@@ -217,6 +217,9 @@ public class TimelapseActivity extends Activity {
 					progressValue.setText(new DecimalFormat("#.##").format(progressPercent) + "%" );
 				
 				} else {
+					/*
+					 * Update activity fields for unlimited mode
+					 */
 					framesCountValue.setText(String.valueOf(remainingFrames));	
 				}
 				

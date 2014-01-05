@@ -3,10 +3,24 @@
 
     <string name="app_name">TimeLapse</string>
     
-    <string name="device_connected">L\'appareil photo est connecté</string>
-    <string name="device_disconnected">L\'appareil photo n\'est pas connecté</string>
-    <string name="device_connection_refresh">Rafraichir la connection</string>
+    <string name="connection_info">Informations de connexion</string>
+    <string name="connection_refresh">Rafraichir la connexion</string>
+    <string name="connection_info_nothing">En attente de plus d\'informations</string>
+    <string name="connection_info_scan_networks">Analyse des réseaux</string>
+    <string name="connection_info_wifi_not_found">Pas de réseau Wifi d\'appareil photo Sony trouvé</string>
+    <string name="connection_info_wifi_connected">Connecté au wifi %1$s</string>
+    <string name="connection_info_wifi_connecting">En cours de connexion au wifi %1$s</string>
+    <string name="connection_info_wifi_disconnected">Réseau wifi de l\'appareil deconnecté</string>
+    <string name="connection_info_ok">La connexion est bonne</string>
+    <string name="connection_info_ws_failed">La connexion au WebService a échoué, merci de contacter le développeur</string>
+    <string name="connection_choose_network">Choisissez un réseau</string>
+    <string name="connection_choose_network_cancel">Annuler</string>
+    <string name="connection_enter_password">Entrez un mote de passe pour le réseau %1$s</string>
+    <string name="connection_enter_password_ok">Rejoindre</string>
+    <string name="connection_enter_password_cancel">Annuler</string>
+    <string name="connection_nfc_error">Un problème est survenu lors du pairage du NFC, merci de rééssayer</string>
     
+        
     <string name="form_initial_delay">Délai initial (s)</string>
     
     <string name="form_interval_time">Intervalle entre les captures (s)</string>

@@ -6,27 +6,48 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".MainActivity" >
+    tools:context=".InitTimelpaseActivity" >
+
+    <ImageView
+        android:id="@+id/connectionInfoImage"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignBottom="@+id/connectionInfoText"
+        android:contentDescription="@string/connection_info"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_connection_information" />
 
     <TextView
-        android:id="@+id/deviceConnectedMessage"
+        android:id="@+id/connectionInfoText"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="16dp"
-        android:gravity="center"
-        android:text="@string/device_disconnected"
+        android:layout_height="20dp"
+        android:layout_marginLeft="3dp"
+        android:layout_toRightOf="@+id/connectionInfoImage"
+        android:text="@string/connection_info"
         android:textSize="16sp" />
 
     <ImageView
-        android:id="@+id/deviceConnectionRefresh"
+        android:id="@+id/connectionRefresh"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_alignBottom="@+id/deviceConnectedMessage"
-        android:layout_toRightOf="@+id/deviceConnectedMessage"
-        android:contentDescription="@string/device_connection_refresh"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/connectionInfoText"
+        android:contentDescription="@string/connection_refresh"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_connection_refresh" />
+
+    <TextView
+        android:id="@+id/connectionInfoMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/connectionRefresh"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:background="#10000000"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="@string/connection_info_nothing"
+        android:textSize="16sp" />
 
     <!-- Initial Delay -->
 
@@ -34,7 +55,7 @@
         android:id="@+id/initialDelayImage"
         android:layout_width="16dp"
         android:layout_height="16dp"
-        android:layout_below="@+id/deviceConnectedMessage"
+        android:layout_below="@+id/connectionInfoMessage"
         android:layout_marginTop="20dp"
         android:contentDescription="@string/form_initial_delay"
         android:scaleType="fitCenter"
@@ -164,15 +185,6 @@
         android:text="@string/show_last_image_review"
         android:textSize="16sp" />
 
-    <Switch
-        android:id="@+id/showImageReview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/showImageReviewImage"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:checked="true"
-        android:textOff="@string/show_last_image_review_off"
-        android:textOn="@string/show_last_image_review_on" />
+    <include layout="@layout/compound_button" />
 
 </RelativeLayout>

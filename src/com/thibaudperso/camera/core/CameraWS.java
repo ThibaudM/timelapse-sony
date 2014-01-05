@@ -24,20 +24,20 @@ import org.json.JSONObject;
  * @author Thibaud Michel
  *
  */
-public class CameraIO {
+public class CameraWS {
 
 	private final static String CAMERA_URL = "http://10.0.0.1:10000/camera";
 	private int requestId;
 
-	public CameraIO() {
+	public CameraWS() {
 		requestId = 1;
 	}
 
-	public void sendRequest(String method, JSONArray params, CameraIOListener listener)  {
+	public void sendRequest(String method, JSONArray params, CameraWSListener listener)  {
 		sendRequest(method, params, listener, 0);
 	}
 
-	public void sendRequest(final String method, final JSONArray params, final CameraIOListener listener, 
+	public void sendRequest(final String method, final JSONArray params, final CameraWSListener listener, 
 			final int timeout) {
 
 		Thread requestThread = new Thread(new Runnable() {

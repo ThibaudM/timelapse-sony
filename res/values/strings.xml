@@ -3,9 +3,23 @@
 
     <string name="app_name">TimeLapse</string>
     
-    <string name="device_connected">Camera is connected</string>
-    <string name="device_disconnected">Camera is not connected</string>
-    <string name="device_connection_refresh">Refresh connection</string>
+    <string name="connection_info">Connection information</string>
+    <string name="connection_refresh">Refresh connection</string>
+    <string name="connection_info_nothing">Waiting more information</string>
+    <string name="connection_info_scan_networks">Scanning networks</string>
+    <string name="connection_info_wifi_not_found">No Sony camera network found</string>
+    <string name="connection_info_wifi_connected">Wifi connected to %1$s</string>
+    <string name="connection_info_wifi_connecting">Wifi connecting to %1$s</string>
+    <string name="connection_info_wifi_disconnected">Wifi disconnected</string>
+    <string name="connection_info_ok">Connection is OK</string>
+    <string name="connection_info_ws_failed">Connection to WebService failed please contact developer for more information</string>
+    <string name="connection_choose_network">Choose network</string>
+    <string name="connection_choose_network_cancel">Cancel</string>
+    <string name="connection_enter_password">Enter password for %1$s network</string>
+    <string name="connection_enter_password_ok">Join</string>
+    <string name="connection_enter_password_cancel">Cancel</string>
+    <string name="connection_nfc_error">A problem occurred during pairing of Camera. Please try again</string>
+    
     
     <string name="form_initial_delay">Initial delay (s)</string>
     <string name="form_initial_delay_default">0</string>

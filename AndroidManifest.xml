@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.thibaudperso.timelapse"
-    android:versionCode="1"
-    android:versionName="0.9" >
+    android:versionCode="2"
+    android:versionName="1" >
 
     <uses-sdk
-        android:minSdkVersion="14"
+        android:minSdkVersion="8"
         android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    
     <application
         android:name="com.thibaudperso.camera.TimelapseApplication"
         android:allowBackup="true"
@@ -17,7 +20,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.thibaudperso.camera.MainActivity"
+            android:name="com.thibaudperso.camera.InitTimelpaseActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
             <intent-filter>

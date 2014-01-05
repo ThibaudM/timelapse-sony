@@ -12,5 +12,5 @@ How to use
 ----------
 
 You just need to:
-* Put your camera in "Ctrl with Smartphone" mode
-* Connect your smartphone to the camera's wifi network
+* Start Timelapse app
+* Put your camera in "Ctrl with Smartphone" mode or Connect by NFC
