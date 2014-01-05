@@ -14,6 +14,7 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.util.Log;
 
 public class WifiHandler {
 
@@ -28,7 +29,7 @@ public class WifiHandler {
 
 		this.context = context;
 		mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE); 
-
+		mWifiManager.setWifiEnabled(true);
 		listeners = new ArrayList<WifiListener>();
 
 	}
@@ -37,12 +38,15 @@ public class WifiHandler {
 		cameraWifiState = State.DISCONNECTED;
 		WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
 
-		String ssid = wifiInfo.getSSID().substring(1, wifiInfo.getSSID().length()-1);
-		if(wifiInfo != null && isSonyCameraSSID(ssid)) {
+		if(wifiInfo != null && wifiInfo.getSSID() != null) {
 
-			// Don't need to check more, camera is already connected
-			connected(ssid);
-			return;
+			Log.v("DEBUG", "wifiInfo: "+wifiInfo);
+			String ssid = wifiInfo.getSSID().substring(1, wifiInfo.getSSID().length()-1);
+			if(isSonyCameraSSID(ssid)) {
+				// Don't need to check more, camera is already connected
+				connected(ssid);
+				return;
+			}
 		}
 
 		mWifiManager.startScan();
@@ -87,7 +91,7 @@ public class WifiHandler {
 				continue;
 			}
 
-			if(mWifiManager.getConnectionInfo() != null) {
+			if(mWifiManager.getConnectionInfo() != null && mWifiManager.getConnectionInfo().getSSID() != null) {
 				String ssid = mWifiManager.getConnectionInfo().getSSID().substring(1, mWifiManager.getConnectionInfo().getSSID().length()-1);
 
 				if(!isSonyCameraSSID(ssid)) {
@@ -134,7 +138,7 @@ public class WifiHandler {
 
 		if(lastWifiConnected != null) {
 			mWifiManager.enableNetwork(lastWifiConnected.getNetworkId(), true);
-			
+
 			// Maybe remove comment on this line for more logic
 			//lastWifiConnected = null;
 		}
