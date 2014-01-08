@@ -4,7 +4,14 @@
     <item
         android:id="@+id/start_timelapse"
         android:icon="@drawable/ic_timelapse_start"
+        android:orderInCategory="2"
         android:showAsAction="always"
         android:title="@string/start_timelapse"/>
+    <item
+        android:id="@+id/switch_device"
+        android:icon="@drawable/ic_switch_device"
+        android:orderInCategory="1"
+        android:showAsAction="always"
+        android:title="@string/switch_device"/>
 
 </menu>

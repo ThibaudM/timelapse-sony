@@ -24,7 +24,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.thibaudperso.camera.sdk.CameraManager;
+import com.thibaudperso.camera.sdk.CameraIO;
 import com.thibaudperso.camera.sdk.TakePictureListener;
 import com.thibaudperso.timelapse.R;
 
@@ -47,7 +47,7 @@ public class TimelapseActivity extends Activity {
 
 	private final static String TIME_FORMAT = "HH:mm";
 
-	private CameraManager mCameraManager;
+	private CameraIO mCameraIO;
 
 	private TextView batteryValue;
 	private TextView framesCountDownValue;
@@ -69,7 +69,7 @@ public class TimelapseActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mCameraManager = ((TimelapseApplication) getApplication()).getCameraManager();
+		mCameraIO = ((TimelapseApplication) getApplication()).getCameraIO();
 
 		setContentView(R.layout.activity_timelapse);
 
@@ -237,7 +237,7 @@ public class TimelapseActivity extends Activity {
 
 	private void takePicture() {
 
-		mCameraManager.takePicture(new TakePictureListener() {
+		mCameraIO.takePicture(new TakePictureListener() {
 
 			@Override
 			public void onResult(String url) {

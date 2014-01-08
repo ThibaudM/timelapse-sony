@@ -26,11 +26,15 @@ import org.json.JSONObject;
  */
 public class CameraWS {
 
-	private final static String CAMERA_URL = "http://10.0.0.1:10000/camera";
+	private String mWSUrl;
 	private int requestId;
 
 	public CameraWS() {
 		requestId = 1;
+	}
+	
+	public void setWSUrl(String wsUrl) {
+		mWSUrl = wsUrl;
 	}
 
 	public void sendRequest(String method, JSONArray params, CameraWSListener listener)  {
@@ -40,6 +44,11 @@ public class CameraWS {
 	public void sendRequest(final String method, final JSONArray params, final CameraWSListener listener, 
 			final int timeout) {
 
+		if(mWSUrl == null) {
+			listener.cameraError(null);
+			return;
+		}
+		
 		Thread requestThread = new Thread(new Runnable() {
 
 			@Override
@@ -49,7 +58,7 @@ public class CameraWS {
 				HttpConnectionParams.setConnectionTimeout(httpParameters, timeout);
 
 				HttpClient httpclient = new DefaultHttpClient(httpParameters);
-				HttpPost httppost = new HttpPost(CAMERA_URL);
+				HttpPost httppost = new HttpPost(mWSUrl);
 
 				try {
 					JSONObject jsonObject = new JSONObject();
@@ -97,6 +106,11 @@ public class CameraWS {
 
 	public void testConnection(final int timeout, final TestConnectionListener listener) {
 
+		if(mWSUrl == null) {
+			listener.cameraConnected(false);
+			return;
+		}
+		
 		Thread requestThread = new Thread(new Runnable() {
 
 			@Override
@@ -106,7 +120,7 @@ public class CameraWS {
 				HttpConnectionParams.setConnectionTimeout(httpParameters, timeout);
 
 				HttpClient httpclient = new DefaultHttpClient(httpParameters);
-				HttpGet httpget = new HttpGet(CAMERA_URL);
+				HttpGet httpget = new HttpGet(mWSUrl);
 
 				try {
 					httpclient.execute(httpget);

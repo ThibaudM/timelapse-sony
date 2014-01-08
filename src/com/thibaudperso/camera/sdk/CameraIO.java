@@ -6,24 +6,28 @@ import org.json.JSONObject;
 import com.thibaudperso.camera.core.CameraWS;
 import com.thibaudperso.camera.core.CameraWSListener;
 import com.thibaudperso.camera.core.TestConnectionListener;
+import com.thibaudperso.camera.model.Device;
 
 /**
  * 
  * @author Thibaud Michel
  *
  */
-public class CameraManager {
+public class CameraIO {
 
 	public static int MIN_TIME_BETWEEN_CAPTURE = 5;
 
 	private CameraWS mCameraWS;
 
-	public CameraManager() {
+	public CameraIO() {
 
 		mCameraWS = new CameraWS();
 
 	}
 
+	public void setDevice(Device device) {
+		mCameraWS.setWSUrl(device.getWebService());
+	}
 
 	public void takePicture(final TakePictureListener listener) {
 

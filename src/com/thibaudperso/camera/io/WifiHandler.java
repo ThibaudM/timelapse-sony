@@ -14,7 +14,6 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.util.Log;
 
 public class WifiHandler {
 
@@ -40,7 +39,6 @@ public class WifiHandler {
 
 		if(wifiInfo != null && wifiInfo.getSSID() != null && wifiInfo.getSSID().length() > 2) {
 
-			Log.v("DEBUG", "wifiInfo: "+wifiInfo);
 			String ssid = wifiInfo.getSSID().substring(1, wifiInfo.getSSID().length()-1);
 			if(isSonyCameraSSID(ssid)) {
 				// Don't need to check more, camera is already connected

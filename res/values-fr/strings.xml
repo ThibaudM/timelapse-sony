@@ -3,6 +3,10 @@
 
     <string name="app_name">TimeLapse</string>
     
+    <string name="choose_camera_model">Choisissez votre caméra</string>
+    <string name="choose_camera_model_ok">Choisir</string>
+    <string name="choose_camera_model_cancel">Annuler</string>
+    
     <string name="connection_info">Informations de connexion</string>
     <string name="connection_refresh">Rafraichir la connexion</string>
     <string name="connection_info_nothing">En attente de plus d\'informations</string>
@@ -12,7 +16,7 @@
     <string name="connection_info_wifi_connecting">En cours de connexion au wifi %1$s</string>
     <string name="connection_info_wifi_disconnected">Réseau wifi de l\'appareil deconnecté</string>
     <string name="connection_info_ok">La connexion est bonne</string>
-    <string name="connection_info_ws_failed">La connexion au WebService a échoué, merci de contacter le développeur</string>
+    <string name="connection_info_ws_failed">La connexion au WebService a échoué. Vérifiez le modèle de votre appareil.</string>
     <string name="connection_choose_network">Choisissez un réseau</string>
     <string name="connection_choose_network_cancel">Annuler</string>
     <string name="connection_enter_password">Entrez un mote de passe pour le réseau %1$s</string>
@@ -33,6 +37,7 @@
    	<string name="show_last_image_review_off">Cacher</string>
    	
     <string name="start_timelapse">Commencer</string>
+    <string name="switch_device">Changer d\'appareil photo</string>
     <string name="form_positive_integer_error">Ce chiffre doit être un entier positif</string>
     <string name="minimum_time_error">Le temps minimum entre 2 captures doit être de %1$d secondes minimum</string>
 

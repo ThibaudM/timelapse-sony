@@ -2,6 +2,10 @@
 <resources>
 
     <string name="app_name">TimeLapse</string>
+
+    <string name="choose_camera_model">Choose your camera model</string>
+    <string name="choose_camera_model_ok">Choose</string>
+    <string name="choose_camera_model_cancel">Cancel</string>
     
     <string name="connection_info">Connection information</string>
     <string name="connection_refresh">Refresh connection</string>
@@ -12,7 +16,7 @@
     <string name="connection_info_wifi_connecting">Wifi connecting to %1$s</string>
     <string name="connection_info_wifi_disconnected">Wifi disconnected</string>
     <string name="connection_info_ok">Connection is OK</string>
-    <string name="connection_info_ws_failed">Connection to WebService failed please contact developer for more information</string>
+    <string name="connection_info_ws_failed">Connection to WebService failed. Check your device model.</string>
     <string name="connection_choose_network">Choose network</string>
     <string name="connection_choose_network_cancel">Cancel</string>
     <string name="connection_enter_password">Enter password for %1$s network</string>
@@ -36,6 +40,7 @@
     
     
     <string name="start_timelapse">Start</string>
+    <string name="switch_device">Switch device</string>
     <string name="form_positive_integer_error">It has to be a positive integer</string>
     <string name="minimum_time_error">Minimum time between 2 frames has to be at least %1$d seconds</string>
 

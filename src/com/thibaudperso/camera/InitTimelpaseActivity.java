@@ -26,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CheckedTextView;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
@@ -39,7 +40,9 @@ import com.thibaudperso.camera.core.TestConnectionListener;
 import com.thibaudperso.camera.io.NFCHandler;
 import com.thibaudperso.camera.io.WifiHandler;
 import com.thibaudperso.camera.io.WifiListener;
-import com.thibaudperso.camera.sdk.CameraManager;
+import com.thibaudperso.camera.model.Device;
+import com.thibaudperso.camera.model.DeviceManager;
+import com.thibaudperso.camera.sdk.CameraIO;
 import com.thibaudperso.timelapse.R;
 
 /**
@@ -55,17 +58,18 @@ public class InitTimelpaseActivity extends Activity implements WifiListener {
 	private EditText intervalTime;
 	private EditText framesCount;
 	private CompoundButton showImageReview;
-	private MenuItem startMenuItem;
 	private CheckBox framesCountUnlimited;
 	private TextView framesCountUnlimitedText;
 
-	private CameraManager mCameraManager;
+	private CameraIO mCameraIO;
+	private DeviceManager mDeviceManager;
 	private NfcAdapter mNfcAdapter;
 	private WifiHandler mWifiHandler;
 
 	private AlertDialog alertDialogChooseNetworkConnection;
 	private AlertDialog alertDialogChooseNetworkCreation;
 	private AlertDialog alertDialogAskForPassword;
+	private AlertDialog alertDialogChooseCameraModel;
 
 	/**
 	 * Application Life Cycle
@@ -75,7 +79,8 @@ public class InitTimelpaseActivity extends Activity implements WifiListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mCameraManager = ((TimelapseApplication) getApplication()).getCameraManager();
+		mCameraIO = ((TimelapseApplication) getApplication()).getCameraIO();
+		mDeviceManager = ((TimelapseApplication) getApplication()).getDeviceManager();
 
 		mWifiHandler = ((TimelapseApplication) getApplication()).getWifiHandler();
 		mWifiHandler.addListener(this);
@@ -162,6 +167,11 @@ public class InitTimelpaseActivity extends Activity implements WifiListener {
 			}
 		});
 
+
+		if(mDeviceManager.getSelectedDevice() == null) {
+			askForDeviceModel();
+		}
+
 	}
 
 
@@ -176,15 +186,23 @@ public class InitTimelpaseActivity extends Activity implements WifiListener {
 	public boolean onCreateOptionsMenu(Menu menu) {
 
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.main_actions, menu);
+		inflater.inflate(R.menu.init_timelapse_actions, menu);
 
-		startMenuItem = menu.findItem(R.id.start_timelapse);
 
-		startMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+		menu.findItem(R.id.start_timelapse).setOnMenuItemClickListener(new OnMenuItemClickListener() {
 
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
 				startTimelapse();
+				return true;
+			}
+		});
+
+		menu.findItem(R.id.switch_device).setOnMenuItemClickListener(new OnMenuItemClickListener() {
+
+			@Override
+			public boolean onMenuItemClick(MenuItem item) {
+				askForDeviceModel();
 				return true;
 			}
 		});
@@ -198,7 +216,7 @@ public class InitTimelpaseActivity extends Activity implements WifiListener {
 			return;
 		}
 
-		mCameraManager.testConnection(500, new TestConnectionListener() {
+		mCameraIO.testConnection(500, new TestConnectionListener() {
 
 			@Override
 			public void cameraConnected(boolean isConnected) {
@@ -329,8 +347,8 @@ public class InitTimelpaseActivity extends Activity implements WifiListener {
 				intervalTime.setError(getString(R.string.form_positive_integer_error));
 				return false;
 			}
-			if(value < CameraManager.MIN_TIME_BETWEEN_CAPTURE) {
-				intervalTime.setError(getString(R.string.minimum_time_error, CameraManager.MIN_TIME_BETWEEN_CAPTURE));
+			if(value < CameraIO.MIN_TIME_BETWEEN_CAPTURE) {
+				intervalTime.setError(getString(R.string.minimum_time_error, CameraIO.MIN_TIME_BETWEEN_CAPTURE));
 				return false;
 			}
 		} catch(NumberFormatException e) {
@@ -402,7 +420,7 @@ public class InitTimelpaseActivity extends Activity implements WifiListener {
 	@Override
 	public void onWifiScanFinished(List<ScanResult> sonyCameraScanResults,
 			List<WifiConfiguration> sonyCameraWifiConfiguration) {
-
+		
 		/*
 		 * No Sony Camera network found in scan 
 		 */
@@ -442,7 +460,7 @@ public class InitTimelpaseActivity extends Activity implements WifiListener {
 
 
 	private void checkWSConnection() {
-		mCameraManager.testConnection(500, new TestConnectionListener() {
+		mCameraIO.testConnection(500, new TestConnectionListener() {
 
 			@Override
 			public void cameraConnected(final boolean isConnected) {
@@ -573,4 +591,77 @@ public class InitTimelpaseActivity extends Activity implements WifiListener {
 
 	}
 
+
+	private void askForDeviceModel() {
+
+		boolean cancelable = mDeviceManager.getSelectedDevice() != null;
+
+		final ListView listView = new ListView(this);
+		listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
+		ArrayAdapter<Device> adapter = new ArrayAdapter<Device>(this, 
+				android.R.layout.simple_list_item_single_choice, mDeviceManager.getDevices()){
+
+			public View getView(int position, View convertView, ViewGroup parent) {
+
+				final CheckedTextView view = (CheckedTextView) super.getView(position, convertView, parent);
+
+				if(((Device) getItem(position)).equals(mDeviceManager.getSelectedDevice())) {
+					listView.setItemChecked(position, true);
+				}
+
+				return view;
+			}
+		};
+		adapter.sort(Device.COMPARE_BY_DEVICEMODEL);
+
+		listView.setAdapter(adapter);
+
+		AlertDialog.Builder alertDialogBuilderChooseCameraModel = 
+				new AlertDialog.Builder(this)
+		.setTitle(R.string.choose_camera_model)
+		.setView(listView)
+		.setPositiveButton(R.string.choose_camera_model_ok, 
+				new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+
+				int checkedItemPosition = listView.getCheckedItemPosition();
+				if(checkedItemPosition < 0) {
+					return;
+				}
+				Device device = (Device) listView.getItemAtPosition(checkedItemPosition);
+				mDeviceManager.setSelectedDevice(device);
+				checkWSConnection();
+			}
+		});
+
+
+
+		if(cancelable) {
+			alertDialogBuilderChooseCameraModel.setNegativeButton(R.string.choose_camera_model_cancel, 
+					new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {		
+					// Do nothing.
+				}
+			});
+		} else {
+			alertDialogBuilderChooseCameraModel.setCancelable(false);
+		}
+
+		alertDialogChooseCameraModel = alertDialogBuilderChooseCameraModel.show();
+		
+		if(!cancelable) {
+			alertDialogChooseCameraModel.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+		}
+
+		listView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				alertDialogChooseCameraModel.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);				
+			}
+		});
+
+	}
 }
