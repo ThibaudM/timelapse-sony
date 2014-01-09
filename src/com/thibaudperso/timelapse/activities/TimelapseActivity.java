@@ -1,4 +1,4 @@
-package com.thibaudperso.camera;
+package com.thibaudperso.timelapse.activities;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -24,6 +24,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.thibaudperso.camera.MyCountDownTicks;
+import com.thibaudperso.camera.TimelapseApplication;
+import com.thibaudperso.camera.Utils;
 import com.thibaudperso.camera.sdk.CameraIO;
 import com.thibaudperso.camera.sdk.TakePictureListener;
 import com.thibaudperso.timelapse.R;

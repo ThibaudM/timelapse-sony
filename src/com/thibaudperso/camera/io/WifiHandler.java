@@ -17,7 +17,7 @@ import android.net.wifi.WifiManager;
 
 public class WifiHandler {
 
-	private Context context;
+	private Context mContext;
 	private WifiManager mWifiManager;
 	private WifiInfo lastWifiConnected;
 	private NetworkInfo.State cameraWifiState;
@@ -26,11 +26,12 @@ public class WifiHandler {
 
 	public WifiHandler(Context context) {
 
-		this.context = context;
+		this.mContext = context;
 		mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE); 
 		mWifiManager.setWifiEnabled(true);
 		listeners = new ArrayList<WifiListener>();
-
+		
+		cameraWifiState = State.UNKNOWN;
 	}
 
 	public void checkForConnection() {
@@ -48,7 +49,7 @@ public class WifiHandler {
 		}
 
 		mWifiManager.startScan();
-		context.registerReceiver(scanResultsBroadcastReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));	
+		mContext.registerReceiver(scanResultsBroadcastReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));	
 
 	}
 
@@ -88,6 +89,8 @@ public class WifiHandler {
 			if(wc.networkId != netId) {
 				continue;
 			}
+			
+			cameraWifiState = State.CONNECTING;
 
 			WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
 			if(wifiInfo != null && wifiInfo.getSSID() != null && wifiInfo.getSSID().length() > 2) {
@@ -259,13 +262,17 @@ public class WifiHandler {
 		final IntentFilter filters = new IntentFilter();
 		filters.addAction("android.net.wifi.WIFI_STATE_CHANGED");
 		filters.addAction("android.net.wifi.STATE_CHANGE");
-		context.registerReceiver(wifiBroadcastReceiver, filters);
+		mContext.registerReceiver(wifiBroadcastReceiver, filters);
 	}
 
 	public void unregister() {
 		try {
-			context.unregisterReceiver(wifiBroadcastReceiver);
-			context.unregisterReceiver(scanResultsBroadcastReceiver);
+			mContext.unregisterReceiver(wifiBroadcastReceiver);
+			mContext.unregisterReceiver(scanResultsBroadcastReceiver);
 		} catch (IllegalArgumentException e) { }
+	}
+	
+	public State getCameraWifiState() {
+		return cameraWifiState;
 	}
 }

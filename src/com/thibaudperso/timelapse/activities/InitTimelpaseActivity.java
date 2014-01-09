@@ -1,4 +1,4 @@
-package com.thibaudperso.camera;
+package com.thibaudperso.timelapse.activities;
 
 import java.util.List;
 
@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.NetworkInfo.State;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.nfc.NfcAdapter;
@@ -36,6 +37,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.thibaudperso.camera.TimelapseApplication;
 import com.thibaudperso.camera.core.TestConnectionListener;
 import com.thibaudperso.camera.io.NFCHandler;
 import com.thibaudperso.camera.io.WifiHandler;
@@ -420,7 +422,7 @@ public class InitTimelpaseActivity extends Activity implements WifiListener {
 	@Override
 	public void onWifiScanFinished(List<ScanResult> sonyCameraScanResults,
 			List<WifiConfiguration> sonyCameraWifiConfiguration) {
-		
+
 		/*
 		 * No Sony Camera network found in scan 
 		 */
@@ -631,7 +633,13 @@ public class InitTimelpaseActivity extends Activity implements WifiListener {
 				}
 				Device device = (Device) listView.getItemAtPosition(checkedItemPosition);
 				mDeviceManager.setSelectedDevice(device);
-				checkWSConnection();
+
+				if(mWifiHandler.getCameraWifiState() == State.CONNECTED) {
+					checkWSConnection();
+				} else if(mWifiHandler.getCameraWifiState() != State.CONNECTING) {
+					mWifiHandler.checkForConnection();
+					setConnectionInformation(R.string.connection_info_scan_networks);
+				}
 			}
 		});
 
@@ -649,7 +657,7 @@ public class InitTimelpaseActivity extends Activity implements WifiListener {
 		}
 
 		alertDialogChooseCameraModel = alertDialogBuilderChooseCameraModel.show();
-		
+
 		if(!cancelable) {
 			alertDialogChooseCameraModel.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
 		}
