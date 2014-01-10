@@ -10,4 +10,9 @@
         <model>NEX5-R</model>
         <webservice>http://192.168.122.1:8080/sony/camera</webservice>
     </camera>
+    <camera>
+        <id>3</id>
+        <model>QX-10/QX-100 (untested)</model>
+        <webservice>http://10.0.0.1:10000/sony/camera</webservice>
+    </camera>
 </cameras>
