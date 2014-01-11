@@ -11,8 +11,8 @@ import android.content.SharedPreferences;
 import android.content.res.XmlResourceParser;
 import android.preference.PreferenceManager;
 
-import com.thibaudperso.camera.TimelapseApplication;
 import com.thibaudperso.timelapse.R;
+import com.thibaudperso.timelapse.TimelapseApplication;
 
 public class DeviceManager {
 

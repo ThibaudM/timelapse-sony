@@ -24,12 +24,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.thibaudperso.camera.MyCountDownTicks;
-import com.thibaudperso.camera.TimelapseApplication;
-import com.thibaudperso.camera.Utils;
 import com.thibaudperso.camera.sdk.CameraIO;
 import com.thibaudperso.camera.sdk.TakePictureListener;
+import com.thibaudperso.timelapse.MyCountDownTicks;
 import com.thibaudperso.timelapse.R;
+import com.thibaudperso.timelapse.TimelapseApplication;
+import com.thibaudperso.timelapse.Utils;
 
 /**
  * 

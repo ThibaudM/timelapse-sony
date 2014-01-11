@@ -1,4 +1,4 @@
-package com.thibaudperso.camera;
+package com.thibaudperso.timelapse;
 
 import java.io.InputStream;
 

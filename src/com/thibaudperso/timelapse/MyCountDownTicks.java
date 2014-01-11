@@ -1,4 +1,4 @@
-package com.thibaudperso.camera;
+package com.thibaudperso.timelapse;
 
 import android.annotation.SuppressLint;
 import android.os.Handler;

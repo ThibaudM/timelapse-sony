@@ -37,7 +37,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.thibaudperso.camera.TimelapseApplication;
 import com.thibaudperso.camera.core.TestConnectionListener;
 import com.thibaudperso.camera.io.NFCHandler;
 import com.thibaudperso.camera.io.WifiHandler;
@@ -46,6 +45,7 @@ import com.thibaudperso.camera.model.Device;
 import com.thibaudperso.camera.model.DeviceManager;
 import com.thibaudperso.camera.sdk.CameraIO;
 import com.thibaudperso.timelapse.R;
+import com.thibaudperso.timelapse.TimelapseApplication;
 
 /**
  * 

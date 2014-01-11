@@ -1,4 +1,4 @@
-package com.thibaudperso.camera;
+package com.thibaudperso.timelapse;
 
 import com.thibaudperso.camera.io.WifiHandler;
 import com.thibaudperso.camera.model.DeviceManager;
