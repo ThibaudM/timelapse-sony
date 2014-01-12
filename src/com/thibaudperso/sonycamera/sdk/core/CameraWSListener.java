@@ -1,4 +1,4 @@
-package com.thibaudperso.camera.core;
+package com.thibaudperso.sonycamera.sdk.core;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

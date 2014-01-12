@@ -1,4 +1,4 @@
-package com.thibaudperso.timelapse.activities;
+package com.thibaudperso.sonycamera.timelapse.activities;
 
 import java.util.List;
 
@@ -37,15 +37,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.thibaudperso.camera.core.TestConnectionListener;
-import com.thibaudperso.camera.io.NFCHandler;
-import com.thibaudperso.camera.io.WifiHandler;
-import com.thibaudperso.camera.io.WifiListener;
-import com.thibaudperso.camera.model.Device;
-import com.thibaudperso.camera.model.DeviceManager;
-import com.thibaudperso.camera.sdk.CameraIO;
-import com.thibaudperso.timelapse.R;
-import com.thibaudperso.timelapse.TimelapseApplication;
+import com.thibaudperso.sonycamera.R;
+import com.thibaudperso.sonycamera.io.NFCHandler;
+import com.thibaudperso.sonycamera.io.WifiHandler;
+import com.thibaudperso.sonycamera.io.WifiListener;
+import com.thibaudperso.sonycamera.sdk.CameraIO;
+import com.thibaudperso.sonycamera.sdk.core.TestConnectionListener;
+import com.thibaudperso.sonycamera.sdk.model.Device;
+import com.thibaudperso.sonycamera.sdk.model.DeviceManager;
+import com.thibaudperso.sonycamera.timelapse.TimelapseApplication;
 
 /**
  * 

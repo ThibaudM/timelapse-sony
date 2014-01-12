@@ -1,10 +1,10 @@
-package com.thibaudperso.timelapse;
-
-import com.thibaudperso.camera.io.WifiHandler;
-import com.thibaudperso.camera.model.DeviceManager;
-import com.thibaudperso.camera.sdk.CameraIO;
+package com.thibaudperso.sonycamera.timelapse;
 
 import android.app.Application;
+
+import com.thibaudperso.sonycamera.io.WifiHandler;
+import com.thibaudperso.sonycamera.sdk.CameraIO;
+import com.thibaudperso.sonycamera.sdk.model.DeviceManager;
 
 public class TimelapseApplication extends Application {
 

@@ -1,4 +1,4 @@
-package com.thibaudperso.timelapse.activities;
+package com.thibaudperso.sonycamera.timelapse.activities;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -24,12 +24,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.thibaudperso.camera.sdk.CameraIO;
-import com.thibaudperso.camera.sdk.TakePictureListener;
-import com.thibaudperso.timelapse.MyCountDownTicks;
-import com.thibaudperso.timelapse.R;
-import com.thibaudperso.timelapse.TimelapseApplication;
-import com.thibaudperso.timelapse.Utils;
+import com.thibaudperso.sonycamera.R;
+import com.thibaudperso.sonycamera.sdk.CameraIO;
+import com.thibaudperso.sonycamera.sdk.TakePictureListener;
+import com.thibaudperso.sonycamera.timelapse.MyCountDownTicks;
+import com.thibaudperso.sonycamera.timelapse.TimelapseApplication;
+import com.thibaudperso.sonycamera.timelapse.Utils;
 
 /**
  * 

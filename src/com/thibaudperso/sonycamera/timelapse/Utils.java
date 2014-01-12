@@ -1,4 +1,4 @@
-package com.thibaudperso.timelapse;
+package com.thibaudperso.sonycamera.timelapse;
 
 import java.io.InputStream;
 

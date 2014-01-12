@@ -1,4 +1,4 @@
-package com.thibaudperso.camera.model;
+package com.thibaudperso.sonycamera.sdk.model;
 
 import java.util.Comparator;
 

@@ -1,4 +1,4 @@
-package com.thibaudperso.camera.model;
+package com.thibaudperso.sonycamera.sdk.model;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,8 +11,8 @@ import android.content.SharedPreferences;
 import android.content.res.XmlResourceParser;
 import android.preference.PreferenceManager;
 
-import com.thibaudperso.timelapse.R;
-import com.thibaudperso.timelapse.TimelapseApplication;
+import com.thibaudperso.sonycamera.R;
+import com.thibaudperso.sonycamera.timelapse.TimelapseApplication;
 
 public class DeviceManager {
 

@@ -1,4 +1,4 @@
-package com.thibaudperso.camera.sdk;
+package com.thibaudperso.sonycamera.sdk;
 
 /**
  * 

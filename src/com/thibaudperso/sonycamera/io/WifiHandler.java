@@ -1,4 +1,4 @@
-package com.thibaudperso.camera.io;
+package com.thibaudperso.sonycamera.io;
 
 import java.util.ArrayList;
 import java.util.List;

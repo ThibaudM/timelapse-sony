@@ -1,12 +1,12 @@
-package com.thibaudperso.camera.sdk;
+package com.thibaudperso.sonycamera.sdk;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.thibaudperso.camera.core.CameraWS;
-import com.thibaudperso.camera.core.CameraWSListener;
-import com.thibaudperso.camera.core.TestConnectionListener;
-import com.thibaudperso.camera.model.Device;
+import com.thibaudperso.sonycamera.sdk.core.CameraWS;
+import com.thibaudperso.sonycamera.sdk.core.CameraWSListener;
+import com.thibaudperso.sonycamera.sdk.core.TestConnectionListener;
+import com.thibaudperso.sonycamera.sdk.model.Device;
 
 /**
  * 

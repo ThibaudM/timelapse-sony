@@ -1,5 +1,6 @@
-package com.thibaudperso.camera.io;
+package com.thibaudperso.sonycamera.io;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.nfc.tech.NfcF;
 import android.os.Parcelable;
 import android.util.Pair;
 
+@TargetApi(10)
 public class NFCHandler {
 
 	private static String SONY_MIME_TYPE = "application/x-sony-pmm";
