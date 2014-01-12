@@ -269,8 +269,8 @@ public class InitTimelpaseActivity extends Activity implements WifiListener {
 	}
 
 	@Override
-	protected void onStop() {
-		super.onStop();
+	protected void onDestroy() {
+		super.onDestroy();
 		exit();
 	}
 
