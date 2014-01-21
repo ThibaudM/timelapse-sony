@@ -102,9 +102,13 @@ public class DeviceManager {
 	private Device readCamera(XmlPullParser parser) throws XmlPullParserException, IOException {
 
 		parser.require(XmlPullParser.START_TAG, ns, "camera");
+		
 		int id = -1;
 		String deviceModel = null;
 		String webService = null;
+		String needInitString = parser.getAttributeValue(ns, "needInit");
+		boolean needInit = needInitString == null ? false : "true".equals(needInitString);
+		
 		while (parser.next() != XmlPullParser.END_TAG) {
 			if (parser.getEventType() != XmlPullParser.START_TAG) {
 				continue;
@@ -121,7 +125,7 @@ public class DeviceManager {
 			}
 		}
 
-		return new Device(id, deviceModel, webService);
+		return new Device(id, deviceModel, webService, needInit);
 	}
 
 	private int readId(XmlPullParser parser) throws IOException, XmlPullParserException {

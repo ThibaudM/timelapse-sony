@@ -35,6 +35,11 @@ public class CameraIO {
 
 			@Override
 			public void cameraResponse(JSONArray jsonResponse) {
+				
+				if(listener == null) {
+					return;
+				}
+				
 				String url;
 				try {
 					url = jsonResponse.getJSONArray(0).getString(0);
@@ -46,6 +51,10 @@ public class CameraIO {
 
 			@Override
 			public void cameraError(JSONObject jsonResponse) {
+				if(listener == null) {
+					return;
+				}
+				
 				listener.onError("Error");
 			}
 		});
@@ -53,10 +62,80 @@ public class CameraIO {
 
 	}
 
-	public void testConnection(int timeout, TestConnectionListener listener) {
+	public void initWebService(final InitWebServiceListener listener) {
+
+		mCameraWS.sendRequest("startRecMode", new JSONArray(), new CameraWSListener() {
+
+			@Override
+			public void cameraResponse(JSONArray jsonResponse) {
+				if(listener == null) {
+					return;
+				}
+
+				listener.onResult();
+			}
+
+			@Override
+			public void cameraError(JSONObject jsonResponse) {
+				if(listener == null) {
+					return;
+				}
+				
+				listener.onError("Error");
+			}
+		});
+
+	}
+
+	public void getVersion(final GetVersionListener listener) {
+
+		mCameraWS.sendRequest("getVersions", new JSONArray(), new CameraWSListener() {
+
+			@Override
+			public void cameraResponse(JSONArray jsonResponse) {
+				if(listener == null) {
+					return;
+				}
+
+				int version;
+				try {
+					version = jsonResponse.getJSONArray(0).getInt(0);
+					listener.onResult(version);
+				} catch (Exception e) {
+					listener.onError(e.getMessage());
+				}
+			}
+
+			@Override
+			public void cameraError(JSONObject jsonResponse) {
+				if(listener == null) {
+					return;
+				}
+				
+				listener.onError("Error");
+			}
+		});
+
+	}
+
+	public void testConnection(int timeout, final TestConnectionListener listener) {
+
+		// Not enough
+		// mCameraWS.testConnection(timeout, listener);
+
+		mCameraWS.sendRequest("getVersions", new JSONArray(), new CameraWSListener() {
+			
+			@Override
+			public void cameraResponse(JSONArray jsonResponse) {
+				listener.cameraConnected(true);				
+			}
+			
+			@Override
+			public void cameraError(JSONObject jsonResponse) {
+				listener.cameraConnected(false);				
+			}
+		}, timeout);
 		
-		mCameraWS.testConnection(timeout, listener);
-	
 	}
 
 }

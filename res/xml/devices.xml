@@ -15,9 +15,14 @@
         <model>QX-10 / QX-100</model>
         <webservice>http://10.0.0.1:10000/sony/camera</webservice>
     </camera>
-    <camera>
+    <camera needInit="true">
         <id>4</id>
         <model>Alpha 7</model>
-        <webservice>http://192.168.122.1:8080/camera</webservice>
+        <webservice>http://192.168.122.1:8080/sony/camera</webservice>
+    </camera>
+    <camera needInit="true">
+        <id>5</id>
+        <model>NEX-6</model>
+        <webservice>http://192.168.122.1:8080/sony/camera</webservice>
     </camera>
 </cameras>

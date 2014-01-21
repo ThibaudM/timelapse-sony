@@ -467,6 +467,10 @@ public class InitTimelpaseActivity extends Activity implements WifiListener {
 			@Override
 			public void cameraConnected(final boolean isConnected) {
 
+				if(isConnected && mDeviceManager.getSelectedDevice() != null && mDeviceManager.getSelectedDevice().needInit()) {
+					mCameraIO.initWebService(null);
+				}
+				
 				runOnUiThread(new Runnable() {
 
 					@Override

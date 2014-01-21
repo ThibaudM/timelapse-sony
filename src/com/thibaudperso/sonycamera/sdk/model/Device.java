@@ -7,11 +7,13 @@ public class Device {
 	private int mId;
 	private String mModel;
 	private String mWebService;
+	private boolean mNeedInit;
 
-	public Device(int id, String model, String webService) {
+	public Device(int id, String model, String webService, boolean needInit) {
 		this.mId = id;
 		this.mModel = model;
 		this.mWebService = webService;
+		this.mNeedInit = needInit;
 	}
 
 	public int getId() {
@@ -37,6 +39,14 @@ public class Device {
 	public void setWebService(String webService) {
 		this.mWebService = webService;
 	}
+	
+	public boolean needInit() {
+		return mNeedInit;
+	}
+
+	public void setNeedInit(boolean needInit) {
+		this.mNeedInit = needInit;
+	}
 
 	@Override
 	public String toString() {
@@ -55,6 +65,6 @@ public class Device {
 			return false;
 		}
 		return ((Device) o).mId == mId;
-	};
+	}
 
 }
