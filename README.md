@@ -2,7 +2,7 @@ Timelapse - Sony Camera
 ===================
 
 Project type: **Android**  
-Current version: **1.12**
+Current version: **2.00**
 Google Play store link: https://play.google.com/store/apps/details?id=com.thibaudperso.timelapse
 
 This project is a proof of concept to show it's possible to create your own application for [rx100 mk2](http://www.sony.co.uk/product/dsc-r-series/dsc-rx100m2)  

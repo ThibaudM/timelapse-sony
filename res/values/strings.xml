@@ -3,10 +3,24 @@
 
     <string name="app_name">TimeLapse</string>
 
-    <string name="choose_camera_model">Choose your camera model</string>
-    <string name="choose_camera_model_ok">Choose</string>
-    <string name="choose_camera_model_cancel">Cancel</string>
+    <!-- Step Activity Strings -->
     
+    <string name="action_previous">Previous</string>
+    <string name="action_next">Next</string>
+    <string name="action_start">Start</string>
+    <string name="action_stop">Stop</string>
+    <string name="action_finish">Quit</string>
+    
+    <string name="information_button_description">More information</string>
+    
+    <string name="connection_nfc_error">A problem occurred during pairing of Camera. Please try again</string>
+    
+    
+    <!-- Connection Step Strings -->
+
+    <string name="connection_information_message"><![CDATA[If your camera is not in the list you can send 
+        an email to developer, only if you have a wifi access]]></string>
+        
     <string name="connection_info">Connection information</string>
     <string name="connection_refresh">Refresh connection</string>
     <string name="connection_info_nothing">Waiting more information</string>
@@ -22,53 +36,76 @@
     <string name="connection_enter_password">Enter password for %1$s network</string>
     <string name="connection_enter_password_ok">Join</string>
     <string name="connection_enter_password_cancel">Cancel</string>
-    <string name="connection_nfc_error">A problem occurred during pairing of Camera. Please try again</string>
+        
+    <string name="connection_camera_model">Camera model</string>
+    <string name="connection_choose_camera_model">Choose your camera model</string>
+    <string name="connection_choose_camera_model_ok">Choose</string>
+    <string name="connection_choose_camera_model_cancel">Cancel</string>
     
     
-    <string name="form_initial_delay">Initial delay (s)</string>
-    <string name="form_initial_delay_default">0</string>
+    <!-- Camera Settings Step Strings -->
     
-    <string name="form_interval_time">Interval between frames (s)</string>
-    <string name="form_interval_time_default">10</string>
+    <string name="camera_settings_information_message"><![CDATA[You can take a picture to adjust
+        your field of view. Zoom is available only on few devices.<br /><br />
+        More settings will be available in the future for supported devices]]></string>
+    <string name="camera_settings_zoom_title">Zoom</string>
+    <string name="camera_settings_flash_title">Flash</string>
     
-    <string name="form_frames_count">Frames count</string>
-    <string name="form_frames_count_unlimited">Unlimited</string>
+    
+    <!-- Timelapse Settings Step Strings -->
+    
+    <string name="timelapse_settings_information_message"><![CDATA[This is the last step before capture. <br /><br />
+        On <u>RX100 mk2</u> and maybe on other devices 
+        be careful with <u>interval less than 5sec</u>.]]></string>
+        
+    <string name="timelapse_settings_initial_delay">Initial delay (s)</string>
+    <string name="timelapse_settings_initial_delay_default">0</string>
+    
+    <string name="timelapse_settings_interval_time">Interval between frames (s)</string>
+    <string name="timelapse_settings_interval_time_default">10</string>
+    
+    <string name="timelapse_settings_frames_count">Frames count</string>
+    <string name="timelapse_settings_frames_count_unlimited">Unlimited</string>
 
-    <string name="show_last_image_review">Show last picture taken</string>
-    <string name="show_last_image_review_on">Show</string>
-   	<string name="show_last_image_review_off">Hide</string>
+    <string name="timelapse_settings_show_last_image_review">Show last picture taken</string>
+    <string name="timelapse_settings_show_last_image_review_on">Show</string>
+   	<string name="timelapse_settings_show_last_image_review_off">Hide</string>
     
-    
-    <string name="start_timelapse">Start</string>
-    <string name="switch_device">Switch device</string>
-    <string name="form_positive_integer_error">It has to be a positive integer</string>
-    <string name="minimum_time_error">Minimum time between 2 frames has to be at least %1$d seconds</string>
+    <string name="timelapse_settings_positive_integer_error">It has to be a positive integer</string>
+    <string name="timelapse_settings_minimum_time_error">Minimum time between 2 frames has to be at least %1$d seconds</string>
 
+    
+    <!-- Capture Step Strings -->
+    
+    <string name="capture_begin_time">Start</string>
+    <string name="capture_begin_time_default">00:00</string>
+    
+    <string name="capture_end_time">End</string>
+    <string name="capture_end_time_default">00:00</string>
+    
+    <string name="capture_progress">Progress</string>
+    <string name="capture_progress_default">0%</string>
+    
+    <string name="capture_duration">Duration</string>
+    <string name="capture_duration_default">0s</string>
 
-    <string name="begin_time">Start</string>
-    <string name="begin_time_default">00:00</string>
+    <string name="capture_frames_count_down">Frames remaining</string>
+    <string name="capture_frames_count_down_default">0</string>
     
-    <string name="end_time">End</string>
-    <string name="end_time_default">00:00</string>
+    <string name="capture_frames_count">Frames count</string>
+    <string name="capture_frames_count_default">0</string>
     
-    <string name="progress">Progress</string>
-    <string name="progress_default">0%</string>
+    <string name="capture_battery_life">Phone Battery</string>
+    <string name="capture_battery_life_default">100%</string>
     
-    <string name="duration">Duration</string>
-    <string name="duration_default">0s</string>
+    <string name="capture_last_image_preview">Last picture taken</string>
 
-    <string name="frames_count_down">Frames remaining</string>
-    <string name="frames_count_down_default">0</string>
+    <string name="capture_countdown_before_start_message">Timelapse starts in %1$d seconds</string>    
     
-    <string name="frames_count">Frames count</string>
-    <string name="frames_count_default">0</string>
     
-    <string name="battery_life">Phone Battery</string>
-    <string name="battery_life_default">100%</string>
+    <!-- Finish Step Strings -->
     
-    <string name="last_image_preview">Last picture taken</string>
-    <string name="stop_timelapse">Stop timelapse</string>
-
-    <string name="timelapse_countdown_before_start_message">Timelapse starts in %1$d seconds</string>
-    <string name="timelapse_finished">Timelapse ended</string>
+    <string name="finish_message">Timelapse finished !</string>
+    <string name="finish_restart">Restart a new timelapse</string>
+    
 </resources>

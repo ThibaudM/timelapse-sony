@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/guideTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center_horizontal"
+        android:text="@string/guidebar_title_connection"
+        android:textSize="@dimen/guide_textsize"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/guideBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/guideTitle"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="10dp" >
+
+        <Button
+            android:id="@+id/guideStep1"
+            style="@style/GuideBullet"
+            android:background="@drawable/blue_bullet" />
+
+        <Button
+            android:id="@+id/guideStep2"
+            style="@style/GuideBullet"
+            android:background="@drawable/black_bullet" />
+
+        <Button
+            android:id="@+id/guideStep3"
+            style="@style/GuideBullet"
+            android:background="@drawable/black_bullet" />
+
+        <Button
+            android:id="@+id/guideStep4"
+            style="@style/GuideBullet"
+            android:background="@drawable/black_bullet" />
+
+        <Button
+            android:id="@+id/guideStep5"
+            style="@style/GuideBullet"
+            android:background="@drawable/black_bullet" />
+    </LinearLayout>
+
+    <com.thibaudperso.sonycamera.timelapse.ui.MyViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/guideBar"
+        android:layout_marginTop="10dp" />
+
+    <ImageView
+        android:id="@+id/informationImage"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/guideTitle"
+        android:layout_marginRight="19dp"
+        android:contentDescription="@string/information_button_description"
+        android:src="@drawable/information" />
+
+    <TextView
+        android:id="@+id/informationText"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/informationImage"
+        android:layout_marginTop="-10dp"
+        android:background="@drawable/dialog_bubble"
+        android:textColor="#FFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:visibility="visible" />
+
+</RelativeLayout>

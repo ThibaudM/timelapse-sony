@@ -1,0 +1,82 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin" >
+
+    <!-- Connection info -->
+
+    <ImageView
+        android:id="@+id/connectionInfoImage"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignBottom="@+id/connectionInfoText"
+        android:contentDescription="@string/connection_info"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_connection_information" />
+
+    <TextView
+        android:id="@+id/connectionInfoText"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginLeft="3dp"
+        android:layout_toRightOf="@+id/connectionInfoImage"
+        android:text="@string/connection_info"
+        android:textSize="16sp" />
+
+    <ImageView
+        android:id="@+id/connectionInfoRefresh"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/connectionInfoText"
+        android:contentDescription="@string/connection_refresh"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_connection_refresh" />
+
+    <TextView
+        android:id="@+id/connectionInfoMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/connectionInfoRefresh"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:background="#10000000"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="@string/connection_info_nothing"
+        android:textSize="16sp" />
+
+    <!-- Camera selection -->
+
+    <ImageView
+        android:id="@+id/connectionCameraImage"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_below="@+id/connectionInfoMessage"
+        android:layout_marginTop="30dp"
+        android:contentDescription="@string/connection_camera_model"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_camera" />
+
+    <TextView
+        android:id="@+id/connectionCameraText"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_alignBottom="@+id/connectionCameraImage"
+        android:layout_marginLeft="3dp"
+        android:layout_toRightOf="@+id/connectionCameraImage"
+        android:text="@string/connection_camera_model"
+        android:textSize="16sp" />
+
+    <Spinner
+        android:id="@+id/connectionCameraSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/connectionCameraImage"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

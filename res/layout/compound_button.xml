@@ -11,7 +11,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:checked="true"
-        android:textOff="@string/show_last_image_review_off"
-        android:textOn="@string/show_last_image_review_on" />
+        android:textOff="@string/timelapse_settings_show_last_image_review_off"
+        android:textOn="@string/timelapse_settings_show_last_image_review_on" />
 
 </merge>

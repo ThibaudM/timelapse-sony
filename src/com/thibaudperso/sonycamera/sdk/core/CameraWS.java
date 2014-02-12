@@ -32,7 +32,7 @@ public class CameraWS {
 	public CameraWS() {
 		requestId = 1;
 	}
-	
+
 	public void setWSUrl(String wsUrl) {
 		mWSUrl = wsUrl;
 	}
@@ -45,10 +45,12 @@ public class CameraWS {
 			final int timeout) {
 
 		if(mWSUrl == null) {
-			listener.cameraError(null);
+			if(listener != null) {
+				listener.cameraError(null);
+			}
 			return;
 		}
-		
+
 		Thread requestThread = new Thread(new Runnable() {
 
 			@Override
@@ -80,19 +82,25 @@ public class CameraWS {
 					String responseBody = EntityUtils.toString(entity);					
 					JSONObject jsonResponse = new JSONObject(responseBody);
 
-					if(jsonResponse.has("result")) {
+					if(jsonResponse.has("result") && listener != null) {
 						listener.cameraResponse(jsonResponse.getJSONArray("result"));
 						return;
 					}
 
-					listener.cameraError(jsonResponse);
+					if(listener != null) {
+						listener.cameraError(jsonResponse);
+					}
 
 
 				} catch (JSONException e) {
-					listener.cameraError(null);
+					if(listener != null) {
+						listener.cameraError(null);
+					}
 					e.printStackTrace();
 				} catch (IOException e) {
-					listener.cameraError(null);
+					if(listener != null) {
+						listener.cameraError(null);
+					}
 					e.printStackTrace();
 				}
 			}
@@ -110,7 +118,7 @@ public class CameraWS {
 			listener.cameraConnected(false);
 			return;
 		}
-		
+
 		Thread requestThread = new Thread(new Runnable() {
 
 			@Override

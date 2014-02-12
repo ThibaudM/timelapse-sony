@@ -1,0 +1,152 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin" >
+
+    <!-- Initial Delay -->
+
+    <ImageView
+        android:id="@+id/initialDelayImage"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignBottom="@+id/initialDelayText"
+        android:layout_marginBottom="2dp"
+        android:contentDescription="@string/timelapse_settings_initial_delay"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_time" />
+
+    <TextView
+        android:id="@+id/initialDelayText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="3dp"
+        android:layout_toRightOf="@+id/initialDelayImage"
+        android:text="@string/timelapse_settings_initial_delay"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/initialDelay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/initialDelayImage"
+        android:layout_centerHorizontal="true"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        android:text="@string/timelapse_settings_initial_delay_default" />
+
+    <!-- Interval time -->
+
+    <ImageView
+        android:id="@+id/intervalTimeImage"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignBottom="@+id/intervalTimeText"
+        android:layout_marginBottom="2dp"
+        android:contentDescription="@string/timelapse_settings_interval_time"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_interval" />
+
+    <TextView
+        android:id="@+id/intervalTimeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/initialDelay"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="20dp"
+        android:layout_toRightOf="@+id/intervalTimeImage"
+        android:text="@string/timelapse_settings_interval_time"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/intervalTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/intervalTimeImage"
+        android:layout_centerHorizontal="true"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        android:text="@string/timelapse_settings_interval_time_default" />
+
+    <!-- Frames count -->
+
+    <ImageView
+        android:id="@+id/framesCountImage"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignBottom="@+id/framesCountText"
+        android:layout_marginBottom="2dp"
+        android:contentDescription="@string/timelapse_settings_frames_count"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_frames_count_down" />
+
+    <TextView
+        android:id="@+id/framesCountText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/intervalTime"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="20dp"
+        android:layout_toRightOf="@+id/framesCountImage"
+        android:text="@string/timelapse_settings_frames_count"
+        android:textSize="16sp" />
+
+    <CheckBox
+        android:id="@+id/framesCountUnlimited"
+        android:layout_width="wrap_content"
+        android:layout_height="18dp"
+        android:layout_alignBottom="@+id/framesCountText"
+        android:layout_toLeftOf="@+id/framesCountUnlimitedText"
+        android:checked="true" />
+
+    <TextView
+        android:id="@+id/framesCountUnlimitedText"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_alignBottom="@+id/framesCountText"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="3dp"
+        android:text="@string/timelapse_settings_frames_count_unlimited"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/framesCount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/framesCountImage"
+        android:layout_centerHorizontal="true"
+        android:ems="10"
+        android:enabled="false"
+        android:inputType="numberDecimal" />
+
+    <!-- Show last picture -->
+
+    <ImageView
+        android:id="@+id/showImageReviewImage"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignBottom="@+id/showImageReviewText"
+        android:layout_marginBottom="2dp"
+        android:contentDescription="@string/timelapse_settings_show_last_image_review"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_review_image" />
+
+    <TextView
+        android:id="@+id/showImageReviewText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/framesCount"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="20dp"
+        android:layout_toRightOf="@+id/showImageReviewImage"
+        android:text="@string/timelapse_settings_show_last_image_review"
+        android:textSize="16sp" />
+
+    <include
+        android:id="@+id/showImageReview"
+        layout="@layout/compound_button" />
+
+</RelativeLayout>

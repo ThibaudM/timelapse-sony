@@ -10,6 +10,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.text.Html;
+import android.text.Spanned;
 
 public class Utils {
 
@@ -51,5 +53,20 @@ public class Utils {
 
 	     return image;
 	 }
+	
+	public static Spanned htmlColorizeFirstLetter(String text, int color) {
+		
+		if(text == null || text.length() <= 2) {
+			throw new IllegalStateException();
+		}
+		
+		String strColor = String.format("#%06X", 0xFFFFFF & color);
+		
+		String output = "<font color='"+strColor+"'>";
+		output += text.charAt(0)+"</font>";
+		output += text.substring(1);
+		
+		return Html.fromHtml(output);
+	}
 	
 }
