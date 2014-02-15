@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.TextView;
 
 import com.thibaudperso.sonycamera.R;
 import com.thibaudperso.sonycamera.sdk.CameraIO;
@@ -22,7 +21,6 @@ import com.thibaudperso.sonycamera.sdk.CameraIO.ZoomDirection;
 import com.thibaudperso.sonycamera.sdk.TakePictureListener;
 import com.thibaudperso.sonycamera.timelapse.StepFragment;
 import com.thibaudperso.sonycamera.timelapse.TimelapseApplication;
-import com.thibaudperso.sonycamera.timelapse.Utils;
 import com.thibaudperso.sonycamera.timelapse.ui.SimpleLiveviewSurfaceView;
 
 public class CameraSettingsFragment extends StepFragment {
@@ -45,14 +43,6 @@ public class CameraSettingsFragment extends StepFragment {
 		
 		liveviewSurfaceView = (SimpleLiveviewSurfaceView) viewResult.findViewById(R.id.camera_settings_liveview);
 		liveviewSurfaceView.bindCameraIO( ((TimelapseApplication) getActivity().getApplication()).getCameraIO());
-		
-		TextView flashTitle = (TextView) viewResult.findViewById(R.id.cameraSettingsFlashTitle);
-		flashTitle.setText(Utils.htmlColorizeFirstLetter(getString(R.string.camera_settings_flash_title), 
-				getResources().getColor(R.color.customBlue)));
-		
-		TextView zoomTitle = (TextView) viewResult.findViewById(R.id.cameraSettingsZoomTitle);
-		zoomTitle.setText(Utils.htmlColorizeFirstLetter(getString(R.string.camera_settings_zoom_title), 
-				getResources().getColor(R.color.customBlue)));
 		
 		Button zoomInButton = (Button) viewResult.findViewById(R.id.cameraSettingsZoomIn);
 		Button zoomOutButton = (Button) viewResult.findViewById(R.id.cameraSettingsZoomOut);

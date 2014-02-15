@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -364,8 +365,7 @@ public class ConnectionFragment extends StepFragment implements WifiListener {
 
 	@Override
 	public Spanned getInformation() {
-		return null;
-		//return Html.fromHtml(getString(R.string.connection_information_message));
+		return Html.fromHtml(getString(R.string.connection_information_message));
 	}
 
 }
