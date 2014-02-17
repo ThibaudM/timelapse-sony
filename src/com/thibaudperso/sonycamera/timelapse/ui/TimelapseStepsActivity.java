@@ -348,6 +348,9 @@ FinishFragmentListener, CaptureFragmentListener {
 	}
 
 	@Override
+	public void onWifiStartScan() { }
+	
+	@Override
 	public void onWifiScanFinished(List<ScanResult> sonyCameraScanResults,
 			List<WifiConfiguration> sonyCameraWifiConfiguration) { }
 

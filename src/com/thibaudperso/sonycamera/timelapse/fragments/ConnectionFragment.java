@@ -2,9 +2,9 @@ package com.thibaudperso.sonycamera.timelapse.fragments;
 
 import java.util.List;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.net.NetworkInfo.State;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.os.Bundle;
@@ -55,7 +55,6 @@ public class ConnectionFragment extends StepFragment implements WifiListener {
 		mWifiHandler = ((TimelapseApplication) getActivity().getApplication()).getWifiHandler();
 		mCameraIO = ((TimelapseApplication) getActivity().getApplication()).getCameraIO();
 
-		mWifiHandler.addListener(this);
 	}
 	
 	@Override
@@ -109,21 +108,11 @@ public class ConnectionFragment extends StepFragment implements WifiListener {
 		return viewResult;
 	}
 
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-	}
-	
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-	}
 	
 	private void checkForConnection() {
 		setStepCompleted(false);
 		if(mWifiHandler != null) {
 			mWifiHandler.checkForConnection();
-			setConnectionInfoMessage(R.string.connection_info_scan_networks);
 		}
 	}
 
@@ -131,13 +120,19 @@ public class ConnectionFragment extends StepFragment implements WifiListener {
 	public void onEnterFragment() {
 		super.onEnterFragment();
 		
-		checkForConnection();
+		mWifiHandler.addListener(this);
+		
+		if(mWifiHandler.getCameraWifiState() == State.DISCONNECTED) {
+			checkForConnection();			
+		}
 	}
 
 	@Override
 	public void onExitFragment() {
 		super.onExitFragment();
 
+		mWifiHandler.removeListener(this);
+		
 		if(alertDialogChooseNetworkConnection != null) {
 			alertDialogChooseNetworkConnection.cancel();
 		}
@@ -180,6 +175,11 @@ public class ConnectionFragment extends StepFragment implements WifiListener {
 		setStepCompleted(false);
 	}
 
+	@Override
+	public void onWifiStartScan() {
+		setConnectionInfoMessage(R.string.connection_info_scan_networks);		
+	}
+	
 	@Override
 	public void onWifiScanFinished(List<ScanResult> sonyCameraScanResults,
 			List<WifiConfiguration> sonyCameraWifiConfiguration) {

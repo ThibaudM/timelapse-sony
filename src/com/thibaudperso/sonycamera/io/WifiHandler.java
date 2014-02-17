@@ -30,7 +30,7 @@ public class WifiHandler {
 		mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE); 
 		mWifiManager.setWifiEnabled(true);
 		listeners = new ArrayList<WifiListener>();
-		
+
 		cameraWifiState = State.UNKNOWN;
 	}
 
@@ -38,9 +38,9 @@ public class WifiHandler {
 		cameraWifiState = State.DISCONNECTED;
 		WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
 
-		if(wifiInfo != null && wifiInfo.getSSID() != null && wifiInfo.getSSID().length() > 2) {
+		if(wifiInfo != null) {
 
-			String ssid = wifiInfo.getSSID().substring(1, wifiInfo.getSSID().length()-1);
+			String ssid = parseSSID(wifiInfo.getSSID());
 			if(isSonyCameraSSID(ssid)) {
 				// Don't need to check more, camera is already connected
 				connected(ssid);
@@ -48,8 +48,12 @@ public class WifiHandler {
 			}
 		}
 
-		mWifiManager.startScan();
+		for(WifiListener listener : listeners) {
+			listener.onWifiStartScan();
+		}
+
 		mContext.registerReceiver(scanResultsBroadcastReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));	
+		mWifiManager.startScan();
 
 	}
 
@@ -89,12 +93,12 @@ public class WifiHandler {
 			if(wc.networkId != netId) {
 				continue;
 			}
-			
+
 			cameraWifiState = State.CONNECTING;
 
 			WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
-			if(wifiInfo != null && wifiInfo.getSSID() != null && wifiInfo.getSSID().length() > 2) {
-				String ssid = mWifiManager.getConnectionInfo().getSSID().substring(1, mWifiManager.getConnectionInfo().getSSID().length()-1);
+			if(wifiInfo != null) {
+				String ssid = parseSSID(mWifiManager.getConnectionInfo().getSSID());
 
 				if(!isSonyCameraSSID(ssid)) {
 					lastWifiConnected = mWifiManager.getConnectionInfo();
@@ -146,13 +150,17 @@ public class WifiHandler {
 		}
 	}
 
-	private static boolean isSonyCameraSSID(String SSID) {
-		return SSID.matches("^DIRECT-\\w{4}:.*$");
+	private static boolean isSonyCameraSSID(String ssid) {
+		return ssid != null && ssid.matches("^DIRECT-\\w{4}:.*$");
 	}
 
 	private WifiConfiguration getWifiConfigurationFromSSID(String SSID) {
 
 		List<WifiConfiguration> knownNetworks = mWifiManager.getConfiguredNetworks();
+
+		if(knownNetworks == null) {
+			return null;
+		}
 
 		for(WifiConfiguration net : knownNetworks) {
 			if(net.SSID.equals("\""+SSID+"\"")) {
@@ -199,10 +207,11 @@ public class WifiHandler {
 
 			NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
 
-			if(networkInfo == null || 
-					networkInfo.getType() != ConnectivityManager.TYPE_WIFI) {
+			if(networkInfo == null || networkInfo.getType() != ConnectivityManager.TYPE_WIFI) {
 				return;
 			}
+
+			WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
 
 			NetworkInfo.State state = networkInfo.getState();
 
@@ -212,9 +221,9 @@ public class WifiHandler {
 
 			}
 
-			if(state == State.CONNECTED && networkInfo.getExtraInfo() != null && networkInfo.getExtraInfo().length() > 2) {
+			if(state == State.CONNECTED && wifiInfo != null) {
 
-				String ssid = networkInfo.getExtraInfo().substring(1, networkInfo.getExtraInfo().length()-1);
+				String ssid = parseSSID(wifiInfo.getSSID());
 
 				if(!isSonyCameraSSID(ssid)) {
 					return;
@@ -271,8 +280,16 @@ public class WifiHandler {
 			mContext.unregisterReceiver(scanResultsBroadcastReceiver);
 		} catch (IllegalArgumentException e) { }
 	}
-	
+
 	public State getCameraWifiState() {
 		return cameraWifiState;
+	}
+
+
+	private String parseSSID(String ssid) {
+		if(ssid != null && ssid.length() >= 2 && ssid.charAt(0) == '"' && ssid.charAt(ssid.length()-1) == '"') {
+			return ssid.substring(1, ssid.length()-1);
+		}
+		return ssid;
 	}
 }

@@ -47,7 +47,7 @@
     
     <string name="camera_settings_information_message"><![CDATA[Vous pouvez prendre un photo pour ajuster 
         votre champ de vision. Le zoom n\'est disponible que sur certains appareils.<br /><br />
-        Plus de paramètres vont bientôt être disponible pour les appareils qui les supporte]]></string>
+        Plus de paramètres vont bientôt être disponible pour les appareils qui les supportes]]></string>
     <string name="camera_settings_zoom_title">Zoom</string>
     <string name="camera_settings_flash_title">Flash</string>    
     

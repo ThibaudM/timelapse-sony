@@ -11,6 +11,7 @@ public interface WifiListener {
 	void onWifiConnected(String ssid);
 	void onWifiDisconnected();
 	
+	void onWifiStartScan();
 	void onWifiScanFinished(List<ScanResult> sonyCameraScanResults, 
 			List<WifiConfiguration> sonyCameraWifiConfiguration);
 

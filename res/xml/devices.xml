@@ -30,4 +30,9 @@
         <model>RX-10</model>
         <webservice>http://10.0.0.1:10000/sony/camera</webservice>
     </camera>
+    <camera>
+        <id>7</id>
+        <model>DSC-HX50V</model>
+        <webservice>http://10.0.0.1:10000/camera</webservice>
+    </camera>
 </cameras>
