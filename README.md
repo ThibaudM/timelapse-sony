@@ -41,3 +41,6 @@ I work for this app when I have free time. So, I can't tell you when will be the
 
 #### This feature doesn't work with my camera, what can I do?
 I'm just an indie developer, I only have a RX100 mk2 and sometimes I can test my app on a NEX5-R. For others devices, I can't really test features.
+
+#### Some images are missing during timelapse
+It's a known issue. On some devices (like my RX100 mk2) with a normal shutter speed, camera needs lots of time to save the picture and is not able to take a new picture. That's why I recommand to set interval at least at 5sec. I hope Sony will provide a new firmware to fix it.
