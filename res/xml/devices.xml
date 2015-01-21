@@ -35,4 +35,9 @@
         <model>DSC-HX50V</model>
         <webservice>http://10.0.0.1:10000/camera</webservice>
     </camera>
+    <camera needInit="true">
+        <id>8</id>
+        <model>Alpha 6000</model>
+        <webservice>http://192.168.122.1:8080/sony/camera</webservice>
+    </camera>
 </cameras>
