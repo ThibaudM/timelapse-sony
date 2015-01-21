@@ -12,6 +12,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.Spanned;
@@ -53,9 +54,12 @@ public class CaptureFragment extends StepFragment {
 	private TextView framesCountValue;
 	private ProgressBar progressBar;
 	private TextView progressValue;
+	private ProgressBar nextProgressBar;
+	private TextView nextProgressValue;
 	
 	private MyCountDownTicks mCountDownPictures;
 	private MyCountDownTicks mInitialCountDown;
+	private CountDownTimer mNextCountDown;
 	
 	private boolean showLastFramePreview;
 	private int timeLapseDuration;
@@ -79,6 +83,8 @@ public class CaptureFragment extends StepFragment {
 		normalModeLine3View = (View) rootView.findViewById(R.id.normalModeLine3);
 		unlimitedModeLine1View = (View) rootView.findViewById(R.id.unlimitedModeLine1);
 		lastFramePreviewImageView = (ImageView) rootView.findViewById(R.id.lastFramePreview);
+		nextProgressBar = (ProgressBar) rootView.findViewById(R.id.nextPictureProgressBar);
+		nextProgressValue = (TextView) rootView.findViewById(R.id.nextValueTextView);
 		
 		return rootView;
 	}
@@ -146,6 +152,25 @@ public class CaptureFragment extends StepFragment {
 			batteryValue = ((TextView) rootView.findViewById(R.id.batteryUnlimitedModeValue));
 		}
 
+		final Integer updateEveryMillisec = 100;
+		nextProgressBar.setMax(intervalTime*1000/updateEveryMillisec);
+		nextProgressValue.setText(getString(R.string.capture_next_picture_default));
+		mNextCountDown = new CountDownTimer(intervalTime*1000, updateEveryMillisec) {
+			
+			@Override
+			public void onTick(long millisUntilFinished) {
+				int progressUnits = (int) ((intervalTime*1000-millisUntilFinished)/updateEveryMillisec);
+				nextProgressBar.setProgress(progressUnits);
+				nextProgressValue.setText(new DecimalFormat("#").format(Math.ceil(millisUntilFinished/1000.0)) + "s" );
+			}
+			
+			@Override
+			public void onFinish() {
+				//set all values to max
+				onTick(0);
+			}
+		};
+
 		final TextView timelapseCountdownBeforeStart = (TextView) rootView.findViewById(R.id.timelapseCountdownBeforeStartText);
 
 
@@ -196,6 +221,9 @@ public class CaptureFragment extends StepFragment {
 			mCountDownPictures.cancel();
 		}
 		
+		if(mNextCountDown != null){
+			mNextCountDown.cancel();
+		}
 
 		getActivity().unregisterReceiver(myBatteryReceiver);
 	}
@@ -203,9 +231,11 @@ public class CaptureFragment extends StepFragment {
 	
 	private void startTimeLapse() {
 
-		mCountDownPictures = new MyCountDownTicks(framesCount, intervalTime*1000) {
+		mCountDownPictures = new MyCountDownTicks(framesCount, intervalTime*1000, true) {
 
 			public void onTick(int remainingFrames) {
+				//reset progress bar
+				nextProgressBar.setProgress(0);
 
 				if(!isUnlimitedMode) {
 					/*
@@ -226,6 +256,9 @@ public class CaptureFragment extends StepFragment {
 				}
 				
 				takePicture();
+				
+				//start progress bar for next picture
+				mNextCountDown.start();
 			}
 
 			public void onFinish() {
@@ -240,23 +273,29 @@ public class CaptureFragment extends StepFragment {
 	}
 	
 	private void takePicture() {
-
+		/*
+		 * Take a picture and notify the counter when it is done
+		 * this is necessary in order to avoid a further takePicture() while the camera
+		 * is still working on the last one
+		 */
 		mCameraIO.takePicture(new TakePictureListener() {
 
 			@Override
 			public void onResult(String url) {
-
-				if(!showLastFramePreview) {
-					return;
-				}
-
-				Bitmap preview = Utils.downloadBitmap(url);				
-				setPreviewImage(preview);					
+				
+				if(showLastFramePreview) {
+					Bitmap preview = Utils.downloadBitmap(url);				
+					setPreviewImage(preview);	
+				}	
+				
+				//a picture was taken, notify the countdown class
+				mCountDownPictures.tickProcessed();			
 			}
 
 			@Override
 			public void onError(String error) {
-				// Do nothing
+				// Had an error, mark the tick nevertheless as processed
+				mCountDownPictures.tickProcessed();
 			}
 		});
 	}

@@ -98,6 +98,9 @@
     <string name="capture_battery_life">Batterie Tel</string>
     <string name="capture_battery_life_default">100%</string>
     
+    <string name="capture_next_picture">Suivant photo</string>
+    <string name="capture_next_picture_default">0s</string>
+    
     <string name="capture_last_image_preview">Dernière photo prise</string>
 
     <string name="capture_countdown_before_start_message">Le timelapse commence dans %1$d secondes</string>
