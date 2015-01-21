@@ -203,7 +203,7 @@ public class CaptureFragment extends StepFragment {
 	
 	private void startTimeLapse() {
 
-		mCountDownPictures = new MyCountDownTicks(framesCount, intervalTime*1000) {
+		mCountDownPictures = new MyCountDownTicks(framesCount, intervalTime*1000, true) {
 
 			public void onTick(int remainingFrames) {
 
@@ -240,23 +240,29 @@ public class CaptureFragment extends StepFragment {
 	}
 	
 	private void takePicture() {
-
+		/*
+		 * Take a picture and notify the counter when it is done
+		 * this is necessary in order to avoid a further takePicture() while the camera
+		 * is still working on the last one
+		 */
 		mCameraIO.takePicture(new TakePictureListener() {
 
 			@Override
 			public void onResult(String url) {
-
-				if(!showLastFramePreview) {
-					return;
-				}
-
-				Bitmap preview = Utils.downloadBitmap(url);				
-				setPreviewImage(preview);					
+				
+				if(showLastFramePreview) {
+					Bitmap preview = Utils.downloadBitmap(url);				
+					setPreviewImage(preview);	
+				}	
+				
+				//a picture was taken, notify the countdown class
+				mCountDownPictures.tickProcessed();			
 			}
 
 			@Override
 			public void onError(String error) {
-				// Do nothing
+				// Had an error, mark the tick nevertheless as processed
+				mCountDownPictures.tickProcessed();
 			}
 		});
 	}
