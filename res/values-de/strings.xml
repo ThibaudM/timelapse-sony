@@ -99,6 +99,9 @@
     <string name="capture_battery_life">Handy</string>
     <string name="capture_battery_life_default">100%</string>
     
+    <string name="capture_next_picture">Nächste Aufnahme</string>
+    <string name="capture_next_picture_default">0s</string>
+    
     <string name="capture_last_image_preview">Zuletzt aufgenommenes Bild</string>
 
     <string name="capture_countdown_before_start_message">Timelapse startet in %1$d Sekunden</string>    
