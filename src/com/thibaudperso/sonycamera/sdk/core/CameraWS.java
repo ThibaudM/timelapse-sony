@@ -19,6 +19,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 /**
  * 
  * @author Thibaud Michel
@@ -79,16 +81,18 @@ public class CameraWS {
 					HttpResponse response = httpclient.execute(httppost);
 
 					HttpEntity entity = response.getEntity();
-					String responseBody = EntityUtils.toString(entity);					
+					String responseBody = EntityUtils.toString(entity);	
+					Log.i("timelapse-app","responseBody: "+responseBody); //TMP
 					JSONObject jsonResponse = new JSONObject(responseBody);
 
-					if(jsonResponse.has("result") && listener != null) {
-						listener.cameraResponse(jsonResponse.getJSONArray("result"));
-						return;
-					}
-
-					if(listener != null) {
-						listener.cameraError(jsonResponse);
+					if(listener != null){
+						if(jsonResponse.has("result")) {
+							listener.cameraResponse(jsonResponse.getJSONArray("result"));
+						//} else if (jsonResponse.has("error") ){
+						//	listener.cameraError(jsonResponse);
+						} else {
+							listener.cameraError(jsonResponse);
+						}
 					}
 
 

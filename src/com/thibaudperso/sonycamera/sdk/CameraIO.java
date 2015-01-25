@@ -1,6 +1,7 @@
 package com.thibaudperso.sonycamera.sdk;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
@@ -19,6 +20,25 @@ public class CameraIO {
 
 	public static enum ZoomDirection { IN, OUT };
 	public static enum ZoomAction { START, STOP };
+	
+	public static enum ResponseCode { 
+		NONE(-1), //means no code available
+		OK(0),
+		LONG_SHOOTING(40403),
+		NOT_AVAILABLE_NOW(1);
+		
+		private int value;
+		
+		ResponseCode(int value){ this.value = value; }
+		public int getValue(){ return value; }
+		public static ResponseCode find(int value){
+			for(ResponseCode el : ResponseCode.values())
+				if(el.getValue() == value)
+					return el;
+			return NONE; //if not an appropriate found
+		}
+		
+	}
 
 	public static int MIN_TIME_BETWEEN_CAPTURE = 1;
 
@@ -35,8 +55,15 @@ public class CameraIO {
 	}
 
 	public void takePicture(final TakePictureListener listener) {
-
-		mCameraWS.sendRequest("actTakePicture", new JSONArray(), new CameraWSListener() {
+		mCameraWS.sendRequest("actTakePicture", new JSONArray(), getTakePictureListener(listener));
+	}
+	
+	public void awaitTakePicture(final TakePictureListener listener) {
+		mCameraWS.sendRequest("awaitTakePicture", new JSONArray(), getTakePictureListener(listener));
+	}
+	
+	private CameraWSListener getTakePictureListener(final TakePictureListener listener){
+		return new CameraWSListener() {
 
 			@Override
 			public void cameraResponse(JSONArray jsonResponse) {
@@ -50,21 +77,29 @@ public class CameraIO {
 					url = jsonResponse.getJSONArray(0).getString(0);
 					listener.onResult(url);
 				} catch (Exception e) {
-					listener.onError(e.getMessage());
+					listener.onError(ResponseCode.NONE, e.getMessage());
 				}
 			}
 
 			@Override
 			public void cameraError(JSONObject jsonResponse) {
-				if(listener == null) {
-					return;
+				if(listener != null) {
+					int responseCode = -1;
+					String responseMsg = null;
+					//whole JSON is of format {"id":38,"error":[1,"Not Available Now"]}
+					try {
+						if(jsonResponse.has("error")){
+							JSONArray arr = jsonResponse.getJSONArray("error");
+							responseCode = arr.getInt(0);
+							responseMsg = arr.getString(1);
+						}
+						listener.onError(ResponseCode.find(responseCode),responseMsg);
+					} catch (JSONException err){
+						listener.onError(ResponseCode.NONE, err.toString());
+					}
 				}
-
-				listener.onError("Error");
 			}
-		});
-
-
+		};
 	}
 
 	public void initWebService(final InitWebServiceListener listener) {

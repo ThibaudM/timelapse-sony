@@ -16,6 +16,7 @@ import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -293,9 +294,25 @@ public class CaptureFragment extends StepFragment {
 			}
 
 			@Override
-			public void onError(String error) {
-				// Had an error, mark the tick nevertheless as processed
-				mCountDownPictures.tickProcessed();
+			public void onError(CameraIO.ResponseCode responseCode, String responseMsg) {
+				// Had an error, let's see which
+				
+				Log.i("timelapseapp","error in takepicture "+responseCode+", "+responseMsg); //TMP
+				switch(responseCode){
+					case LONG_SHOOTING:
+						//shooting not yet finished
+						//await picture and call this listener when finished
+						//(or when again an error occurs)
+						mCameraIO.awaitTakePicture(this);
+						break;
+					case NOT_AVAILABLE_NOW:
+						//will have to try later for picture shooting
+						//TODO
+					case NONE:
+					case OK:
+						//mark as processed for the cases where we don't react to the error
+						mCountDownPictures.tickProcessed();
+				}
 			}
 		});
 	}
