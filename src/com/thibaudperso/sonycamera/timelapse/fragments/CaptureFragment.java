@@ -16,10 +16,10 @@ import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -212,11 +212,15 @@ public class CaptureFragment extends StepFragment {
 
 		}.start();
 		
+		//Keep the screen on as long as we are in this fragment
+		getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 	}
 	
 	@Override
 	public void onExitFragment() {
 		super.onExitFragment();
+		//no more need to keep the screen on
+		getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		
 		if(mInitialCountDown != null) {
 			mInitialCountDown.cancel();
