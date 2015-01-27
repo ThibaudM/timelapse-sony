@@ -82,15 +82,14 @@ public class CameraWS {
 
 					HttpEntity entity = response.getEntity();
 					String responseBody = EntityUtils.toString(entity);	
-					Log.i("timelapse-app","responseBody: "+responseBody); //TMP
 					JSONObject jsonResponse = new JSONObject(responseBody);
 
 					if(listener != null){
 						if(jsonResponse.has("result")) {
 							listener.cameraResponse(jsonResponse.getJSONArray("result"));
-						//} else if (jsonResponse.has("error") ){
-						//	listener.cameraError(jsonResponse);
 						} else {
+							//if no "results" element is present, there has probably an error occured
+							//and a "error" element is there instead
 							listener.cameraError(jsonResponse);
 						}
 					}

@@ -192,13 +192,29 @@
                     android:textAllCaps="true"
                     android:textSize="14sp" />
 
-                <TextView
-                    android:id="@+id/framesCountUnlimitedModeValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/framesCountUnlimitedModeImageView"
-                    android:text="@string/capture_frames_count_default"
-                    android:textSize="32sp" />
+				<LinearLayout
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_below="@+id/framesCountUnlimitedModeImageView"
+				    android:baselineAligned="false"
+				    android:gravity="center_vertical"
+				    android:orientation="horizontal" >
+		            
+	                <TextView
+	                    android:id="@+id/framesCountUnlimitedModeValue"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:text="@string/capture_frames_count_default"
+	                    android:textSize="32sp" />
+	
+	                <ProgressBar
+	                    android:id="@+id/takingPictureProgressBar"
+	                    android:layout_width="32dp"
+	                    android:layout_height="32dp"
+	                    android:indeterminate="true" />
+	                
+                </LinearLayout>
+
             </RelativeLayout>
 
             <RelativeLayout

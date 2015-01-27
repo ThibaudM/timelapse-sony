@@ -57,6 +57,7 @@ public class CaptureFragment extends StepFragment {
 	private TextView progressValue;
 	private ProgressBar nextProgressBar;
 	private TextView nextProgressValue;
+	private ProgressBar actualProgressBar;
 	
 	private MyCountDownTicks mCountDownPictures;
 	private MyCountDownTicks mInitialCountDown;
@@ -86,6 +87,7 @@ public class CaptureFragment extends StepFragment {
 		lastFramePreviewImageView = (ImageView) rootView.findViewById(R.id.lastFramePreview);
 		nextProgressBar = (ProgressBar) rootView.findViewById(R.id.nextPictureProgressBar);
 		nextProgressValue = (TextView) rootView.findViewById(R.id.nextValueTextView);
+		actualProgressBar = (ProgressBar) rootView.findViewById(R.id.takingPictureProgressBar);
 		
 		return rootView;
 	}
@@ -155,7 +157,9 @@ public class CaptureFragment extends StepFragment {
 
 		final Integer updateEveryMillisec = 100;
 		nextProgressBar.setMax(intervalTime*1000/updateEveryMillisec);
+		nextProgressBar.setProgress(0);
 		nextProgressValue.setText(getString(R.string.capture_next_picture_default));
+		actualProgressBar.setVisibility(View.INVISIBLE);
 		mNextCountDown = new CountDownTimer(intervalTime*1000, updateEveryMillisec) {
 			
 			@Override
@@ -260,6 +264,9 @@ public class CaptureFragment extends StepFragment {
 				
 				//start progress bar for next picture
 				mNextCountDown.start();
+				//show progressbar for actual picture (indeterminate)
+				actualProgressBar.setVisibility(View.VISIBLE);
+				
 			}
 
 			public void onFinish() {
@@ -288,6 +295,14 @@ public class CaptureFragment extends StepFragment {
 					Bitmap preview = Utils.downloadBitmap(url);				
 					setPreviewImage(preview);	
 				}	
+
+				//hide (indeterminate) progressbar for current picture
+				actualProgressBar.post(new Runnable() {
+					@Override
+					public void run() {
+						actualProgressBar.setVisibility(View.INVISIBLE);
+					}
+				});
 				
 				//a picture was taken, notify the countdown class
 				mCountDownPictures.tickProcessed();			
@@ -297,7 +312,6 @@ public class CaptureFragment extends StepFragment {
 			public void onError(CameraIO.ResponseCode responseCode, String responseMsg) {
 				// Had an error, let's see which
 				
-				Log.i("timelapseapp","error in takepicture "+responseCode+", "+responseMsg); //TMP
 				switch(responseCode){
 					case LONG_SHOOTING:
 						//shooting not yet finished
