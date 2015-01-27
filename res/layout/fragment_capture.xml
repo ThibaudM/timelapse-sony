@@ -126,12 +126,13 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/unlimitedModeLine1"
+            android:id="@+id/bothModesLine1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:baselineAligned="false" >
 
             <RelativeLayout
+                android:id="@+id/startTimeRelativeLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -173,7 +174,7 @@
                 tools:ignore="UseCompoundDrawables" >
 
                 <ImageView
-                    android:id="@+id/framesCountUnlimitedModeImageView"
+                    android:id="@+id/framesCountImageView"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:layout_alignParentLeft="true"
@@ -182,12 +183,12 @@
                     android:src="@drawable/ic_frames_count_down" />
 
                 <TextView
-                    android:id="@+id/framesCountUnlimitedModeTextView"
+                    android:id="@+id/framesCountTextView"
                     android:layout_width="match_parent"
                     android:layout_height="18dp"
-                    android:layout_alignBottom="@+id/framesCountUnlimitedModeImageView"
+                    android:layout_alignBottom="@+id/framesCountImageView"
                     android:layout_marginLeft="2dp"
-                    android:layout_toRightOf="@+id/framesCountUnlimitedModeImageView"
+                    android:layout_toRightOf="@+id/framesCountImageView"
                     android:text="@string/capture_frames_count"
                     android:textAllCaps="true"
                     android:textSize="14sp" />
@@ -195,13 +196,13 @@
 				<LinearLayout
 				    android:layout_width="wrap_content"
 				    android:layout_height="wrap_content"
-				    android:layout_below="@+id/framesCountUnlimitedModeImageView"
+				    android:layout_below="@+id/framesCountImageView"
 				    android:baselineAligned="false"
 				    android:gravity="center_vertical"
 				    android:orientation="horizontal" >
 		            
 	                <TextView
-	                    android:id="@+id/framesCountUnlimitedModeValue"
+	                    android:id="@+id/framesCountValue"
 	                    android:layout_width="wrap_content"
 	                    android:layout_height="wrap_content"
 	                    android:text="@string/capture_frames_count_default"
@@ -224,7 +225,7 @@
                 tools:ignore="UseCompoundDrawables" >
 
                 <ImageView
-                    android:id="@+id/batteryUnlimitedModeImageView"
+                    android:id="@+id/batteryImageView"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:layout_alignParentLeft="true"
@@ -233,21 +234,21 @@
                     android:src="@drawable/ic_battery_life" />
 
                 <TextView
-                    android:id="@+id/batteryUnlimitedModeTextView"
+                    android:id="@+id/batteryTextView"
                     android:layout_width="match_parent"
                     android:layout_height="18dp"
-                    android:layout_alignBottom="@+id/batteryUnlimitedModeImageView"
+                    android:layout_alignBottom="@+id/batteryImageView"
                     android:layout_marginLeft="2dp"
-                    android:layout_toRightOf="@+id/batteryUnlimitedModeImageView"
+                    android:layout_toRightOf="@+id/batteryImageView"
                     android:text="@string/capture_battery_life"
                     android:textAllCaps="true"
                     android:textSize="14sp" />
 
                 <TextView
-                    android:id="@+id/batteryUnlimitedModeValue"
+                    android:id="@+id/batteryValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/batteryUnlimitedModeImageView"
+                    android:layout_below="@+id/batteryImageView"
                     android:text="@string/capture_battery_life_default"
                     android:textSize="32sp" />
             </RelativeLayout>
@@ -297,84 +298,6 @@
                 android:layout_alignTop="@+id/progressTextView"
                 android:text="@string/capture_progress_default" />
         </RelativeLayout>
-
-        <LinearLayout
-            android:id="@+id/normalModeLine3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:baselineAligned="false" >
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                tools:ignore="UseCompoundDrawables" >
-
-                <ImageView
-                    android:id="@+id/framesCountDownImageView"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
-                    android:contentDescription="@string/capture_frames_count_down"
-                    android:src="@drawable/ic_frames_count_down" />
-
-                <TextView
-                    android:id="@+id/framesCountDownTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="18dp"
-                    android:layout_alignBottom="@+id/framesCountDownImageView"
-                    android:layout_marginLeft="2dp"
-                    android:layout_toRightOf="@+id/framesCountDownImageView"
-                    android:text="@string/capture_frames_count_down"
-                    android:textAllCaps="true"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/framesCountDownValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/framesCountDownImageView"
-                    android:text="@string/capture_frames_count_down_default"
-                    android:textSize="32sp" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                tools:ignore="UseCompoundDrawables" >
-
-                <ImageView
-                    android:id="@+id/batteryImageView"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
-                    android:contentDescription="@string/capture_battery_life"
-                    android:src="@drawable/ic_battery_life" />
-
-                <TextView
-                    android:id="@+id/batteryTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="18dp"
-                    android:layout_alignBottom="@+id/batteryImageView"
-                    android:layout_marginLeft="2dp"
-                    android:layout_toRightOf="@+id/batteryImageView"
-                    android:text="@string/capture_battery_life"
-                    android:textAllCaps="true"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/batteryValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/batteryImageView"
-                    android:text="@string/capture_battery_life_default"
-                    android:textSize="32sp" />
-            </RelativeLayout>
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

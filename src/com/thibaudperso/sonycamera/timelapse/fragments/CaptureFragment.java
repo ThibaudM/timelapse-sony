@@ -24,6 +24,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.thibaudperso.sonycamera.R;
@@ -46,12 +47,10 @@ public class CaptureFragment extends StepFragment {
 	
 	private View normalModeLine1View;
 	private View normalModeLine2View;
-	private View normalModeLine3View;
-	private View unlimitedModeLine1View;
+	private RelativeLayout startTimeUnlimitedModeLayout;
 	private ImageView lastFramePreviewImageView;
 
 	private TextView batteryValue;
-	private TextView framesCountDownValue;
 	private TextView framesCountValue;
 	private ProgressBar progressBar;
 	private TextView progressValue;
@@ -82,8 +81,7 @@ public class CaptureFragment extends StepFragment {
 
 		normalModeLine1View = (View) rootView.findViewById(R.id.normalModeLine1);
 		normalModeLine2View = (View) rootView.findViewById(R.id.normalModeLine2);
-		normalModeLine3View = (View) rootView.findViewById(R.id.normalModeLine3);
-		unlimitedModeLine1View = (View) rootView.findViewById(R.id.unlimitedModeLine1);
+		startTimeUnlimitedModeLayout = (RelativeLayout) rootView.findViewById(R.id.startTimeRelativeLayout);
 		lastFramePreviewImageView = (ImageView) rootView.findViewById(R.id.lastFramePreview);
 		nextProgressBar = (ProgressBar) rootView.findViewById(R.id.nextPictureProgressBar);
 		nextProgressValue = (TextView) rootView.findViewById(R.id.nextValueTextView);
@@ -123,6 +121,10 @@ public class CaptureFragment extends StepFragment {
 		beginEndCalendar.add(Calendar.SECOND, initialDelay);
 		String beginTime = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault()).format(beginEndCalendar.getTime());
 
+		framesCountValue = ((TextView) rootView.findViewById(R.id.framesCountValue));
+		TextView framesCountTextView = ((TextView) rootView.findViewById(R.id.framesCountTextView));
+		batteryValue = ((TextView) rootView.findViewById(R.id.batteryValue));
+		
 		if(!isUnlimitedMode) {
 			switchUIToNormalMode();
 
@@ -141,18 +143,16 @@ public class CaptureFragment extends StepFragment {
 			progressValue = (TextView) rootView.findViewById(R.id.progressValue);
 			progressValue.setText(getString(R.string.capture_progress_default));
 
-			framesCountDownValue = (TextView) rootView.findViewById(R.id.framesCountDownValue);
-			framesCountDownValue.setText(String.valueOf(framesCount));
-
-			batteryValue = ((TextView) rootView.findViewById(R.id.batteryValue));
+			framesCountTextView.setText(R.string.capture_frames_count_down);
+			framesCountValue.setText(String.valueOf(framesCount));
 
 		} else {
 			switchUIToUnlimitedMode();
+			
+			framesCountTextView.setText(R.string.capture_frames_count);
 
 			((TextView) rootView.findViewById(R.id.beginUnlimitedModeValue)).setText(beginTime);
 
-			framesCountValue = ((TextView) rootView.findViewById(R.id.framesCountUnlimitedModeValue));
-			batteryValue = ((TextView) rootView.findViewById(R.id.batteryUnlimitedModeValue));
 		}
 
 		final Integer updateEveryMillisec = 100;
@@ -250,7 +250,6 @@ public class CaptureFragment extends StepFragment {
 					/*
 					 * Update activity fields for normal mode
 					 */
-					framesCountDownValue.setText(String.valueOf(remainingFrames));
 
 					int progress = framesCount - remainingFrames;
 					float progressPercent = (float) progress / framesCount * 100;
@@ -261,8 +260,8 @@ public class CaptureFragment extends StepFragment {
 					/*
 					 * Update activity fields for unlimited mode
 					 */
-					framesCountValue.setText(String.valueOf(remainingFrames));	
 				}
+				framesCountValue.setText(String.valueOf(remainingFrames));
 				
 				takePicture();
 				
@@ -365,15 +364,13 @@ public class CaptureFragment extends StepFragment {
 	private void switchUIToUnlimitedMode() {
 		normalModeLine1View.setVisibility(View.GONE);						
 		normalModeLine2View.setVisibility(View.GONE);						
-		normalModeLine3View.setVisibility(View.GONE);						
-		unlimitedModeLine1View.setVisibility(View.VISIBLE);						
+		startTimeUnlimitedModeLayout.setVisibility(View.VISIBLE);						
 	}
 
 	private void switchUIToNormalMode() {
 		normalModeLine1View.setVisibility(View.VISIBLE);						
 		normalModeLine2View.setVisibility(View.VISIBLE);						
-		normalModeLine3View.setVisibility(View.VISIBLE);						
-		unlimitedModeLine1View.setVisibility(View.GONE);						
+		startTimeUnlimitedModeLayout.setVisibility(View.GONE);						
 	}
 	
 	public void setListener(CaptureFragmentListener listener) {
