@@ -34,7 +34,7 @@
     <string name="connection_info_ws_failed">Verbindung zum WebService fehlgeschlagen. Prüfe das Kameramodell.</string>
     <string name="connection_choose_network">Netzwerk wählen</string>
     <string name="connection_choose_network_cancel">Abbrechen</string>
-    <string name="connection_enter_password">Passwort für Netzwerk \'%1$\' angeben</string>
+    <string name="connection_enter_password">Passwort für Netzwerk %1$s angeben</string>
     <string name="connection_enter_password_ok">Verbinden</string>
     <string name="connection_enter_password_cancel">Abbrechen</string>
         
