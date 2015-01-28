@@ -53,6 +53,8 @@ public class TimelapseSettingsFragment extends StepFragment {
 		framesCountUnlimited = (CheckBox) resView.findViewById(R.id.framesCountUnlimited);
 		framesCountUnlimitedText = (TextView) resView.findViewById(R.id.framesCountUnlimitedText);
 		showImageReview = (CompoundButton) resView.findViewById(R.id.showImageReview);
+		
+		framesCount.setFocusable(!framesCountUnlimited.isChecked());
 
 		initialDelay.addTextChangedListener(new TextWatcher() {
 
@@ -102,6 +104,8 @@ public class TimelapseSettingsFragment extends StepFragment {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
 				framesCount.setEnabled(!isChecked);
+				framesCount.setFocusable(!isChecked);
+				framesCount.setFocusableInTouchMode(!isChecked);
 
 				checkAllFormValidity();
 
@@ -115,6 +119,8 @@ public class TimelapseSettingsFragment extends StepFragment {
 			public void onClick(View v) {
 				framesCountUnlimited.toggle();
 				framesCount.setEnabled(!framesCountUnlimited.isChecked());
+				framesCount.setFocusable(!framesCountUnlimited.isChecked());
+				framesCount.setFocusableInTouchMode(!framesCountUnlimited.isChecked());
 				
 				checkAllFormValidity();
 			}
