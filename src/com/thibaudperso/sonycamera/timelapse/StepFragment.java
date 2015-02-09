@@ -10,6 +10,9 @@ public abstract class StepFragment extends Fragment {
 	private boolean mStepCompleted;
 	protected boolean mIsActive;
 	
+	private boolean fragmentStarted = false;
+	private boolean onEnterFragmentTooFast = false;
+	
 	public StepFragment() {
 		this.mStepCompleted = false;
 		this.mIsActive = false;
@@ -33,11 +36,33 @@ public abstract class StepFragment extends Fragment {
 	}
 	
 	public void onEnterFragment() {
+		
+		if(!fragmentStarted) {
+			onEnterFragmentTooFast = true;
+		}
+		
 		mIsActive = true;
 	}
 	public void onExitFragment() {
 		mIsActive = false;
 	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		fragmentStarted = true;
+		if(onEnterFragmentTooFast) {
+			onEnterFragment();
+		}
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		fragmentStarted = false;
+		onEnterFragmentTooFast = false;
+	}
+	
 	
 	public abstract Spanned getInformation();
 

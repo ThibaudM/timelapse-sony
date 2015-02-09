@@ -47,8 +47,6 @@ public class ConnectionFragment extends StepFragment implements WifiListener {
 	private AlertDialog alertDialogChooseNetworkCreation;
 	private AlertDialog alertDialogAskForPassword;
 
-	private boolean fragmentCreated = false;
-	private boolean onEnterFragmentTooFast = false;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -58,17 +56,6 @@ public class ConnectionFragment extends StepFragment implements WifiListener {
 		mWifiHandler = ((TimelapseApplication) getActivity().getApplication()).getWifiHandler();
 		mCameraIO = ((TimelapseApplication) getActivity().getApplication()).getCameraIO();
 
-		fragmentCreated = true;
-		if(onEnterFragmentTooFast) {
-			onEnterFragment();
-		}
-	}
-	
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		fragmentCreated = false;
-		onEnterFragmentTooFast = false;
 	}
 	
 	@Override
@@ -132,11 +119,6 @@ public class ConnectionFragment extends StepFragment implements WifiListener {
 
 	@Override
 	public void onEnterFragment() {
-		
-		if(!fragmentCreated) {
-			onEnterFragmentTooFast = true;
-		}
-		
 		super.onEnterFragment();
 		
 		mWifiHandler.addListener(this);
