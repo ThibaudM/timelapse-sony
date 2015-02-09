@@ -163,7 +163,7 @@ public class WifiHandler {
 		}
 
 		for(WifiConfiguration net : knownNetworks) {
-			if(net.SSID.equals("\""+SSID+"\"")) {
+			if(net.SSID != null && net.SSID.equals("\""+SSID+"\"")) {
 				return net;
 			}
 		}
