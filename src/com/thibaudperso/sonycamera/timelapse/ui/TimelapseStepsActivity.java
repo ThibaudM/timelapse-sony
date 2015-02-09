@@ -334,7 +334,11 @@ FinishFragmentListener, CaptureFragmentListener {
 			exit();
 		} else {
 			// Otherwise, select the previous step.
-			mPager.setCurrentItem(mPager.getCurrentItem() - 1);
+			int newItem = mPager.getCurrentItem() - 1;
+			//CaptureFragment can't be reached by BackPressed, jump to CaptureSettings instead 
+			if(newItem == 3)
+				newItem--;
+			mPager.setCurrentItem(newItem);
 		}
 	}
 
