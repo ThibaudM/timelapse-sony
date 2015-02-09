@@ -10,6 +10,7 @@
     <string name="action_start">Start</string>
     <string name="action_stop">Stop</string>
     <string name="action_finish">Quit</string>
+    <string name="action_keep_display_on">Keep display on</string>
     
     <string name="information_button_description">More information</string>
     

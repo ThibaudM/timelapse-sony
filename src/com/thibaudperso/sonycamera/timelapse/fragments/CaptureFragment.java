@@ -13,6 +13,8 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.Spanned;
@@ -69,6 +71,8 @@ public class CaptureFragment extends StepFragment {
 	private int framesCount;
 	private boolean isUnlimitedMode;
 
+	private WakeLock wakeLock;
+	private boolean keepDisplayOn = false;
 
 	
 	@Override
@@ -86,6 +90,10 @@ public class CaptureFragment extends StepFragment {
 		nextProgressBar = (ProgressBar) rootView.findViewById(R.id.nextPictureProgressBar);
 		nextProgressValue = (TextView) rootView.findViewById(R.id.nextValueTextView);
 		actualProgressBar = (ProgressBar) rootView.findViewById(R.id.takingPictureProgressBar);
+		
+		//prepare wakelock for capture
+		PowerManager powerManager = (PowerManager) getActivity().getSystemService(Context.POWER_SERVICE);
+		wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"CaptureFragmentWakeLock");
 		
 		return rootView;
 	}
@@ -179,6 +187,9 @@ public class CaptureFragment extends StepFragment {
 		final TextView timelapseCountdownBeforeStart = (TextView) rootView.findViewById(R.id.timelapseCountdownBeforeStartText);
 
 
+		//register wake lock to make sure the CPU keeps the app running
+		wakeLock.acquire();
+
 		/*
 		 * Show start in message 
 		 */
@@ -213,7 +224,8 @@ public class CaptureFragment extends StepFragment {
 		}.start();
 		
 		//Keep the screen on as long as we are in this fragment
-		getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		if(keepDisplayOn)
+			getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 	}
 	
 	@Override
@@ -221,6 +233,8 @@ public class CaptureFragment extends StepFragment {
 		super.onExitFragment();
 		//no more need to keep the screen on
 		getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		//remove wake lock
+		wakeLock.release();
 		
 		if(mInitialCountDown != null) {
 			mInitialCountDown.cancel();
@@ -380,5 +394,17 @@ public class CaptureFragment extends StepFragment {
 	@Override
 	public Spanned getInformation() {
 		return Html.fromHtml(getString(R.string.connection_information_message));
+	}
+	
+	public void setKeepDisplayOn(boolean keepDisplayOn){		
+		this.keepDisplayOn = keepDisplayOn;
+		if(keepDisplayOn)
+			getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		else
+			getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+	}
+	
+	public boolean isKeepDisplayOn(){
+		return keepDisplayOn;
 	}
 }

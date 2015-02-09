@@ -20,5 +20,14 @@
     <item android:id="@+id/action_previous"
         android:title="@string/action_previous"
         android:showAsAction="ifRoom|withText" />
+    
+    <item android:id="@+id/action_next"
+        android:title="@string/action_next"
+        android:showAsAction="ifRoom|withText" />
+    
+    <item android:id="@+id/action_keep_display_on"
+        android:title="@string/action_keep_display_on"
+        android:showAsAction="never"
+        android:checkable="true" />
 
 </menu>

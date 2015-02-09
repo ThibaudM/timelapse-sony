@@ -267,9 +267,17 @@ FinishFragmentListener, CaptureFragmentListener {
 			resNextTitle = R.string.action_next;
 		}
 		
-		MenuItem nextItem = menu.add(Menu.NONE, R.id.action_next, Menu.NONE, resNextTitle);
+		MenuItem nextItem = menu.findItem(R.id.action_next);
+		nextItem.setTitle(resNextTitle);
 		nextItem.setEnabled(isStepCompleted);
 		nextItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		
+		MenuItem keepDisplayAwakeItem = menu.findItem(R.id.action_keep_display_on);
+		//only visible and enabled on the CaptureFragment page
+		boolean isCapturePage = mPager.getCurrentItem() == 3;
+		keepDisplayAwakeItem.setVisible(isCapturePage);
+		keepDisplayAwakeItem.setEnabled(isCapturePage);
+		keepDisplayAwakeItem.setChecked(mCaptureFragment.isKeepDisplayOn());
 		return true;
 	}
 
@@ -305,6 +313,12 @@ FinishFragmentListener, CaptureFragmentListener {
 				return true;
 			}
 			mPager.setCurrentItem(mPager.getCurrentItem() + 1);
+			return true;
+			
+		case R.id.action_keep_display_on:
+			//toggle state, doesn't happen automatically!
+			item.setChecked(!item.isChecked());
+			mCaptureFragment.setKeepDisplayOn(item.isChecked());
 			return true;
 		}
 
