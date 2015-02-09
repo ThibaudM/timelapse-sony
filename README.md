@@ -24,7 +24,7 @@ Frequently Asked Questions
 
 #### Is this app works with my camera?
 Is your camera has a Wifi connection ? If not this app is not compatible.
-Check the following list to know if your device is compatible: A5100, A6000, Alpha 7, DSC-HX50V, DSC-HX400V, DSC-WX80, NEX-5R, NEX-6, QX-10, QZ-30, QX-100, RX-10, RX-100 mk3. If your device is not in the list and has a Wifi connection try another device when you start app.
+Check the following list to know if your device is compatible: A5100, A6000, Alpha 7, DSC-HX50V, DSC-HX400V, DSC-WX80, NEX-5R, NEX-6, QX-10, QX-30, QX-100, RX-10, RX-100 mk3. If your device is not in the list and has a Wifi connection try another device when you start app.
 
 #### My camera is automatically set to auto-mode when I use your app. Can I set settings manually?
 Sony choosed to set the camera settings to auto when you use their WebService. Fortunately on some devices we can set this settings using this same connection. But for the moment I haven't implemented this feature. List of supported cameras should be: A7R, A7, NEX-5, NEX-6, A5000, A6000, DSC-HX400, DSC-HX60.
