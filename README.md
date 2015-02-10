@@ -5,7 +5,7 @@ Want [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=LFFF
 
 Project type: **Android**  
 Current version: **2.0.2**  
-Google Play store link: https://play.google.com/store/apps/details?id=com.thibaudperso.timelapse  
+Google Play store link: https://play.google.com/store/apps/details?id=com.thibaudperso.sonycamera  
 
 
 This project is a proof of concept to show it's possible to create your own application for [rx100 mk2](http://www.sony.co.uk/product/dsc-r-series/dsc-rx100m2)  
