@@ -47,6 +47,7 @@ public class ConnectionFragment extends StepFragment implements WifiListener {
 	private AlertDialog alertDialogChooseNetworkCreation;
 	private AlertDialog alertDialogAskForPassword;
 
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

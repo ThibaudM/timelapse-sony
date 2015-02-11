@@ -62,18 +62,22 @@ public class WifiHandler {
 		int netId = -1;
 
 		List<WifiConfiguration> list = mWifiManager.getConfiguredNetworks();
-		for( WifiConfiguration i : list ) {
-
-			// In the case of network is already registered
-			if(i.SSID != null && i.SSID.equals("\"" + networkSSID + "\"")) {
-
-				// In case password changed since last time
-				i.preSharedKey = "\""+ networkPassword +"\"";
-				mWifiManager.saveConfiguration();
-
-				netId = i.networkId;
-				break;
-			}           
+		
+		if(list != null) {
+	
+			for( WifiConfiguration i : list ) {
+	
+				// In the case of network is already registered
+				if(i.SSID != null && i.SSID.equals("\"" + networkSSID + "\"")) {
+	
+					// In case password changed since last time
+					i.preSharedKey = "\""+ networkPassword +"\"";
+					mWifiManager.saveConfiguration();
+	
+					netId = i.networkId;
+					break;
+				}           
+			}
 		}
 
 		// In the case of network is not registered create it and join it
@@ -163,7 +167,7 @@ public class WifiHandler {
 		}
 
 		for(WifiConfiguration net : knownNetworks) {
-			if(net.SSID.equals("\""+SSID+"\"")) {
+			if(net.SSID != null && net.SSID.equals("\""+SSID+"\"")) {
 				return net;
 			}
 		}

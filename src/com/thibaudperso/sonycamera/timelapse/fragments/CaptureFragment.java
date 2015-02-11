@@ -16,7 +16,6 @@ import android.os.CountDownTimer;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
-import android.text.Html;
 import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -393,7 +392,7 @@ public class CaptureFragment extends StepFragment {
 	
 	@Override
 	public Spanned getInformation() {
-		return Html.fromHtml(getString(R.string.connection_information_message));
+		return null;
 	}
 	
 	public void setKeepDisplayOn(boolean keepDisplayOn){		

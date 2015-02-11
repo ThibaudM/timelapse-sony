@@ -202,15 +202,18 @@ public class TimelapseSettingsFragment extends StepFragment {
 	@Override
 	public void onExitFragment() {
 		super.onExitFragment();
-
-		Editor preferencesEditor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
 		
-		preferencesEditor.putInt(PREFERENCES_INITIAL_DELAY, Integer.parseInt(initialDelay.getText().toString()));
-		preferencesEditor.putInt(PREFERENCES_INTERVAL_TIME, Integer.parseInt(intervalTime.getText().toString()));
-		preferencesEditor.putInt(PREFERENCES_FRAMES_COUNT, framesCountUnlimited.isChecked() ? -1 : Integer.parseInt(framesCount.getText().toString()));
-		preferencesEditor.putBoolean(PREFERENCES_LAST_IMAGE_REVIEW, showImageReview.isChecked());
-
-		preferencesEditor.commit();
+		try {
+			Editor preferencesEditor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+			
+			preferencesEditor.putInt(PREFERENCES_INITIAL_DELAY, Integer.parseInt(initialDelay.getText().toString()));
+			preferencesEditor.putInt(PREFERENCES_INTERVAL_TIME, Integer.parseInt(intervalTime.getText().toString()));
+			preferencesEditor.putInt(PREFERENCES_FRAMES_COUNT, framesCountUnlimited.isChecked() ? -1 : Integer.parseInt(framesCount.getText().toString()));
+			preferencesEditor.putBoolean(PREFERENCES_LAST_IMAGE_REVIEW, showImageReview.isChecked());
+	
+			preferencesEditor.commit();
+		
+		} catch(NumberFormatException e) {}
 	}
 	
 	@Override

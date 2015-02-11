@@ -4,20 +4,19 @@ Timelapse - Sony Camera
 Want [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=LFFFQZD9UNKRC&lc=FR&item_name=Thibaud%20Michel&item_number=1&currency_code=EUR&bn=PP-DonationsBF%3abtn_donate_LG%2egif%3aNonHosted)?  
 
 Project type: **Android**  
-Current version: **2.01**  
-Google Play store link: https://play.google.com/store/apps/details?id=com.thibaudperso.timelapse  
+Current version: **2.0.2**  
+Google Play store link: https://play.google.com/store/apps/details?id=com.thibaudperso.sonycamera  
 
 
 This project is a proof of concept to show it's possible to create your own application for [rx100 mk2](http://www.sony.co.uk/product/dsc-r-series/dsc-rx100m2)  
 For more information read [this thread](https://camera.developer.sony.com/common/forum/en/viewtopic.php?f=21&t=121&start=10#p361)
-Since version 1.1, this project works also for NEX-5R, QX-10 and QX-100
 
 How to use
 ----------
 
 You just need to:
 * Start Timelapse app
-* Put your camera in "Ctrl with Smartphone" mode or Connect by NFC
+* Put your camera in "Ctrl with Smartphone" mode or Connect it by NFC
 
 
 Frequently Asked Questions
@@ -25,7 +24,7 @@ Frequently Asked Questions
 
 #### Is this app works with my camera?
 Is your camera has a Wifi connection ? If not this app is not compatible.
-Check the following list to know if your device is compatible: Sony RX100-mk2, Sony NEX-5R, Sony QX-10 / QX-100, Sony NEX-6, Sony Alpha-7, Sony RX10, Sony DSC-HX50V. If your device is not in the list and has a Wifi connection try another device when you start app.
+Check the following list to know if your device is compatible: A5100, A6000, Alpha 7, DSC-HX50V, DSC-HX400V, DSC-WX80, NEX-5R, NEX-6, QX-10, QX-30, QX-100, RX-10, RX-100 mk3. If your device is not in the list and has a Wifi connection try another device when you start app.
 
 #### My camera is automatically set to auto-mode when I use your app. Can I set settings manually?
 Sony choosed to set the camera settings to auto when you use their WebService. Fortunately on some devices we can set this settings using this same connection. But for the moment I haven't implemented this feature. List of supported cameras should be: A7R, A7, NEX-5, NEX-6, A5000, A6000, DSC-HX400, DSC-HX60.
