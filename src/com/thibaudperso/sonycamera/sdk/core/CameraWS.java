@@ -79,16 +79,17 @@ public class CameraWS {
 					HttpResponse response = httpclient.execute(httppost);
 
 					HttpEntity entity = response.getEntity();
-					String responseBody = EntityUtils.toString(entity);					
+					String responseBody = EntityUtils.toString(entity);	
 					JSONObject jsonResponse = new JSONObject(responseBody);
 
-					if(jsonResponse.has("result") && listener != null) {
-						listener.cameraResponse(jsonResponse.getJSONArray("result"));
-						return;
-					}
-
-					if(listener != null) {
-						listener.cameraError(jsonResponse);
+					if(listener != null){
+						if(jsonResponse.has("result")) {
+							listener.cameraResponse(jsonResponse.getJSONArray("result"));
+						} else {
+							//if no "results" element is present, there has probably an error occured
+							//and a "error" element is there instead
+							listener.cameraError(jsonResponse);
+						}
 					}
 
 

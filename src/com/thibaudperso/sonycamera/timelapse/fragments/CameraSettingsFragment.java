@@ -149,8 +149,8 @@ public class CameraSettingsFragment extends StepFragment {
 					}
 					
 					@Override
-					public void onError(String error) {
-						
+					public void onError(CameraIO.ResponseCode responseCode, String responseMsg) {
+						//TODO
 					}
 				});	
 			}

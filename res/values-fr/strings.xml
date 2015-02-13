@@ -10,6 +10,7 @@
     <string name="action_start">Commencer</string>
     <string name="action_stop">Arrêter</string>
     <string name="action_finish">Quitter</string>
+    <string name="action_keep_display_on">Garder l'écran activé</string>
     
     <string name="information_button_description">Plus d\'informations</string>
     
@@ -97,6 +98,9 @@
     
     <string name="capture_battery_life">Batterie Tel</string>
     <string name="capture_battery_life_default">100%</string>
+    
+    <string name="capture_next_picture">Photo suivante</string>
+    <string name="capture_next_picture_default">0s</string>
     
     <string name="capture_last_image_preview">Dernière photo prise</string>
 

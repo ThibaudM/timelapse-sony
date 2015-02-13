@@ -12,15 +12,20 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
 import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.thibaudperso.sonycamera.R;
@@ -43,18 +48,20 @@ public class CaptureFragment extends StepFragment {
 	
 	private View normalModeLine1View;
 	private View normalModeLine2View;
-	private View normalModeLine3View;
-	private View unlimitedModeLine1View;
+	private RelativeLayout startTimeUnlimitedModeLayout;
 	private ImageView lastFramePreviewImageView;
 
 	private TextView batteryValue;
-	private TextView framesCountDownValue;
 	private TextView framesCountValue;
 	private ProgressBar progressBar;
 	private TextView progressValue;
+	private ProgressBar nextProgressBar;
+	private TextView nextProgressValue;
+	private ProgressBar actualProgressBar;
 	
 	private MyCountDownTicks mCountDownPictures;
 	private MyCountDownTicks mInitialCountDown;
+	private CountDownTimer mNextCountDown;
 	
 	private boolean showLastFramePreview;
 	private int timeLapseDuration;
@@ -63,6 +70,8 @@ public class CaptureFragment extends StepFragment {
 	private int framesCount;
 	private boolean isUnlimitedMode;
 
+	private WakeLock wakeLock;
+	private boolean keepDisplayOn = false;
 
 	
 	@Override
@@ -75,9 +84,15 @@ public class CaptureFragment extends StepFragment {
 
 		normalModeLine1View = (View) rootView.findViewById(R.id.normalModeLine1);
 		normalModeLine2View = (View) rootView.findViewById(R.id.normalModeLine2);
-		normalModeLine3View = (View) rootView.findViewById(R.id.normalModeLine3);
-		unlimitedModeLine1View = (View) rootView.findViewById(R.id.unlimitedModeLine1);
+		startTimeUnlimitedModeLayout = (RelativeLayout) rootView.findViewById(R.id.startTimeRelativeLayout);
 		lastFramePreviewImageView = (ImageView) rootView.findViewById(R.id.lastFramePreview);
+		nextProgressBar = (ProgressBar) rootView.findViewById(R.id.nextPictureProgressBar);
+		nextProgressValue = (TextView) rootView.findViewById(R.id.nextValueTextView);
+		actualProgressBar = (ProgressBar) rootView.findViewById(R.id.takingPictureProgressBar);
+		
+		//prepare wakelock for capture
+		PowerManager powerManager = (PowerManager) getActivity().getSystemService(Context.POWER_SERVICE);
+		wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"CaptureFragmentWakeLock");
 		
 		return rootView;
 	}
@@ -113,6 +128,10 @@ public class CaptureFragment extends StepFragment {
 		beginEndCalendar.add(Calendar.SECOND, initialDelay);
 		String beginTime = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault()).format(beginEndCalendar.getTime());
 
+		framesCountValue = ((TextView) rootView.findViewById(R.id.framesCountValue));
+		TextView framesCountTextView = ((TextView) rootView.findViewById(R.id.framesCountTextView));
+		batteryValue = ((TextView) rootView.findViewById(R.id.batteryValue));
+		
 		if(!isUnlimitedMode) {
 			switchUIToNormalMode();
 
@@ -131,22 +150,44 @@ public class CaptureFragment extends StepFragment {
 			progressValue = (TextView) rootView.findViewById(R.id.progressValue);
 			progressValue.setText(getString(R.string.capture_progress_default));
 
-			framesCountDownValue = (TextView) rootView.findViewById(R.id.framesCountDownValue);
-			framesCountDownValue.setText(String.valueOf(framesCount));
-
-			batteryValue = ((TextView) rootView.findViewById(R.id.batteryValue));
+			framesCountTextView.setText(R.string.capture_frames_count_down);
+			framesCountValue.setText(String.valueOf(framesCount));
 
 		} else {
 			switchUIToUnlimitedMode();
+			
+			framesCountTextView.setText(R.string.capture_frames_count);
 
 			((TextView) rootView.findViewById(R.id.beginUnlimitedModeValue)).setText(beginTime);
 
-			framesCountValue = ((TextView) rootView.findViewById(R.id.framesCountUnlimitedModeValue));
-			batteryValue = ((TextView) rootView.findViewById(R.id.batteryUnlimitedModeValue));
 		}
+
+		final Integer updateEveryMillisec = 100;
+		nextProgressBar.setMax(intervalTime*1000/updateEveryMillisec);
+		nextProgressBar.setProgress(0);
+		nextProgressValue.setText(getString(R.string.capture_next_picture_default));
+		actualProgressBar.setVisibility(View.INVISIBLE);
+		mNextCountDown = new CountDownTimer(intervalTime*1000, updateEveryMillisec) {
+			
+			@Override
+			public void onTick(long millisUntilFinished) {
+				int progressUnits = (int) ((intervalTime*1000-millisUntilFinished)/updateEveryMillisec);
+				nextProgressBar.setProgress(progressUnits);
+				nextProgressValue.setText(new DecimalFormat("#").format(Math.ceil(millisUntilFinished/1000.0)) + "s" );
+			}
+			
+			@Override
+			public void onFinish() {
+				//set all values to max
+				onTick(0);
+			}
+		};
 
 		final TextView timelapseCountdownBeforeStart = (TextView) rootView.findViewById(R.id.timelapseCountdownBeforeStartText);
 
+
+		//register wake lock to make sure the CPU keeps the app running
+		wakeLock.acquire();
 
 		/*
 		 * Show start in message 
@@ -181,11 +222,18 @@ public class CaptureFragment extends StepFragment {
 
 		}.start();
 		
+		//Keep the screen on as long as we are in this fragment
+		if(keepDisplayOn)
+			getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 	}
 	
 	@Override
 	public void onExitFragment() {
 		super.onExitFragment();
+		//no more need to keep the screen on
+		getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		//remove wake lock
+		wakeLock.release();
 		
 		if(mInitialCountDown != null) {
 			mInitialCountDown.cancel();
@@ -195,6 +243,9 @@ public class CaptureFragment extends StepFragment {
 			mCountDownPictures.cancel();
 		}
 		
+		if(mNextCountDown != null){
+			mNextCountDown.cancel();
+		}
 
 		getActivity().unregisterReceiver(myBatteryReceiver);
 	}
@@ -202,15 +253,16 @@ public class CaptureFragment extends StepFragment {
 	
 	private void startTimeLapse() {
 
-		mCountDownPictures = new MyCountDownTicks(framesCount, intervalTime*1000) {
+		mCountDownPictures = new MyCountDownTicks(framesCount, intervalTime*1000, true) {
 
 			public void onTick(int remainingFrames) {
+				//reset progress bar
+				nextProgressBar.setProgress(0);
 
 				if(!isUnlimitedMode) {
 					/*
 					 * Update activity fields for normal mode
 					 */
-					framesCountDownValue.setText(String.valueOf(remainingFrames));
 
 					int progress = framesCount - remainingFrames;
 					float progressPercent = (float) progress / framesCount * 100;
@@ -221,10 +273,16 @@ public class CaptureFragment extends StepFragment {
 					/*
 					 * Update activity fields for unlimited mode
 					 */
-					framesCountValue.setText(String.valueOf(remainingFrames));	
 				}
+				framesCountValue.setText(String.valueOf(remainingFrames));
 				
 				takePicture();
+				
+				//start progress bar for next picture
+				mNextCountDown.start();
+				//show progressbar for actual picture (indeterminate)
+				actualProgressBar.setVisibility(View.VISIBLE);
+				
 			}
 
 			public void onFinish() {
@@ -239,23 +297,52 @@ public class CaptureFragment extends StepFragment {
 	}
 	
 	private void takePicture() {
-
+		/*
+		 * Take a picture and notify the counter when it is done
+		 * this is necessary in order to avoid a further takePicture() while the camera
+		 * is still working on the last one
+		 */
 		mCameraIO.takePicture(new TakePictureListener() {
 
 			@Override
 			public void onResult(String url) {
+				
+				if(showLastFramePreview) {
+					Bitmap preview = Utils.downloadBitmap(url);				
+					setPreviewImage(preview);	
+				}	
 
-				if(!showLastFramePreview) {
-					return;
-				}
-
-				Bitmap preview = Utils.downloadBitmap(url);				
-				setPreviewImage(preview);					
+				//hide (indeterminate) progressbar for current picture
+				actualProgressBar.post(new Runnable() {
+					@Override
+					public void run() {
+						actualProgressBar.setVisibility(View.INVISIBLE);
+					}
+				});
+				
+				//a picture was taken, notify the countdown class
+				mCountDownPictures.tickProcessed();			
 			}
 
 			@Override
-			public void onError(String error) {
-				// Do nothing
+			public void onError(CameraIO.ResponseCode responseCode, String responseMsg) {
+				// Had an error, let's see which
+				
+				switch(responseCode){
+					case LONG_SHOOTING:
+						//shooting not yet finished
+						//await picture and call this listener when finished
+						//(or when again an error occurs)
+						mCameraIO.awaitTakePicture(this);
+						break;
+					case NOT_AVAILABLE_NOW:
+						//will have to try later for picture shooting
+						//TODO
+					case NONE:
+					case OK:
+						//mark as processed for the cases where we don't react to the error
+						mCountDownPictures.tickProcessed();
+				}
 			}
 		});
 	}
@@ -290,15 +377,13 @@ public class CaptureFragment extends StepFragment {
 	private void switchUIToUnlimitedMode() {
 		normalModeLine1View.setVisibility(View.GONE);						
 		normalModeLine2View.setVisibility(View.GONE);						
-		normalModeLine3View.setVisibility(View.GONE);						
-		unlimitedModeLine1View.setVisibility(View.VISIBLE);						
+		startTimeUnlimitedModeLayout.setVisibility(View.VISIBLE);						
 	}
 
 	private void switchUIToNormalMode() {
 		normalModeLine1View.setVisibility(View.VISIBLE);						
 		normalModeLine2View.setVisibility(View.VISIBLE);						
-		normalModeLine3View.setVisibility(View.VISIBLE);						
-		unlimitedModeLine1View.setVisibility(View.GONE);						
+		startTimeUnlimitedModeLayout.setVisibility(View.GONE);						
 	}
 	
 	public void setListener(CaptureFragmentListener listener) {
@@ -308,5 +393,17 @@ public class CaptureFragment extends StepFragment {
 	@Override
 	public Spanned getInformation() {
 		return null;
+	}
+	
+	public void setKeepDisplayOn(boolean keepDisplayOn){		
+		this.keepDisplayOn = keepDisplayOn;
+		if(keepDisplayOn)
+			getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		else
+			getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+	}
+	
+	public boolean isKeepDisplayOn(){
+		return keepDisplayOn;
 	}
 }

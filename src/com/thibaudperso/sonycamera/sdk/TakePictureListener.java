@@ -8,6 +8,6 @@ package com.thibaudperso.sonycamera.sdk;
 public interface TakePictureListener {
 
 	void onResult(String url);
-	void onError(String error);
+	void onError(CameraIO.ResponseCode responseCode, String responseMsg);
 	
 }

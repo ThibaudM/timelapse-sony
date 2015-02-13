@@ -10,6 +10,7 @@
     <string name="action_start">Start</string>
     <string name="action_stop">Stop</string>
     <string name="action_finish">Quit</string>
+    <string name="action_keep_display_on">Keep display on</string>
     
     <string name="information_button_description">More information</string>
     
@@ -97,6 +98,9 @@
     
     <string name="capture_battery_life">Phone Battery</string>
     <string name="capture_battery_life_default">100%</string>
+    
+    <string name="capture_next_picture">Next picture</string>
+    <string name="capture_next_picture_default">0s</string>
     
     <string name="capture_last_image_preview">Last picture taken</string>
 
