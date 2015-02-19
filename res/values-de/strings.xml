@@ -105,12 +105,23 @@
     
     <string name="capture_last_image_preview">Zuletzt aufgenommenes Bild</string>
 
-    <string name="capture_countdown_before_start_message">Timelapse startet in %1$d Sekunden</string>    
+    <string name="capture_countdown_before_start_message">Timelapse startet in %1$d Sekunden</string>
     
+    <string name="capture_frames_overlapping_title">Intervall-Fehler</string>
+    <string name="capture_frames_overlapping_message"><![CDATA[Das Intervall zwischen den Aufnahmen ist zu kurz.<br/><br/>
+        Das kleinstmögliche Intervall wird verwendet, ist aber <font color="#FF8888">länger</font> als das gewählte
+        und kann <font color="#FF8888">variieren</font>.]]></string>
+    <string name="capture_frames_overlapping_ok">Fortfahren</string>
+    <string name="capture_frames_overlapping_cancel">Timelapse abbrechen</string>
     
     <!-- Finish Step Strings -->
     
     <string name="finish_message">Timelapse beendet!</string>
+    <string name="finish_with_errors_message">Timelapse mit Fehlern beendet!</string>
     <string name="finish_restart">Starte einen neuen Timelapse</string>
+    
+    <string name="finish_summary_overlapping_frames_message"><![CDATA[Das gewählte Intervall zwischen Aufnahmen war zu kurz.<br/>
+        Deshalb kann das <font color="#FF8888">effektive Intervall zwischen Bildern variieren</font> und ist mindestens in manchen
+        Fällen größer als das gewählte.]]></string>
     
 </resources>

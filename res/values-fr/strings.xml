@@ -10,7 +10,7 @@
     <string name="action_start">Commencer</string>
     <string name="action_stop">Arrêter</string>
     <string name="action_finish">Quitter</string>
-    <string name="action_keep_display_on">Garder l'écran activé</string>
+    <string name="action_keep_display_on">Garder l\'écran activé</string>
     
     <string name="information_button_description">Plus d\'informations</string>
     
@@ -104,12 +104,24 @@
     
     <string name="capture_last_image_preview">Dernière photo prise</string>
 
-    <string name="capture_countdown_before_start_message">Le timelapse commence dans %1$d secondes</string>
+    <string name="capture_countdown_before_start_message">Le timelapse commence dans %1$d secondes</string> 
+    
+    <string name="capture_frames_overlapping_title">Interval error</string>
+    <string name="capture_frames_overlapping_message"><![CDATA[The interval between frames is too short.<br/><br/>
+        The minimum possible interval will be used but it <font color="#FF8888">is longer</font> than you chose and 
+        may <font color="#FF8888">vary</font>.]]></string>
+    <string name="capture_frames_overlapping_ok">Continue</string>
+    <string name="capture_frames_overlapping_cancel">Cancel Timelapse</string>
     
 
     <!-- Finish Step Strings -->
     
     <string name="finish_message">Le timelapse est terminé !</string>
+    <string name="finish_with_errors_message">Timelapse finished with errors!</string>
     <string name="finish_restart">Recommencer un nouveau timelapse</string>
+    
+    <string name="finish_summary_overlapping_frames_message"><![CDATA[The chosen interval between frames was too short.<br/>
+        Therefore the <font color="#FF8888">effective interval between frames may have varied</font> and is at least in some cases 
+        different from your chosen one.]]></string>
     
 </resources>

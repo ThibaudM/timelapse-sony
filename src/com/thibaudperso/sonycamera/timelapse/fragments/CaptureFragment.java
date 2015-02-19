@@ -5,17 +5,21 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
+import android.text.Html;
 import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +41,8 @@ import com.thibaudperso.sonycamera.timelapse.TimelapseApplication;
 import com.thibaudperso.sonycamera.timelapse.Utils;
 
 public class CaptureFragment extends StepFragment {
+	
+	public static String PREFERENCES_FRAMES_OVERLAPPED = "frame-overlap";
 
 	private final static String TIME_FORMAT = "HH:mm";
 		
@@ -72,6 +78,7 @@ public class CaptureFragment extends StepFragment {
 
 	private WakeLock wakeLock;
 	private boolean keepDisplayOn = false;
+	private boolean tickOverlapHappened = false;
 
 	
 	@Override
@@ -120,6 +127,8 @@ public class CaptureFragment extends StepFragment {
 		
 		timeLapseDuration = intervalTime * (framesCount - 1);
 		isUnlimitedMode = framesCount == -1;
+		
+		tickOverlapHappened = false;
 
 		/*
 		 * Set activity fields
@@ -248,6 +257,10 @@ public class CaptureFragment extends StepFragment {
 		}
 
 		getActivity().unregisterReceiver(myBatteryReceiver);
+
+		Editor preferencesEditor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+		preferencesEditor.putBoolean(PREFERENCES_FRAMES_OVERLAPPED, tickOverlapHappened);
+		preferencesEditor.commit();
 	}
 	
 	
@@ -278,11 +291,26 @@ public class CaptureFragment extends StepFragment {
 				
 				takePicture();
 				
-				//start progress bar for next picture
-				mNextCountDown.start();
+				if(isUnlimitedMode || remainingFrames > 0)
+					//start progress bar for next picture
+					mNextCountDown.start();
+				else {
+					nextProgressBar.setProgress(0);
+					nextProgressValue.setText(null);
+				}
+					
 				//show progressbar for actual picture (indeterminate)
 				actualProgressBar.setVisibility(View.VISIBLE);
 				
+			}
+			@Override
+			public void onTickOverlap(){
+				super.onTickOverlap();
+				//two ticks are overlapping, display an error message (if it's the first time)
+				if(!tickOverlapHappened){
+					tickOverlapHappened = true;
+					showTickOverlapDialog();
+				}
 			}
 
 			public void onFinish() {
@@ -372,6 +400,26 @@ public class CaptureFragment extends StepFragment {
 			batteryValue.setText(String.valueOf(bLevel)+"%");
 		} 
 	};
+	
+	private void showTickOverlapDialog(){
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		builder.setMessage(Html.fromHtml(getString(R.string.capture_frames_overlapping_message)))
+		       .setTitle(R.string.capture_frames_overlapping_title)
+		       .setIcon(R.drawable.ic_connection_information);
+		//just close the dialog if 'OK' pressed
+		builder.setPositiveButton(R.string.capture_frames_overlapping_ok, null);
+		//stop the timelapse if 'Cancel' pressed
+		builder.setNegativeButton(R.string.capture_frames_overlapping_cancel, new DialogInterface.OnClickListener() {
+	           public void onClick(DialogInterface dialog, int id) {
+	              dialog.dismiss();
+	              //send user back to settings
+	              getActivity().onBackPressed();
+	           }
+	       });
+
+		AlertDialog dialog = builder.create();
+		dialog.show();
+	}
 
 	
 	private void switchUIToUnlimitedMode() {

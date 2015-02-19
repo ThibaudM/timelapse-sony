@@ -95,6 +95,10 @@ public abstract class MyCountDownTicks {
 	 * Start the countdown.
 	 */
 	public synchronized final MyCountDownTicks start() {
+		//init
+		currentTickProcessed = true;
+		isWaitingForTickProcessing = false;
+		//maybe already finished?
 		if (!isUnlimited && mRemainingTicks <= 0) {
 			onFinish();
 			return this;
@@ -133,6 +137,14 @@ public abstract class MyCountDownTicks {
 				});
 		}
 	}
+	/**
+	 * Method that gets called if two ticks overlap and waitForTicksProcessing is set to 'true'
+	 * (i.e. a tick isn't yet processed when the next tick occurs)
+	 */
+	public void onTickOverlap(){
+		
+	}
+	
 	/**
 	 * Callback fired when the time is up.
 	 */
@@ -173,8 +185,15 @@ public abstract class MyCountDownTicks {
 					}
 					sendMessageDelayed(obtainMessage(MSG), mCountdownInterval);
 					
-				} else
+				} else {
+					//a new tick (or finish) should happen, but the previous tick wasn't yet processed
+					//remember we are still waiting for the previous tick
 					isWaitingForTickProcessing = true;
+					if(mRemainingTicks > 0 || isUnlimited){
+						//and notify the listener about a tick overlap if there is a tick to come (not finish)
+						onTickOverlap();
+					}
+				}
 			}
 		}
 	};

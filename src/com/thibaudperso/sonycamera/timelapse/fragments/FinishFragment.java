@@ -1,6 +1,9 @@
 package com.thibaudperso.sonycamera.timelapse.fragments;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.text.Html;
 import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +18,10 @@ import com.thibaudperso.sonycamera.timelapse.StepFragment;
 public class FinishFragment extends StepFragment {
 
 	private FinishFragmentListener mListener;
+
+	private TextView finishTextView;
+	private TextView finishWithErrorsTextView;
+	private TextView framesOverlapTextView;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -27,6 +34,10 @@ public class FinishFragment extends StepFragment {
 	
 		restartImage.setOnClickListener(onRestartClickListener);
 		restartMessage.setOnClickListener(onRestartClickListener);
+		
+		finishTextView = (TextView) resView.findViewById(R.id.finishMessage);
+		finishWithErrorsTextView = (TextView) resView.findViewById(R.id.finishWithErrorsMessage);
+		framesOverlapTextView = (TextView) resView.findViewById(R.id.finishFramesOverlappingTextView);
 		
 		return resView;
 	}
@@ -48,6 +59,17 @@ public class FinishFragment extends StepFragment {
 	public void onEnterFragment() {
 		super.onEnterFragment();
 		setStepCompleted(true);
+		
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		boolean framesOverlapped = preferences.getBoolean(CaptureFragment.PREFERENCES_FRAMES_OVERLAPPED,false);
+
+		boolean errorsHappended = framesOverlapped;
+		finishTextView.setVisibility(errorsHappended? TextView.GONE : TextView.VISIBLE);
+		finishWithErrorsTextView.setVisibility(errorsHappended? TextView.VISIBLE : TextView.GONE);
+		
+		framesOverlapTextView.setText(Html.fromHtml(getString(R.string.finish_summary_overlapping_frames_message)));
+		framesOverlapTextView.setVisibility(framesOverlapped? TextView.VISIBLE : TextView.GONE);
+		
 	};
 	
 	@Override
