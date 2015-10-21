@@ -27,16 +27,30 @@
         android:textColor="@color/errorRed"
         android:textSize="24sp" />
 
-     <TextView
-         android:id="@+id/finishFramesOverlappingTextView"
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content"
-         android:layout_marginLeft="14dp"
-         android:layout_marginTop="22dp"
-         android:drawableLeft="@drawable/ic_connection_information"
-         android:gravity="center_vertical"
-         android:text="@string/finish_summary_overlapping_frames_message" />
+    <LinearLayout
+        android:id="@+id/finishFramesOverlappingLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
 
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="15dp"
+            android:contentDescription="@string/finish_summary_overlapping_frames_message"
+            android:src="@drawable/ic_connection_information" />
+
+        <TextView
+            android:id="@+id/finishFramesOverlappingTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/finish_summary_overlapping_frames_message"
+            android:textSize="16sp" />
+    </LinearLayout>
+    
     <LinearLayout
         android:id="@+id/finishRestartLayout"
         android:layout_width="match_parent"

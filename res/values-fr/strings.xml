@@ -106,22 +106,23 @@
 
     <string name="capture_countdown_before_start_message">Le timelapse commence dans %1$d secondes</string> 
     
-    <string name="capture_frames_overlapping_title">Interval error</string>
-    <string name="capture_frames_overlapping_message"><![CDATA[The interval between frames is too short.<br/><br/>
-        The minimum possible interval will be used but it <font color="#FF8888">is longer</font> than you chose and 
-        may <font color="#FF8888">vary</font>.]]></string>
-    <string name="capture_frames_overlapping_ok">Continue</string>
-    <string name="capture_frames_overlapping_cancel">Cancel Timelapse</string>
+    <string name="capture_frames_overlapping_title">Erreur d\'intervalle</string>
+    <string name="capture_frames_overlapping_message"><![CDATA[L\'intervalle que vous avez choisi entre chaque photo est trop court. 
+        Nous essayerons de prendre la prochaine photo dès que c\'est possible.<br/><br/>
+        La prise de la photo prend <font color="#FF8888">trop de temps</font>. 
+        Sur certains appareils il se peut que ce delai soit du au firmware.]]></string>
+    <string name="capture_frames_overlapping_ok">Continuer</string>
+    <string name="capture_frames_overlapping_cancel">Stopper le Timelapse</string>
     
 
     <!-- Finish Step Strings -->
     
     <string name="finish_message">Le timelapse est terminé !</string>
-    <string name="finish_with_errors_message">Timelapse finished with errors!</string>
+    <string name="finish_with_errors_message">Le timelapse s\'est terminé avec des erreurs !</string>
     <string name="finish_restart">Recommencer un nouveau timelapse</string>
     
-    <string name="finish_summary_overlapping_frames_message"><![CDATA[The chosen interval between frames was too short.<br/>
-        Therefore the <font color="#FF8888">effective interval between frames may have varied</font> and is at least in some cases 
-        different from your chosen one.]]></string>
+    <string name="finish_summary_overlapping_frames_message"><![CDATA[L\'intervalle que vous avez choisi entre chaque photo est trop court.<br/>
+        Du coup, <font color="#FF8888">l\'intervalle entre deux photos peut avoir varié</font> et dans certains cas être différent
+        de celui que vous avez choisi.]]></string>
     
 </resources>

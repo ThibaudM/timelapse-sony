@@ -84,6 +84,12 @@ public class CameraIO {
 			@Override
 			public void cameraError(JSONObject jsonResponse) {
 				if(listener != null) {
+					
+					if(jsonResponse == null) {
+						listener.onError(ResponseCode.NONE, "json response is null");
+						return;
+					}
+					
 					int responseCode = -1;
 					String responseMsg = null;
 					//whole JSON is of format {"id":38,"error":[1,"Not Available Now"]}

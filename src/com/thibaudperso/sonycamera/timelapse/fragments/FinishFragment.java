@@ -22,6 +22,7 @@ public class FinishFragment extends StepFragment {
 	private TextView finishTextView;
 	private TextView finishWithErrorsTextView;
 	private TextView framesOverlapTextView;
+	private View framesOverlapLayout;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,6 +39,7 @@ public class FinishFragment extends StepFragment {
 		finishTextView = (TextView) resView.findViewById(R.id.finishMessage);
 		finishWithErrorsTextView = (TextView) resView.findViewById(R.id.finishWithErrorsMessage);
 		framesOverlapTextView = (TextView) resView.findViewById(R.id.finishFramesOverlappingTextView);
+		framesOverlapLayout = resView.findViewById(R.id.finishFramesOverlappingLayout);
 		
 		return resView;
 	}
@@ -68,7 +70,7 @@ public class FinishFragment extends StepFragment {
 		finishWithErrorsTextView.setVisibility(errorsHappended? TextView.VISIBLE : TextView.GONE);
 		
 		framesOverlapTextView.setText(Html.fromHtml(getString(R.string.finish_summary_overlapping_frames_message)));
-		framesOverlapTextView.setVisibility(framesOverlapped? TextView.VISIBLE : TextView.GONE);
+		framesOverlapLayout.setVisibility(framesOverlapped? TextView.VISIBLE : TextView.GONE);
 		
 	};
 	
