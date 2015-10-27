@@ -54,6 +54,18 @@ public class CameraIO {
 		mCameraWS.setWSUrl(device.getWebService());
 	}
 
+	/**
+	 * Sets the shoot mode, "still" or "movie". This needs to be set to "still"
+	 * on some camcorders, because they default to video.
+	 *
+	 * @param mode
+	 *            either "still" or "movie".
+	 */
+	public void setShootMode(String mode) {
+		JSONArray params = new JSONArray().put(mode);
+		mCameraWS.sendRequest("setShootMode", params, null);
+	}
+
 	public void takePicture(final TakePictureListener listener) {
 		mCameraWS.sendRequest("actTakePicture", new JSONArray(), getTakePictureListener(listener));
 	}
