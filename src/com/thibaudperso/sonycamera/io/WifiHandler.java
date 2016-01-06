@@ -19,6 +19,7 @@ public class WifiHandler {
 
 	private Context mContext;
 	private WifiManager mWifiManager;
+	private boolean wasWifiDisabled;
 	private WifiInfo lastWifiConnected;
 	private NetworkInfo.State cameraWifiState;
 
@@ -28,6 +29,7 @@ public class WifiHandler {
 
 		this.mContext = context;
 		mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE); 
+		wasWifiDisabled = mWifiManager.getWifiState() == WifiManager.WIFI_STATE_DISABLED;
 		mWifiManager.setWifiEnabled(true);
 		listeners = new ArrayList<WifiListener>();
 
@@ -141,17 +143,6 @@ public class WifiHandler {
 		mWifiManager.saveConfiguration();
 
 		return netId;
-	}
-
-
-	public void reconnectToLastWifi() {
-
-		if(lastWifiConnected != null) {
-			mWifiManager.enableNetwork(lastWifiConnected.getNetworkId(), true);
-
-			// Maybe remove comment on this line for more logic
-			//lastWifiConnected = null;
-		}
 	}
 
 	private static boolean isSonyCameraSSID(String ssid) {
@@ -295,5 +286,20 @@ public class WifiHandler {
 			return ssid.substring(1, ssid.length()-1);
 		}
 		return ssid;
+	}
+	
+	public void disconnect(){
+		unregister();
+		//reconnect to last wifi
+		if(lastWifiConnected != null && lastWifiConnected.getNetworkId() != -1) {
+			mWifiManager.enableNetwork(lastWifiConnected.getNetworkId(), true);
+		} else {
+			//no previous wifi: just disconnect from the camera's
+			mWifiManager.disconnect();
+			//disable wifi as well if it was disabled on app start
+			if(wasWifiDisabled)
+				mWifiManager.setWifiEnabled(false);
+		}
+		
 	}
 }

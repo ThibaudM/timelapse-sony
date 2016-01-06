@@ -22,6 +22,7 @@
     <string name="connection_information_message"><![CDATA[Put your camera in <font color="#FF8888">Ctrl with Smartphone</font> mode 
         or pair it by NFC (if it\'s possible)]]></string>
         
+    <string name="connection_close_app">Press a second time to exit.</string>
     <string name="connection_info">Connection information</string>
     <string name="connection_refresh">Refresh connection</string>
     <string name="connection_info_nothing">Waiting more information</string>
