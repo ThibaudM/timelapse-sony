@@ -233,6 +233,8 @@ public class ConnectionFragment extends StepFragment implements WifiListener {
 					mCameraIO.initWebService(null);
 				}
 
+				mCameraIO.setShootMode("still");
+
 				if(getActivity() == null) {
 					return;
 				}

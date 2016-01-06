@@ -65,4 +65,9 @@
         <model>RX100 mk3</model>
         <webservice>http://192.168.122.1:8080/sony/camera</webservice>
     </camera>
+    <camera>
+        <id>14</id>
+        <model>HDR-PJ530</model>
+        <webservice>http://10.0.0.1:10000/sony/camera</webservice>
+    </camera>
 </cameras>
