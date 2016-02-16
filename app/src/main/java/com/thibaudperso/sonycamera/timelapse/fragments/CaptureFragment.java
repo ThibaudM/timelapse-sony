@@ -1,10 +1,5 @@
 package com.thibaudperso.sonycamera.timelapse.fragments;
 
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
-
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -32,13 +27,22 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.Volley;
 import com.thibaudperso.sonycamera.R;
 import com.thibaudperso.sonycamera.sdk.CameraIO;
 import com.thibaudperso.sonycamera.sdk.TakePictureListener;
 import com.thibaudperso.sonycamera.timelapse.MyCountDownTicks;
 import com.thibaudperso.sonycamera.timelapse.StepFragment;
 import com.thibaudperso.sonycamera.timelapse.TimelapseApplication;
-import com.thibaudperso.sonycamera.timelapse.Utils;
+
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class CaptureFragment extends StepFragment {
 	
@@ -80,7 +84,9 @@ public class CaptureFragment extends StepFragment {
 	private boolean keepDisplayOn = false;
 	private boolean tickOverlapHappened = false;
 
-	
+	private RequestQueue imagesQueue;
+
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -100,7 +106,9 @@ public class CaptureFragment extends StepFragment {
 		//prepare wakelock for capture
 		PowerManager powerManager = (PowerManager) getActivity().getSystemService(Context.POWER_SERVICE);
 		wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"CaptureFragmentWakeLock");
-		
+
+		imagesQueue = Volley.newRequestQueue(getContext());
+
 		return rootView;
 	}
 	
@@ -336,9 +344,20 @@ public class CaptureFragment extends StepFragment {
 			public void onResult(String url) {
 				
 				if(showLastFramePreview) {
-					Bitmap preview = Utils.downloadBitmap(url);				
-					setPreviewImage(preview);	
-				}	
+
+					ImageRequest request = new ImageRequest(url,
+							new Response.Listener<Bitmap>() {
+								@Override
+								public void onResponse(Bitmap bitmap) {
+									setPreviewImage(bitmap);
+								}
+							}, 0, 0, null,
+							new Response.ErrorListener() {
+								public void onErrorResponse(VolleyError error) {
+								}
+							});
+					imagesQueue.add(request);
+				}
 
 				//hide (indeterminate) progressbar for current picture
 				actualProgressBar.post(new Runnable() {

@@ -1,19 +1,20 @@
 package com.thibaudperso.sonycamera.io;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.net.Network;
 import android.net.NetworkInfo;
 import android.net.NetworkInfo.State;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class WifiHandler {
 
@@ -192,6 +193,20 @@ public class WifiHandler {
 
 	private void connected(String ssid) {
 		cameraWifiState = State.CONNECTED;
+
+		// Workaround when there is a data connection more than the wifi one
+		// http://stackoverflow.com/questions/33237074/request-over-wifi-on-android-m
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+			ConnectivityManager connectivityManager = (ConnectivityManager)
+					mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+			Network activeNetwork = connectivityManager.getActiveNetwork();
+			for (Network net : connectivityManager.getAllNetworks()) {
+				if (!net.equals(activeNetwork)) {
+					connectivityManager.bindProcessToNetwork(net);
+				}
+			}
+		}
+
 		for(WifiListener listener : listeners) {
 			listener.onWifiConnected(ssid);
 		}
