@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,6 +18,7 @@ import com.thibaudperso.sonycamera.R;
 import com.thibaudperso.sonycamera.sdk.CameraIO;
 import com.thibaudperso.sonycamera.sdk.CameraIO.ZoomAction;
 import com.thibaudperso.sonycamera.sdk.CameraIO.ZoomDirection;
+import com.thibaudperso.sonycamera.sdk.StartLiveviewListener;
 import com.thibaudperso.sonycamera.sdk.TakePictureListener;
 import com.thibaudperso.sonycamera.timelapse.StepFragment;
 import com.thibaudperso.sonycamera.timelapse.TimelapseApplication;
@@ -43,8 +43,8 @@ public class CameraSettingsFragment extends StepFragment {
 		View viewResult = inflater.inflate(R.layout.fragment_camera_settings, container, false);
 		
 		liveviewSurfaceView = (SimpleLiveviewSurfaceView) viewResult.findViewById(R.id.camera_settings_liveview);
-		liveviewSurfaceView.bindCameraIO( ((TimelapseApplication) getActivity().getApplication()).getCameraIO());
-		
+
+
 		Button zoomInButton = (Button) viewResult.findViewById(R.id.cameraSettingsZoomIn);
 		Button zoomOutButton = (Button) viewResult.findViewById(R.id.cameraSettingsZoomOut);
 		
@@ -134,7 +134,6 @@ public class CameraSettingsFragment extends StepFragment {
 			
 			@Override
 			public void onClick(View v) {
-				Log.v("DEBUG", "stopLiveView 1");
 				mCameraIO.stopLiveView();
 				mCameraIO.takePicture(new TakePictureListener() {
 					
@@ -165,8 +164,8 @@ public class CameraSettingsFragment extends StepFragment {
 	public void onEnterFragment() {
 
 		setStepCompleted(true);
-		
-		liveviewSurfaceView.start();
+
+		startLiveView();
 		isLiveviewStarted = true;
 	}
 	
@@ -182,10 +181,10 @@ public class CameraSettingsFragment extends StepFragment {
 		super.onStart();
 		
 		if(isLiveviewStarted) {
-			liveviewSurfaceView.start();	
+			startLiveView();
 		}
 	}
-	
+
 	@Override
 	public void onStop() {
 		super.onStop();
@@ -200,10 +199,24 @@ public class CameraSettingsFragment extends StepFragment {
 		super.onActivityResult(requestCode, resultCode, data);
 		
 		if(requestCode == TAKE_PICTURE_ACTIVITY_RESULT && mCameraIO != null) {
-			liveviewSurfaceView.start();
-			mCameraIO.startLiveView(null);
+			startLiveView();
 		}
 		
+	}
+
+	private void startLiveView() {
+
+		mCameraIO.startLiveView(new StartLiveviewListener() {
+			@Override
+			public void onResult(String liveviewUrl) {
+				liveviewSurfaceView.start(liveviewUrl);
+			}
+
+			@Override
+			public void onError(String error) {
+
+			}
+		});
 	}
 
 	@Override

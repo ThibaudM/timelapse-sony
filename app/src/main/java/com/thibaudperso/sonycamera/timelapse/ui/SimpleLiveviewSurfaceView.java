@@ -4,10 +4,6 @@
 
 package com.thibaudperso.sonycamera.timelapse.ui;
 
-import java.io.IOException;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
@@ -24,20 +20,20 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.ViewGroup.LayoutParams;
 
-import com.thibaudperso.sonycamera.sdk.CameraIO;
-import com.thibaudperso.sonycamera.sdk.StartLiveviewListener;
 import com.thibaudperso.sonycamera.timelapse.ui.SimpleLiveviewSlicer.Payload;
+
+import java.io.IOException;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * A SurfaceView based class to draw liveview frames serially.
  */
 public class SimpleLiveviewSurfaceView extends SurfaceView implements
-SurfaceHolder.Callback {
+		SurfaceHolder.Callback {
 
 	private static final String TAG = SimpleLiveviewSurfaceView.class
 			.getSimpleName();
-
-	private CameraIO mCameraIO;
 
 	private boolean mWhileFetching;
 	private final BlockingQueue<byte[]> mJpegQueue = new ArrayBlockingQueue<byte[]>(2);
@@ -50,7 +46,7 @@ SurfaceHolder.Callback {
 
 	/**
 	 * Contractor
-	 * 
+	 *
 	 * @param context
 	 */
 	public SimpleLiveviewSurfaceView(Context context) {
@@ -62,7 +58,7 @@ SurfaceHolder.Callback {
 
 	/**
 	 * Contractor
-	 * 
+	 *
 	 * @param context
 	 * @param attrs
 	 */
@@ -75,13 +71,13 @@ SurfaceHolder.Callback {
 
 	/**
 	 * Contractor
-	 * 
+	 *
 	 * @param context
 	 * @param attrs
 	 * @param defStyle
 	 */
 	public SimpleLiveviewSurfaceView(Context context, AttributeSet attrs,
-			int defStyle) {
+									 int defStyle) {
 		super(context, attrs, defStyle);
 		getHolder().addCallback(this);
 		mFramePaint = new Paint();
@@ -90,7 +86,7 @@ SurfaceHolder.Callback {
 
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
-			int height) {
+							   int height) {
 		// do nothing.
 	}
 
@@ -105,26 +101,14 @@ SurfaceHolder.Callback {
 	}
 
 	/**
-	 * Bind a Remote API object to communicate with Camera device. Need to call
-	 * this method before calling start() method.
-	 * 
-	 * @param cameraIO
-	 */
-	public void bindCameraIO(CameraIO cameraIO) {
-		mCameraIO = cameraIO;
-	}
-
-	/**
 	 * Start retrieving and drawing liveview frame data by new threads.
-	 * 
+	 *
 	 * @return true if the starting is completed successfully, false otherwise.
 	 * @exception IllegalStateException when Remote API object is not set.
 	 * @see SimpleLiveviewSurfaceView#bindRemoteApi(SimpleRemoteApi)
 	 */
-	public boolean start() {
-		if (mCameraIO == null) {
-			throw new IllegalStateException("RemoteApi is not set.");
-		}
+	public boolean start(final String liveviewUrl) {
+
 		if (mWhileFetching) {
 			Log.w(TAG, "start() already starting.");
 			return false;
@@ -133,18 +117,14 @@ SurfaceHolder.Callback {
 		mWhileFetching = true;
 
 		// A thread for retrieving liveview data from server.
-		mCameraIO.startLiveView(new StartLiveviewListener() {
-
-			SimpleLiveviewSlicer slicer = null;
-
+		Thread mSlicerThread = new Thread(new Runnable() {
 			@Override
-			public void onResult(String liveviewUrl) {
+			public void run() {
+
+
+				SimpleLiveviewSlicer slicer = null;
 
 				try {
-
-					if (liveviewUrl == null) {
-						return; 
-					}
 
 					// Create Slicer to open the stream and parse it.
 					slicer = new SimpleLiveviewSlicer();
@@ -175,8 +155,6 @@ SurfaceHolder.Callback {
 				} finally {
 					// Finalize
 					try {
-						mCameraIO.stopLiveView();
-
 						if (slicer != null) {
 							slicer.close();
 						}
@@ -194,12 +172,11 @@ SurfaceHolder.Callback {
 
 				}
 			}
-
-			@Override
-			public void onError(String error) {
-
-			}
 		});
+
+		mSlicerThread.start();
+
+
 
 		// A thread for drawing liveview frame fetched by above thread.
 		mDrawerThread = new Thread() {
@@ -255,7 +232,7 @@ SurfaceHolder.Callback {
 
 	/**
 	 * Check to see whether start() is already called.
-	 * 
+	 *
 	 * @return true if start() is already called, false otherwise.
 	 */
 	public boolean isStarted() {
@@ -283,13 +260,13 @@ SurfaceHolder.Callback {
 
 	// Draw frame bitmap onto a canvas.
 	private void drawFrame(Bitmap frame) {
-		
+
 		if (frame.getWidth() != mPreviousWidth
 				|| frame.getHeight() != mPreviousHeight) {
 			onDetectedFrameSizeChanged(frame.getWidth(), frame.getHeight());
 			return;
 		}
-		
+
 		Canvas canvas = getHolder().lockCanvas();
 		if (canvas == null) {
 			return;
@@ -297,7 +274,7 @@ SurfaceHolder.Callback {
 		int w = frame.getWidth();
 		int h = frame.getHeight();
 		Rect src = new Rect(0, 0, w, h);
-		
+
 		float by = Math
 				.min((float) getWidth() / w, (float) getHeight() / h);
 		int offsetX = (getWidth() - (int) (w * by)) / 2;
@@ -316,23 +293,23 @@ SurfaceHolder.Callback {
 		drawBlackFrame();
 		drawBlackFrame();
 		drawBlackFrame(); // delete triple buffers
-					    
-	    ((Activity) getContext()).runOnUiThread(new Runnable() {
-			
+
+		((Activity) getContext()).runOnUiThread(new Runnable() {
+
 			@Override
 			public void run() {
 
 				//Get the SurfaceView layout parameters
-			    LayoutParams lp = getLayoutParams();
+				LayoutParams lp = getLayoutParams();
 
-			    lp.width = getWidth();
-			    lp.height = (int) (((float) height / (float) width) * (float) getWidth());
-				
-			    setLayoutParams(lp);    				
+				lp.width = getWidth();
+				lp.height = (int) (((float) height / (float) width) * (float) getWidth());
+
+				setLayoutParams(lp);
 			}
 		});
-	    
-		
+
+
 	}
 
 	// Draw black screen.
