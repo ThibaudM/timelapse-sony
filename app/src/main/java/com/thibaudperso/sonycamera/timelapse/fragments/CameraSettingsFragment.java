@@ -22,7 +22,7 @@ import com.thibaudperso.sonycamera.sdk.StartLiveviewListener;
 import com.thibaudperso.sonycamera.sdk.TakePictureListener;
 import com.thibaudperso.sonycamera.timelapse.StepFragment;
 import com.thibaudperso.sonycamera.timelapse.TimelapseApplication;
-import com.thibaudperso.sonycamera.timelapse.ui.SimpleLiveviewSurfaceView;
+import com.thibaudperso.sonycamera.timelapse.ui.SimpleStreamSurfaceView;
 
 public class CameraSettingsFragment extends StepFragment {
 
@@ -30,8 +30,7 @@ public class CameraSettingsFragment extends StepFragment {
 
 	private CameraIO mCameraIO;
 	
-	private SimpleLiveviewSurfaceView liveviewSurfaceView;
-	private boolean isLiveviewStarted = false;
+	private SimpleStreamSurfaceView liveviewSurfaceView;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -42,7 +41,7 @@ public class CameraSettingsFragment extends StepFragment {
 
 		View viewResult = inflater.inflate(R.layout.fragment_camera_settings, container, false);
 		
-		liveviewSurfaceView = (SimpleLiveviewSurfaceView) viewResult.findViewById(R.id.camera_settings_liveview);
+		liveviewSurfaceView = (SimpleStreamSurfaceView) viewResult.findViewById(R.id.camera_settings_liveview);
 
 
 		Button zoomInButton = (Button) viewResult.findViewById(R.id.cameraSettingsZoomIn);
@@ -164,32 +163,26 @@ public class CameraSettingsFragment extends StepFragment {
 	public void onEnterFragment() {
 
 		setStepCompleted(true);
-
 		startLiveView();
-		isLiveviewStarted = true;
 	}
 	
 	@Override
 	public void onExitFragment() {
 		
 		liveviewSurfaceView.stop();
-		isLiveviewStarted = false;
 	}
 	
 	@Override
 	public void onStart() {
 		super.onStart();
-		
-		if(isLiveviewStarted) {
-			startLiveView();
-		}
+		startLiveView();
 	}
 
 	@Override
 	public void onStop() {
 		super.onStop();
 
-		if(isLiveviewStarted) {
+		if(liveviewSurfaceView.isStarted()) {
 			liveviewSurfaceView.stop();	
 		}
 	}
@@ -198,13 +191,17 @@ public class CameraSettingsFragment extends StepFragment {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		
-		if(requestCode == TAKE_PICTURE_ACTIVITY_RESULT && mCameraIO != null) {
+		if(requestCode == TAKE_PICTURE_ACTIVITY_RESULT) {
 			startLiveView();
 		}
 		
 	}
 
 	private void startLiveView() {
+
+		if(liveviewSurfaceView.isStarted() && mCameraIO != null) {
+			return;
+		}
 
 		mCameraIO.startLiveView(new StartLiveviewListener() {
 			@Override

@@ -259,8 +259,8 @@ public class WifiHandler {
 		@Override
 		public void onReceive(Context context, Intent intent) 
 		{
-			List<WifiConfiguration> sonyCameraWifiConfiguration = new ArrayList<WifiConfiguration>();
-			List<ScanResult> sonyCameraScanResults = new ArrayList<ScanResult>();
+			List<WifiConfiguration> sonyCameraWifiConfiguration = new ArrayList<>();
+			List<ScanResult> sonyCameraScanResults = new ArrayList<>();
 
 			List<ScanResult> results = mWifiManager.getScanResults();
 			for(ScanResult sr : results) {
@@ -297,7 +297,7 @@ public class WifiHandler {
 		try {
 			mContext.unregisterReceiver(wifiBroadcastReceiver);
 			mContext.unregisterReceiver(scanResultsBroadcastReceiver);
-		} catch (IllegalArgumentException e) { }
+		} catch (IllegalArgumentException ignored) { }
 	}
 
 	public State getCameraWifiState() {

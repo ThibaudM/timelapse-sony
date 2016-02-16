@@ -1,7 +1,5 @@
 package com.thibaudperso.sonycamera.timelapse.ui;
 
-import java.util.List;
-
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.net.wifi.ScanResult;
@@ -18,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +34,8 @@ import com.thibaudperso.sonycamera.timelapse.fragments.ConnectionFragment;
 import com.thibaudperso.sonycamera.timelapse.fragments.FinishFragment;
 import com.thibaudperso.sonycamera.timelapse.fragments.FinishFragmentListener;
 import com.thibaudperso.sonycamera.timelapse.fragments.TimelapseSettingsFragment;
+
+import java.util.List;
 
 
 public class TimelapseStepsActivity extends FragmentActivity implements StepCompletedListener, WifiListener,
@@ -99,7 +98,7 @@ FinishFragmentListener, CaptureFragmentListener {
 			}
 		});
 
-		mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+		mPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 
 			@Override
 			public void onPageSelected(int position) {
@@ -185,7 +184,9 @@ FinishFragmentListener, CaptureFragmentListener {
 
 		try {
 			Pair<String, String> cameraWifiSettings = NFCHandler.parseIntent(intent);
-			mWifiHandler.createIfNeededThenConnectToWifi(cameraWifiSettings.first, cameraWifiSettings.second);
+			if (cameraWifiSettings != null) {
+				mWifiHandler.createIfNeededThenConnectToWifi(cameraWifiSettings.first, cameraWifiSettings.second);
+			}
 
 			mPager.setCurrentItem(0);
 
@@ -224,11 +225,11 @@ FinishFragmentListener, CaptureFragmentListener {
 
 	private void setGuideBar(int fragmentPosition) {
 
-		((Button) findViewById(R.id.guideStep1)).setBackgroundResource(fragmentPosition == 0 ? R.drawable.blue_bullet : R.drawable.black_bullet);
-		((Button) findViewById(R.id.guideStep2)).setBackgroundResource(fragmentPosition == 1 ? R.drawable.blue_bullet : R.drawable.black_bullet);
-		((Button) findViewById(R.id.guideStep3)).setBackgroundResource(fragmentPosition == 2 ? R.drawable.blue_bullet : R.drawable.black_bullet);
-		((Button) findViewById(R.id.guideStep4)).setBackgroundResource(fragmentPosition == 3 ? R.drawable.blue_bullet : R.drawable.black_bullet);
-		((Button) findViewById(R.id.guideStep5)).setBackgroundResource(fragmentPosition == 4 ? R.drawable.blue_bullet : R.drawable.black_bullet);
+		(findViewById(R.id.guideStep1)).setBackgroundResource(fragmentPosition == 0 ? R.drawable.blue_bullet : R.drawable.black_bullet);
+		(findViewById(R.id.guideStep2)).setBackgroundResource(fragmentPosition == 1 ? R.drawable.blue_bullet : R.drawable.black_bullet);
+		(findViewById(R.id.guideStep3)).setBackgroundResource(fragmentPosition == 2 ? R.drawable.blue_bullet : R.drawable.black_bullet);
+		(findViewById(R.id.guideStep4)).setBackgroundResource(fragmentPosition == 3 ? R.drawable.blue_bullet : R.drawable.black_bullet);
+		(findViewById(R.id.guideStep5)).setBackgroundResource(fragmentPosition == 4 ? R.drawable.blue_bullet : R.drawable.black_bullet);
 
 
 		((TextView) findViewById(R.id.guideTitle)).setText(

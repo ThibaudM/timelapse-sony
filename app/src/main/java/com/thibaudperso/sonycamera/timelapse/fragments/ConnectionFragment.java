@@ -71,7 +71,7 @@ public class ConnectionFragment extends StepFragment implements WifiListener {
 		 */
 		final Spinner cameraSpinner = (Spinner) viewResult.findViewById(R.id.connectionCameraSpinner);
 
-		ArrayAdapter<Device> adapter = new ArrayAdapter<Device>(getActivity(), 
+		ArrayAdapter<Device> adapter = new ArrayAdapter<>(getActivity(),
 				android.R.layout.simple_list_item_1, mDeviceManager.getDevices());
 		adapter.sort(Device.COMPARE_BY_DEVICEMODEL);
 		cameraSpinner.setAdapter(adapter);
@@ -224,7 +224,7 @@ public class ConnectionFragment extends StepFragment implements WifiListener {
 
 	private void checkWSConnection() {
 
-		mCameraIO.testConnection(1000, new TestConnectionListener() {
+		mCameraIO.testConnection(new TestConnectionListener() {
 
 			@Override
 			public void cameraConnected(final boolean isConnected) {
@@ -233,7 +233,7 @@ public class ConnectionFragment extends StepFragment implements WifiListener {
 					mCameraIO.initWebService(null);
 				}
 
-//				mCameraIO.setShootMode("still");
+				mCameraIO.setShootMode("still");
 
 				if(getActivity() == null) {
 					return;
@@ -296,7 +296,7 @@ public class ConnectionFragment extends StepFragment implements WifiListener {
 
 				View view = super.getView(position, convertView, parent);
 				TextView textView = (TextView) view.findViewById(android.R.id.text1);
-				textView.setText(((ScanResult) getItem(position)).SSID);
+				textView.setText((getItem(position)).SSID);
 				return textView;
 			}
 		};
@@ -336,7 +336,7 @@ public class ConnectionFragment extends StepFragment implements WifiListener {
 
 				View view = super.getView(position, convertView, parent);
 				TextView textView = (TextView) view.findViewById(android.R.id.text1);
-				textView.setText(((WifiConfiguration) getItem(position)).SSID);
+				textView.setText((getItem(position)).SSID);
 				return textView;
 			}
 		};

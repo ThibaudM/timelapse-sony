@@ -8,7 +8,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin" >
 
-    <com.thibaudperso.sonycamera.timelapse.ui.SimpleLiveviewSurfaceView
+    <com.thibaudperso.sonycamera.timelapse.ui.SimpleStreamSurfaceView
         android:id="@+id/camera_settings_liveview"
         android:layout_width="match_parent"
         android:layout_height="0dp"

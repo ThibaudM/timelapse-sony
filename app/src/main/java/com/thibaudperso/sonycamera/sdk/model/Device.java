@@ -24,28 +24,12 @@ public class Device {
 		this.mId = id;
 	}
 
-	public String getModel() {
-		return mModel;
-	}
-
-	public void setModel(String model) {
-		this.mModel = model;
-	}
-
 	public String getWebService() {
 		return mWebService;
 	}
 
-	public void setWebService(String webService) {
-		this.mWebService = webService;
-	}
-	
 	public boolean needInit() {
 		return mNeedInit;
-	}
-
-	public void setNeedInit(boolean needInit) {
-		this.mNeedInit = needInit;
 	}
 
 	@Override
@@ -61,10 +45,7 @@ public class Device {
 	
 	@Override
 	public boolean equals(Object o) {
-		if(!(o instanceof Device)) {
-			return false;
-		}
-		return ((Device) o).mId == mId;
+		return o instanceof Device && ((Device) o).mId == mId;
 	}
 
 }

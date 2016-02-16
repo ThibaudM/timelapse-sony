@@ -42,7 +42,7 @@ public class SimpleLiveviewSlicer {
 
     /**
      * Opens Liveview HTTP GET connection and prepares for reading Packet data.
-     * 
+     *
      * @param liveviewUrl Liveview data url that is obtained by DD.xml or result
      *            of startLiveview API.
      * @throws IOException generic errors or exception.
@@ -68,7 +68,7 @@ public class SimpleLiveviewSlicer {
 
     /**
      * Closes the connection.
-     * 
+     *
      * @throws IOException generic errors or exception.
      */
     public void close() throws IOException {
@@ -86,7 +86,7 @@ public class SimpleLiveviewSlicer {
      * Reads liveview stream and slice one Packet. If server is not ready for
      * liveview data, this API calling will be blocked until server returns next
      * data.
-     * 
+     *
      * @return Payload data of sliced Packet
      * @throws IOException generic errors or exception.
      */

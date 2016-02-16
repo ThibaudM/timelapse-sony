@@ -3,6 +3,13 @@
 
     <string name="app_name">TimeLapse</string>
 
+    <!-- Units Strings -->
+
+    <string name="seconds">%1$ds</string>
+    <string name="percent1f">%1$.1f%%</string>
+    <string name="percent">%1$d%%</string>
+
+
     <!-- Step Activity Strings -->
     
     <string name="action_previous">Previous</string>

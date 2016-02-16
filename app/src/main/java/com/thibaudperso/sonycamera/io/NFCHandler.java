@@ -95,7 +95,7 @@ public class NFCHandler {
 			}
 			String password = new String(passwordBytes);
 			
-			return new Pair<String, String>(ssid, password);
+			return new Pair<>(ssid, password);
 
 		} catch(Exception e) {
 			return null;

@@ -38,8 +38,7 @@ public class TimelapseSettingsFragment extends StepFragment {
 	private EditText framesCount;
 	private CompoundButton showImageReview;
 	private CheckBox framesCountUnlimited;
-	private TextView framesCountUnlimitedText;
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -51,7 +50,7 @@ public class TimelapseSettingsFragment extends StepFragment {
 		intervalTime = (EditText) resView.findViewById(R.id.intervalTime);
 		framesCount = (EditText) resView.findViewById(R.id.framesCount);
 		framesCountUnlimited = (CheckBox) resView.findViewById(R.id.framesCountUnlimited);
-		framesCountUnlimitedText = (TextView) resView.findViewById(R.id.framesCountUnlimitedText);
+		TextView framesCountUnlimitedText = (TextView) resView.findViewById(R.id.framesCountUnlimitedText);
 		showImageReview = (CompoundButton) resView.findViewById(R.id.showImageReview);
 		
 		framesCount.setFocusable(!framesCountUnlimited.isChecked());
@@ -121,7 +120,7 @@ public class TimelapseSettingsFragment extends StepFragment {
 				framesCount.setEnabled(!framesCountUnlimited.isChecked());
 				framesCount.setFocusable(!framesCountUnlimited.isChecked());
 				framesCount.setFocusableInTouchMode(!framesCountUnlimited.isChecked());
-				
+
 				checkAllFormValidity();
 			}
 		});
@@ -211,9 +210,9 @@ public class TimelapseSettingsFragment extends StepFragment {
 			preferencesEditor.putInt(PREFERENCES_FRAMES_COUNT, framesCountUnlimited.isChecked() ? -1 : Integer.parseInt(framesCount.getText().toString()));
 			preferencesEditor.putBoolean(PREFERENCES_LAST_IMAGE_REVIEW, showImageReview.isChecked());
 	
-			preferencesEditor.commit();
+			preferencesEditor.apply();
 		
-		} catch(NumberFormatException e) {}
+		} catch(NumberFormatException ignored) {}
 	}
 	
 	@Override

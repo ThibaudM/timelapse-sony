@@ -63,16 +63,15 @@ public class FinishFragment extends StepFragment {
 		setStepCompleted(true);
 		
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-		boolean framesOverlapped = preferences.getBoolean(CaptureFragment.PREFERENCES_FRAMES_OVERLAPPED,false);
+		boolean framesOverlapped = preferences.getBoolean(CaptureFragment.PREFERENCES_FRAMES_OVERLAPPED, false);
 
-		boolean errorsHappended = framesOverlapped;
-		finishTextView.setVisibility(errorsHappended? TextView.GONE : TextView.VISIBLE);
-		finishWithErrorsTextView.setVisibility(errorsHappended? TextView.VISIBLE : TextView.GONE);
+		finishTextView.setVisibility(framesOverlapped ? TextView.GONE : TextView.VISIBLE);
+		finishWithErrorsTextView.setVisibility(framesOverlapped ? TextView.VISIBLE : TextView.GONE);
 		
 		framesOverlapTextView.setText(Html.fromHtml(getString(R.string.finish_summary_overlapping_frames_message)));
 		framesOverlapLayout.setVisibility(framesOverlapped? TextView.VISIBLE : TextView.GONE);
 		
-	};
+	}
 	
 	@Override
 	public void onExitFragment() {

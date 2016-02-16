@@ -54,7 +54,7 @@ public abstract class MyCountDownTicks {
 	 *   is called. If set to -1, countdown is an unlimited normal counter, you 
 	 *   have to call {@link #cancel()} to stop it.
 	 * @param countDownInterval The interval along the way to receive
-	 *   {@link #onTick(long)} callbacks.
+	 *   {@link #onTick(int)} callbacks.
 	 */
 	public MyCountDownTicks(int numberOfTicks, long countDownInterval) {
 		this(numberOfTicks, countDownInterval, false);
@@ -65,7 +65,7 @@ public abstract class MyCountDownTicks {
 	 *   is called. If set to -1, countdown is an unlimited normal counter, you 
 	 *   have to call {@link #cancel()} to stop it.
 	 * @param countDownInterval The interval along the way to receive
-	 *   {@link #onTick(long)} callbacks.
+	 *   {@link #onTick(int)} callbacks.
 	 * @param waitForTicksProcessing If true, {@link #tickProcessed()} has to be
 	 *   called before a further callback will happen. If {@link #tickProcessed()}
 	 *   is called after a new callback should already have happened, it will happen
@@ -108,7 +108,7 @@ public abstract class MyCountDownTicks {
 	}
 	/**
 	 * Fires a tick and resets the boolean that registers if this tick was processed
-	 * @param remainingTicks
+	 * @param remainingTicks The number of ticks remaining
 	 */
 	private void fireTick(int remainingTicks){
 		currentTickProcessed = false;

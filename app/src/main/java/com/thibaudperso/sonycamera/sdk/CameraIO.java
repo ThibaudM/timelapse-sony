@@ -13,14 +13,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * 
  * @author Thibaud Michel
  *
  */
 public class CameraIO {
 
-	public enum ZoomDirection { IN, OUT };
-	public enum ZoomAction { START, STOP };
+	public enum ZoomDirection { IN, OUT }
+	public enum ZoomAction { START, STOP }
 	
 	public enum ResponseCode {
 		NONE(-1), //means no code available
@@ -177,23 +176,19 @@ public class CameraIO {
 
 	}
 
-	public void testConnection(int timeout, final TestConnectionListener listener) {
+	public void testConnection(final TestConnectionListener listener) {
 
-		// Not enough
-		// mCameraWS.testConnection(timeout, listener);
-
-		mCameraWS.sendRequest("getVersions", new JSONArray(), new CameraWSListener() {
-
+		this.getVersion(new GetVersionListener() {
 			@Override
-			public void cameraResponse(JSONArray jsonResponse) {
-				listener.cameraConnected(true);				
+			public void onResult(int version) {
+				listener.cameraConnected(true);
 			}
 
 			@Override
-			public void cameraError(JSONObject jsonResponse) {
+			public void onError(String error) {
 				listener.cameraConnected(false);
 			}
-		}, timeout);
+		});
 
 	}
 

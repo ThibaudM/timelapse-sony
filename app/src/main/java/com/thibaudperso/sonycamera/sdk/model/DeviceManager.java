@@ -1,18 +1,18 @@
 package com.thibaudperso.sonycamera.sdk.model;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-
 import android.content.SharedPreferences;
 import android.content.res.XmlResourceParser;
 import android.preference.PreferenceManager;
 
 import com.thibaudperso.sonycamera.R;
 import com.thibaudperso.sonycamera.timelapse.TimelapseApplication;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DeviceManager {
 
@@ -27,7 +27,7 @@ public class DeviceManager {
 	public DeviceManager(TimelapseApplication application) {
 		this.mApplication = application;
 		
-		mDevicesList = new ArrayList<Device>();
+		mDevicesList = new ArrayList<>();
 
 		final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(application);
 		int currentCameraId = preferences.getInt(CAMERA_ID_PREFERENCE, -1);
@@ -58,7 +58,7 @@ public class DeviceManager {
 			if(device.equals(selectedDevice)) {
 
 				final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mApplication);
-				preferences.edit().putInt(CAMERA_ID_PREFERENCE, device.getId()).commit();
+				preferences.edit().putInt(CAMERA_ID_PREFERENCE, device.getId()).apply();
 				
 				mSelectedDevice = device;
 				
@@ -107,21 +107,26 @@ public class DeviceManager {
 		String deviceModel = null;
 		String webService = null;
 		String needInitString = parser.getAttributeValue(ns, "needInit");
-		boolean needInit = needInitString == null ? false : "true".equals(needInitString);
+		boolean needInit = needInitString != null && "true".equals(needInitString);
 		
 		while (parser.next() != XmlPullParser.END_TAG) {
 			if (parser.getEventType() != XmlPullParser.START_TAG) {
 				continue;
 			}
 			String name = parser.getName();
-			if (name.equals("id")) {
-				id = readId(parser);
-			} else if (name.equals("model")) {
-				deviceModel = readModel(parser);
-			} else if (name.equals("webservice")) {
-				webService = readWebService(parser);
-			} else {
-				skip(parser);
+			switch (name) {
+				case "id":
+					id = readId(parser);
+					break;
+				case "model":
+					deviceModel = readModel(parser);
+					break;
+				case "webservice":
+					webService = readWebService(parser);
+					break;
+				default:
+					skip(parser);
+					break;
 			}
 		}
 
@@ -134,7 +139,7 @@ public class DeviceManager {
 		parser.require(XmlPullParser.START_TAG, ns, "id");
 		try {
 			id = Integer.parseInt(readText(parser));
-		} catch(Exception e) {}
+		} catch(Exception ignored) {}
 		parser.require(XmlPullParser.END_TAG, ns, "id");
 
 		return id;

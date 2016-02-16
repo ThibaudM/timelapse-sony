@@ -39,7 +39,6 @@ import com.thibaudperso.sonycamera.timelapse.MyCountDownTicks;
 import com.thibaudperso.sonycamera.timelapse.StepFragment;
 import com.thibaudperso.sonycamera.timelapse.TimelapseApplication;
 
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -74,7 +73,6 @@ public class CaptureFragment extends StepFragment {
 	private CountDownTimer mNextCountDown;
 	
 	private boolean showLastFramePreview;
-	private int timeLapseDuration;
 	private int initialDelay;
 	private int intervalTime;
 	private int framesCount;
@@ -95,8 +93,8 @@ public class CaptureFragment extends StepFragment {
 
 		rootView = inflater.inflate(R.layout.fragment_capture, container, false);
 
-		normalModeLine1View = (View) rootView.findViewById(R.id.normalModeLine1);
-		normalModeLine2View = (View) rootView.findViewById(R.id.normalModeLine2);
+		normalModeLine1View = rootView.findViewById(R.id.normalModeLine1);
+		normalModeLine2View = rootView.findViewById(R.id.normalModeLine2);
 		startTimeUnlimitedModeLayout = (RelativeLayout) rootView.findViewById(R.id.startTimeRelativeLayout);
 		lastFramePreviewImageView = (ImageView) rootView.findViewById(R.id.lastFramePreview);
 		nextProgressBar = (ProgressBar) rootView.findViewById(R.id.nextPictureProgressBar);
@@ -105,7 +103,7 @@ public class CaptureFragment extends StepFragment {
 		
 		//prepare wakelock for capture
 		PowerManager powerManager = (PowerManager) getActivity().getSystemService(Context.POWER_SERVICE);
-		wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"CaptureFragmentWakeLock");
+		wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "CaptureFragmentWakeLock");
 
 		imagesQueue = Volley.newRequestQueue(getContext());
 
@@ -132,8 +130,8 @@ public class CaptureFragment extends StepFragment {
 		intervalTime = preferences.getInt(TimelapseSettingsFragment.PREFERENCES_INTERVAL_TIME, TimelapseSettingsFragment.DEFAULT_INTERVAL_TIME);
 		framesCount = preferences.getInt(TimelapseSettingsFragment.PREFERENCES_FRAMES_COUNT, TimelapseSettingsFragment.DEFAULT_FRAMES_COUNT);
 		showLastFramePreview = preferences.getBoolean(TimelapseSettingsFragment.PREFERENCES_LAST_IMAGE_REVIEW, TimelapseSettingsFragment.DEFAULT_LAST_IMAGE_REVIEW);
-		
-		timeLapseDuration = intervalTime * (framesCount - 1);
+
+		int timeLapseDuration = intervalTime * (framesCount - 1);
 		isUnlimitedMode = framesCount == -1;
 		
 		tickOverlapHappened = false;
@@ -154,7 +152,8 @@ public class CaptureFragment extends StepFragment {
 
 			((TextView) rootView.findViewById(R.id.beginValue)).setText(beginTime);
 
-			((TextView) rootView.findViewById(R.id.durationValue)).setText(String.valueOf(timeLapseDuration)+"s");
+			((TextView) rootView.findViewById(R.id.durationValue)).setText(
+					String.format(getString(R.string.seconds), timeLapseDuration));
 
 			beginEndCalendar.add(Calendar.SECOND, timeLapseDuration);
 			String endTime = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault()).format(beginEndCalendar.getTime());
@@ -190,7 +189,7 @@ public class CaptureFragment extends StepFragment {
 			public void onTick(long millisUntilFinished) {
 				int progressUnits = (int) ((intervalTime*1000-millisUntilFinished)/updateEveryMillisec);
 				nextProgressBar.setProgress(progressUnits);
-				nextProgressValue.setText(new DecimalFormat("#").format(Math.ceil(millisUntilFinished/1000.0)) + "s" );
+				nextProgressValue.setText(String.format(getString(R.string.seconds), millisUntilFinished/1000));
 			}
 			
 			@Override
@@ -268,7 +267,7 @@ public class CaptureFragment extends StepFragment {
 
 		Editor preferencesEditor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
 		preferencesEditor.putBoolean(PREFERENCES_FRAMES_OVERLAPPED, tickOverlapHappened);
-		preferencesEditor.commit();
+		preferencesEditor.apply();
 	}
 	
 	
@@ -288,13 +287,14 @@ public class CaptureFragment extends StepFragment {
 					int progress = framesCount - remainingFrames;
 					float progressPercent = (float) progress / framesCount * 100;
 					progressBar.setProgress(progress);
-					progressValue.setText(new DecimalFormat("#.##").format(progressPercent) + "%" );
-				
-				} else {
-					/*
-					 * Update activity fields for unlimited mode
-					 */
+					progressValue.setText(String.format(getString(R.string.percent1f), progressPercent));
+
 				}
+//				else {
+//					/*
+//					 * Update activity fields for unlimited mode
+//					 */
+//				}
 				framesCountValue.setText(String.valueOf(remainingFrames));
 				
 				takePicture();
@@ -415,8 +415,7 @@ public class CaptureFragment extends StepFragment {
 		@Override
 		public void onReceive(Context arg0, Intent arg1) {
 			int bLevel = arg1.getIntExtra("level", 0);
-
-			batteryValue.setText(String.valueOf(bLevel)+"%");
+			batteryValue.setText(String.format(getString(R.string.percent), bLevel));
 		} 
 	};
 	
