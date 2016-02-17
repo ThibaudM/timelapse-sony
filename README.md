@@ -4,7 +4,7 @@ Timelapse - Sony Camera
 Want [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=LFFFQZD9UNKRC&lc=FR&item_name=Thibaud%20Michel&item_number=1&currency_code=EUR&bn=PP-DonationsBF%3abtn_donate_LG%2egif%3aNonHosted)?  
 
 Project type: **Android**  
-Current version: **2.0.2**  
+Current version: **2.0.3**  
 Google Play store link: https://play.google.com/store/apps/details?id=com.thibaudperso.sonycamera  
 
 
@@ -24,7 +24,7 @@ Frequently Asked Questions
 
 #### Is this app works with my camera?
 Is your camera has a Wifi connection ? If not this app is not compatible.
-Check the following list to know if your device is compatible: A5100, A6000, Alpha 7, DSC-HX50V, DSC-HX400V, DSC-WX80, NEX-5R, NEX-6, QX-10, QX-30, QX-100, RX-10, RX-100 mk3. If your device is not in the list and has a Wifi connection try another device when you start app.
+Check the following list to know if your device is compatible: A5100, A6000, Alpha 7, DSC-HX50V, DSC-HX400V, DSC-WX80, NEX-5R, NEX-6, QX-10, QX-30, QX-100, RX-10, RX-100 mk2, RX-100 mk3. If your device is not in the list and has a Wifi connection follow steps of [Adding a new camera device](https://github.com/ThibaudM/timelapse-sony#adding-a-new-camera-device) part
 
 #### My camera is automatically set to auto-mode when I use your app. Can I set settings manually?
 Sony choosed to set the camera settings to auto when you use their WebService. Fortunately on some devices we can set this settings using this same connection. But for the moment I haven't implemented this feature. List of supported cameras should be: A7R, A7, NEX-5, NEX-6, A5000, A6000, DSC-HX400, DSC-HX60.
@@ -43,3 +43,22 @@ I'm just an indie developer, I only have a RX100 mk2 and sometimes I can test my
 
 #### Some images are missing during timelapse
 It's a known issue. On some devices (like my RX100 mk2) with a normal shutter speed, camera needs lots of time to save the picture and is not able to take a new picture. That's why I recommand to set interval at least at 5sec. I hope Sony will provide a new firmware to fix it.
+
+
+Adding a new camera device
+--------------------------
+
+In timelapse-sony application, each Sony camera has an associated API address.  
+You can find current associations in [xml/devices.xml](https://github.com/ThibaudM/timelapse-sony/blob/master/app/src/main/res/xml/devices.xml) file.  
+If your device is not listed in this file, don't worry, maybe we can add it.
+
+### Step 1
+Firstly, try with one of the 3 following devices: A5100, RX-10, RX-100 mk2, maybe one works with your camera. In this case, let me know by email what is your camera name and which device you have selected.
+
+### Step 2
+If Step 1, didn't work, 
+* Download and install the following application from your Android device: [RetrieveSonyCameraIP.apk](http://thibaud-michel.com/timelapse/RetrieveSonyCameraIP.apk) [[sources](http://thibaud-michel.com/timelapse/RetrieveSonyCameraIP-src.zip)]. You will need to allow applications from unknown sources.
+* Connect your camera by Wifi to your Android device.
+* Open the app.
+* Click on "Start device discovery" and wait.
+* If a camera is found, click on it and send the automatic email. If not, send an email with your camera name.
