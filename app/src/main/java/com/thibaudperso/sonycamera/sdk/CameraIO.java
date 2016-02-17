@@ -191,6 +191,27 @@ public class CameraIO {
 		});
 
 	}
+	
+	public void closeConnection() {
+
+		// Not enough
+		// mCameraWS.testConnection(timeout, listener);
+
+		mCameraWS.sendRequest("stopRecMode", new JSONArray(), new CameraWSListener() {
+
+			@Override
+			public void cameraResponse(JSONArray jsonResponse) {
+				Log.w("DEBUG","success closing connection.");			
+			}
+
+			@Override
+			public void cameraError(JSONObject jsonResponse) {	
+				Log.w("DEBUG","error closing connection.");				
+			}
+		}, 200);
+
+	}
+
 
 	public void startLiveView(final StartLiveviewListener listener) {
 

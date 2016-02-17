@@ -24,6 +24,7 @@ import com.thibaudperso.sonycamera.R;
 import com.thibaudperso.sonycamera.io.NFCHandler;
 import com.thibaudperso.sonycamera.io.WifiHandler;
 import com.thibaudperso.sonycamera.io.WifiListener;
+import com.thibaudperso.sonycamera.sdk.CameraIO;
 import com.thibaudperso.sonycamera.timelapse.StepCompletedListener;
 import com.thibaudperso.sonycamera.timelapse.StepFragment;
 import com.thibaudperso.sonycamera.timelapse.TimelapseApplication;
@@ -67,6 +68,8 @@ FinishFragmentListener, CaptureFragmentListener {
 
 	private TextView informationTextView;
 	private ImageView informationImage;
+	
+	private boolean doubleBackToExitPressedOnce = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -168,9 +171,9 @@ FinishFragmentListener, CaptureFragmentListener {
 			fragmentsArray[lastPositionSelected].onExitFragment();
 		}
 
+		//disconnect from camera's wifi network
 		if(mWifiHandler != null) {
-			mWifiHandler.reconnectToLastWifi();
-			mWifiHandler.unregister();
+			mWifiHandler.disconnect();
 			mWifiHandler.removeListener(this);
 		}
 
@@ -310,6 +313,11 @@ FinishFragmentListener, CaptureFragmentListener {
 
 		case R.id.action_next:
 			if(mPager.getCurrentItem() == mPagerAdapter.getCount() - 1) {
+				//tell the camera we're done
+				CameraIO mCameraIO = ((TimelapseApplication) this.getApplication()).getCameraIO();
+				if(mCameraIO != null)
+					mCameraIO.closeConnection();
+				//continue with closing procedure, including wifi disconnection
 				finish();
 				return true;
 			}
@@ -328,18 +336,32 @@ FinishFragmentListener, CaptureFragmentListener {
 
 	@Override
 	public void onBackPressed() {
-		if (mPager.getCurrentItem() == 0) {
-			// If the user is currently looking at the first step, allow the system to handle the
-			// Back button. This calls finish() on this activity and pops the back stack.
-			super.onBackPressed();
-			exit();
+		//exit only on second press
+		if(doubleBackToExitPressedOnce){
+			if (mPager.getCurrentItem() == 0) {
+				// If the user is currently looking at the first step, allow the system to handle the
+				// Back button. This calls finish() on this activity and pops the back stack.
+				super.onBackPressed();
+				exit();
+			} else {
+				// Otherwise, select the previous step.
+				int newItem = mPager.getCurrentItem() - 1;
+				//CaptureFragment can't be reached by BackPressed, jump to CaptureSettings instead 
+				if(newItem == 3)
+					newItem--;
+				mPager.setCurrentItem(newItem);
+			}
 		} else {
-			// Otherwise, select the previous step.
-			int newItem = mPager.getCurrentItem() - 1;
-			//CaptureFragment can't be reached by BackPressed, jump to CaptureSettings instead
-			if(newItem == 3)
-				newItem--;
-			mPager.setCurrentItem(newItem);
+			//first press is okay
+			this.doubleBackToExitPressedOnce = true;
+			Toast.makeText(this, R.string.connection_close_app, Toast.LENGTH_SHORT).show();
+			//reset first press if 2 seconds have passed without further press
+		    new android.os.Handler().postDelayed(new Runnable() {
+		        @Override
+		        public void run() {
+		            doubleBackToExitPressedOnce=false;                       
+		        }
+		    }, 2000);
 		}
 	}
 

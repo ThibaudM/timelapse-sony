@@ -23,6 +23,7 @@
         <font color="#FF8888">Steuerung mit Smartphone</font> Modus 
         oder verknüpfe sie mit NFC (falls möglich)]]></string>
         
+    <string name="connection_close_app">Zum Beenden ein zweites Mal drücken.</string>
     <string name="connection_info">Verbindungsinformation</string>
     <string name="connection_refresh">Verbindung aktualisieren</string>
     <string name="connection_info_nothing">Warte auf weitere Informationen</string>

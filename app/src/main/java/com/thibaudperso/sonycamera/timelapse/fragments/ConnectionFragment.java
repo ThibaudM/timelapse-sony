@@ -120,9 +120,10 @@ public class ConnectionFragment extends StepFragment implements WifiListener {
 	@Override
 	public void onEnterFragment() {
 		super.onEnterFragment();
-		
-		mWifiHandler.addListener(this);
-		
+
+		if(mWifiHandler != null) {
+			mWifiHandler.addListener(this);
+		}
 		if(mWifiHandler.getCameraWifiState() == State.DISCONNECTED) {
 			checkForConnection();			
 		}
@@ -132,8 +133,10 @@ public class ConnectionFragment extends StepFragment implements WifiListener {
 	public void onExitFragment() {
 		super.onExitFragment();
 
-		mWifiHandler.removeListener(this);
-		
+		if(mWifiHandler != null) {
+			mWifiHandler.removeListener(this);
+		}
+
 		if(alertDialogChooseNetworkConnection != null) {
 			alertDialogChooseNetworkConnection.cancel();
 		}
@@ -167,7 +170,13 @@ public class ConnectionFragment extends StepFragment implements WifiListener {
 	@Override
 	public void onWifiConnected(String ssid) {
 		setConnectionInfoMessage(R.string.connection_info_wifi_connected, ssid);
-		checkWSConnection();
+		//before checking connection: give the camera some time to adjust to the new connection
+	    android.os.Handler handler = new android.os.Handler(); 
+	    handler.postDelayed(new Runnable() {
+			public void run() {
+				checkWSConnection();
+			}
+		}, 300);
 	}
 
 	@Override
@@ -229,11 +238,12 @@ public class ConnectionFragment extends StepFragment implements WifiListener {
 			@Override
 			public void cameraConnected(final boolean isConnected) {
 
-				if(isConnected && mDeviceManager.getSelectedDevice() != null && mDeviceManager.getSelectedDevice().needInit()) {
-					mCameraIO.initWebService(null);
+				if(isConnected && mDeviceManager.getSelectedDevice() != null) {
+					if(mDeviceManager.getSelectedDevice().needInit()){
+						mCameraIO.initWebService(null);
+					}
+					mCameraIO.setShootMode("still");
 				}
-
-				mCameraIO.setShootMode("still");
 
 				if(getActivity() == null) {
 					return;

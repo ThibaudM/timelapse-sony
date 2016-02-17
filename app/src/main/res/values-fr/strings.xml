@@ -22,6 +22,7 @@
     <string name="connection_information_message"><![CDATA[Mettez votre appareil dans le mode <font color="#FF8888">Contrôl. via smartph.</font> 
         ou pairrez le par NFC (si c\'est possible)]]></string>
     
+    <string name="connection_close_app">Pressez une seconde fois pour sortir.</string>
     <string name="connection_info">Informations de connexion</string>
     <string name="connection_refresh">Rafraichir la connexion</string>
     <string name="connection_info_nothing">En attente de plus d\'informations</string>
