@@ -10,4 +10,5 @@
 
     <string name="camera_settings_zoom_out" translatable="false">-</string>
     <string name="camera_settings_zoom_in" translatable="false">+</string>
+
 </resources>
