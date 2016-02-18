@@ -20,20 +20,16 @@
     <!-- Connection Step Strings -->
 
     <string name="connection_information_message"><![CDATA[Stelle deine Kamera in den
-        <font color="#FF8888">Steuerung mit Smartphone</font> Modus 
+        <b>Steuerung mit Smartphone</b> Modus
         oder verknüpfe sie mit NFC (falls möglich)]]></string>
         
     <string name="connection_close_app">Zum Beenden ein zweites Mal drücken.</string>
     <string name="connection_info">Verbindungsinformation</string>
     <string name="connection_refresh">Verbindung aktualisieren</string>
-    <string name="connection_info_nothing">Warte auf weitere Informationen</string>
-    <string name="connection_info_scan_networks">Durchsuche Netzwerke</string>
-    <string name="connection_info_wifi_not_found">Kein Sony-Kamera-Netzwerk gefunden</string>
-    <string name="connection_info_wifi_connected">Wifi verbunden mit %1$s</string>
-    <string name="connection_info_wifi_connecting">Wifi verbindet mit %1$s</string>
-    <string name="connection_info_wifi_disconnected">Wifi getrennt</string>
-    <string name="connection_info_ok">Verbindung ist aktiv</string>
-    <string name="connection_info_ws_failed">Verbindung zum WebService fehlgeschlagen. Prüfe das Kameramodell.</string>
+    <string name="connection_info_network">Wifi connection</string> <!-- TODO -->
+    <string name="connection_info_network_state">Wifi connection state</string> <!-- TODO -->
+    <string name="connection_info_api">Sony API connection</string> <!-- TODO -->
+    <string name="connection_info_api_state">Sony API connection state</string> <!-- TODO -->
     <string name="connection_choose_network">Netzwerk wählen</string>
     <string name="connection_choose_network_cancel">Abbrechen</string>
     <string name="connection_enter_password">Passwort für Netzwerk %1$s angeben</string>

@@ -3,12 +3,12 @@ package com.thibaudperso.sonycamera.timelapse;
 import android.app.Application;
 
 import com.thibaudperso.sonycamera.io.WifiHandler;
-import com.thibaudperso.sonycamera.sdk.CameraIO;
+import com.thibaudperso.sonycamera.sdk.CameraAPI;
 import com.thibaudperso.sonycamera.sdk.model.DeviceManager;
 
 public class TimelapseApplication extends Application {
 
-	private CameraIO mCameraIO;
+	private CameraAPI mCameraAPI;
 	private DeviceManager mDeviceManager;
 	private WifiHandler mWifiHandler;
 	
@@ -16,14 +16,14 @@ public class TimelapseApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 		
-		mCameraIO = new CameraIO(this);
+		mCameraAPI = new CameraAPI(this);
 		mDeviceManager = new DeviceManager(this);
 		mWifiHandler = new WifiHandler(this);
 	}
 	
 	
-	public CameraIO getCameraIO() {
-		return mCameraIO;
+	public CameraAPI getCameraAPI() {
+		return mCameraAPI;
 	}
 	
 	public WifiHandler getWifiHandler() {

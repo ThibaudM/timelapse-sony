@@ -16,7 +16,7 @@ import org.json.JSONObject;
  * @author Thibaud Michel
  *
  */
-public class CameraIO {
+public class CameraAPI {
 
 	public enum ZoomDirection { IN, OUT }
 	public enum ZoomAction { START, STOP }
@@ -44,7 +44,7 @@ public class CameraIO {
 
 	private CameraWS mCameraWS;
 
-	public CameraIO(Context context) {
+	public CameraAPI(Context context) {
 
 		mCameraWS = new CameraWS(context);
 

@@ -14,20 +14,21 @@
   limitations under the License.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!-- Adds an item to the list. -->
     <item android:id="@+id/action_previous"
         android:title="@string/action_previous"
-        android:showAsAction="ifRoom|withText" />
+        app:showAsAction="ifRoom|withText" />
     
     <item android:id="@+id/action_next"
         android:title="@string/action_next"
-        android:showAsAction="ifRoom|withText" />
+        app:showAsAction="ifRoom|withText" />
     
     <item android:id="@+id/action_keep_display_on"
         android:title="@string/action_keep_display_on"
-        android:showAsAction="never"
+        app:showAsAction="never"
         android:checkable="true" />
 
 </menu>

@@ -3,12 +3,6 @@
 
     <string name="app_name">TimeLapse</string>
 
-    <!-- Units Strings -->
-
-    <string name="seconds">%1$ds</string>
-    <string name="percent1f">%1$.1f%%</string>
-    <string name="percent">%1$d%%</string>
-
 
     <!-- Step Activity Strings -->
     
@@ -26,20 +20,16 @@
     
     <!-- Connection Step Strings -->
 
-    <string name="connection_information_message"><![CDATA[Put your camera in <font color="#FF8888">Ctrl with Smartphone</font> mode 
+    <string name="connection_information_message"><![CDATA[Put your camera in <b>Ctrl with Smartphone</b> mode
         or pair it by NFC (if it\'s possible)]]></string>
         
     <string name="connection_close_app">Press a second time to exit.</string>
     <string name="connection_info">Connection information</string>
     <string name="connection_refresh">Refresh connection</string>
-    <string name="connection_info_nothing">Waiting more information</string>
-    <string name="connection_info_scan_networks">Scanning networks</string>
-    <string name="connection_info_wifi_not_found">No Sony camera network found</string>
-    <string name="connection_info_wifi_connected">Wifi connected to %1$s</string>
-    <string name="connection_info_wifi_connecting">Wifi connecting to %1$s</string>
-    <string name="connection_info_wifi_disconnected">Wifi disconnected</string>
-    <string name="connection_info_ok">Connection is OK</string>
-    <string name="connection_info_ws_failed">Connection to WebService failed. Check your device model.</string>
+    <string name="connection_info_network">Wifi connection</string>
+    <string name="connection_info_network_state">Wifi connection state</string>
+    <string name="connection_info_api">Sony API connection</string>
+    <string name="connection_info_api_state">Sony API connection state</string>
     <string name="connection_choose_network">Choose network</string>
     <string name="connection_choose_network_cancel">Cancel</string>
     <string name="connection_enter_password">Enter password for %1$s network</string>

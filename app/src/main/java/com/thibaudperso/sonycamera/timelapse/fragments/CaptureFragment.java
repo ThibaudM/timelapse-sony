@@ -33,7 +33,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.Volley;
 import com.thibaudperso.sonycamera.R;
-import com.thibaudperso.sonycamera.sdk.CameraIO;
+import com.thibaudperso.sonycamera.sdk.CameraAPI;
 import com.thibaudperso.sonycamera.sdk.TakePictureListener;
 import com.thibaudperso.sonycamera.timelapse.MyCountDownTicks;
 import com.thibaudperso.sonycamera.timelapse.StepFragment;
@@ -51,7 +51,7 @@ public class CaptureFragment extends StepFragment {
 		
 	private CaptureFragmentListener mListener;
 
-	private CameraIO mCameraIO;
+	private CameraAPI mCameraAPI;
 
 	private View rootView;
 	
@@ -89,7 +89,7 @@ public class CaptureFragment extends StepFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		
-		mCameraIO = ((TimelapseApplication) getActivity().getApplication()).getCameraIO();
+		mCameraAPI = ((TimelapseApplication) getActivity().getApplication()).getCameraAPI();
 
 		rootView = inflater.inflate(R.layout.fragment_capture, container, false);
 
@@ -338,7 +338,7 @@ public class CaptureFragment extends StepFragment {
 		 * this is necessary in order to avoid a further takePicture() while the camera
 		 * is still working on the last one
 		 */
-		mCameraIO.takePicture(new TakePictureListener() {
+		mCameraAPI.takePicture(new TakePictureListener() {
 
 			@Override
 			public void onResult(String url) {
@@ -372,7 +372,7 @@ public class CaptureFragment extends StepFragment {
 			}
 
 			@Override
-			public void onError(CameraIO.ResponseCode responseCode, String responseMsg) {
+			public void onError(CameraAPI.ResponseCode responseCode, String responseMsg) {
 				// Had an error, let's see which
 				
 				switch(responseCode){
@@ -380,7 +380,7 @@ public class CaptureFragment extends StepFragment {
 						//shooting not yet finished
 						//await picture and call this listener when finished
 						//(or when again an error occurs)
-						mCameraIO.awaitTakePicture(this);
+						mCameraAPI.awaitTakePicture(this);
 						break;
 					case NOT_AVAILABLE_NOW:
 						//will have to try later for picture shooting

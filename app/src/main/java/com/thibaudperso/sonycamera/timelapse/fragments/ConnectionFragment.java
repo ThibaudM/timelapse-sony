@@ -2,12 +2,13 @@ package com.thibaudperso.sonycamera.timelapse.fragments;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.net.NetworkInfo.State;
+import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,13 +21,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.thibaudperso.sonycamera.R;
 import com.thibaudperso.sonycamera.io.WifiHandler;
 import com.thibaudperso.sonycamera.io.WifiListener;
-import com.thibaudperso.sonycamera.sdk.CameraIO;
+import com.thibaudperso.sonycamera.sdk.CameraAPI;
 import com.thibaudperso.sonycamera.sdk.core.TestConnectionListener;
 import com.thibaudperso.sonycamera.sdk.model.Device;
 import com.thibaudperso.sonycamera.sdk.model.DeviceManager;
@@ -35,350 +37,442 @@ import com.thibaudperso.sonycamera.timelapse.TimelapseApplication;
 
 import java.util.List;
 
-public class ConnectionFragment extends StepFragment implements WifiListener {
+public class ConnectionFragment extends StepFragment {
 
-	private DeviceManager mDeviceManager;
-	private WifiHandler mWifiHandler;
-	private CameraIO mCameraIO;
+    private DeviceManager mDeviceManager;
+    private WifiHandler mWifiHandler;
+    private CameraAPI mCameraAPI;
 
-	private TextView connectionInfoMessage;
+    private AlertDialog alertDialogChooseNetworkConnection;
+    private AlertDialog alertDialogChooseNetworkCreation;
+    private AlertDialog alertDialogAskForPassword;
 
-	private AlertDialog alertDialogChooseNetworkConnection;
-	private AlertDialog alertDialogChooseNetworkCreation;
-	private AlertDialog alertDialogAskForPassword;
+    private ImageView connectionInfoNetworkState, connectionInfoAPIState;
+    private ProgressBar connectionInfoNetworkStateProgress, connectionInfoAPIStateProgress;
 
-	
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-		mDeviceManager = ((TimelapseApplication) getActivity().getApplication()).getDeviceManager();
-		mWifiHandler = ((TimelapseApplication) getActivity().getApplication()).getWifiHandler();
-		mCameraIO = ((TimelapseApplication) getActivity().getApplication()).getCameraIO();
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-	}
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+        mDeviceManager = ((TimelapseApplication) getActivity().getApplication()).getDeviceManager();
+        mWifiHandler = ((TimelapseApplication) getActivity().getApplication()).getWifiHandler();
+        mCameraAPI = ((TimelapseApplication) getActivity().getApplication()).getCameraAPI();
 
-		View viewResult = inflater.inflate(R.layout.fragment_connection, container, false);
+    }
 
-		connectionInfoMessage = (TextView) viewResult.findViewById(R.id.connectionInfoMessage);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
-		/**
-		 * Handle Camera spinner
-		 */
-		final Spinner cameraSpinner = (Spinner) viewResult.findViewById(R.id.connectionCameraSpinner);
+        View viewResult = inflater.inflate(R.layout.fragment_connection, container, false);
 
-		ArrayAdapter<Device> adapter = new ArrayAdapter<>(getActivity(),
-				android.R.layout.simple_list_item_1, mDeviceManager.getDevices());
-		adapter.sort(Device.COMPARE_BY_DEVICEMODEL);
-		cameraSpinner.setAdapter(adapter);
+        connectionInfoNetworkState = (ImageView) viewResult.findViewById(R.id.connectionInfoNetworkState);
+        connectionInfoAPIState = (ImageView) viewResult.findViewById(R.id.connectionInfoAPIState);
+        connectionInfoNetworkStateProgress = (ProgressBar) viewResult.findViewById(R.id.connectionInfoNetworkStateProgress);
+        connectionInfoAPIStateProgress = (ProgressBar) viewResult.findViewById(R.id.connectionInfoAPIStateProgress);
+        ((TextView) viewResult.findViewById(R.id.connectionInfoMessage)).setText(
+                Html.fromHtml(getString(R.string.connection_information_message)));
 
-		int defaultPosition = adapter.getPosition(mDeviceManager.getSelectedDevice());
-		cameraSpinner.setSelection(defaultPosition);
+        /**
+         * Handle Camera spinner
+         */
+        final Spinner cameraSpinner = (Spinner) viewResult.findViewById(R.id.connectionCameraSpinner);
 
-		cameraSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+        ArrayAdapter<Device> adapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_list_item_1, mDeviceManager.getDevices());
+        adapter.sort(Device.COMPARE_BY_DEVICEMODEL);
+        cameraSpinner.setAdapter(adapter);
 
-			@Override
-			public void onItemSelected(AdapterView<?> arg0, View view,
-					int position, long id) {
-				mDeviceManager.setSelectedDevice((Device) cameraSpinner.getItemAtPosition(position));				
-				checkForConnection();
-			}
+        int defaultPosition = adapter.getPosition(mDeviceManager.getSelectedDevice());
+        cameraSpinner.setSelection(defaultPosition);
 
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {}
-		});
+        cameraSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
+            @Override
+            public void onItemSelected(AdapterView<?> arg0, View view,
+                                       int position, long id) {
+                mDeviceManager.setSelectedDevice((Device) cameraSpinner.getItemAtPosition(position));
+                checkAPIConnection();
+            }
 
-		/**
-		 * Handle Camera Refresh
-		 */
-
-		ImageView deviceConnectionRefresh = (ImageView) viewResult.findViewById(R.id.connectionInfoRefresh);
-		deviceConnectionRefresh.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				checkForConnection();
-			}
-		});
-
-		return viewResult;
-	}
-
-	
-	private void checkForConnection() {
-		setStepCompleted(false);
-		if(mWifiHandler != null) {
-			mWifiHandler.checkForConnection();
-		}
-	}
-
-	@Override
-	public void onEnterFragment() {
-		super.onEnterFragment();
-
-		if(mWifiHandler != null) {
-			mWifiHandler.addListener(this);
-		}
-		if(mWifiHandler.getCameraWifiState() == State.DISCONNECTED) {
-			checkForConnection();			
-		}
-	}
-
-	@Override
-	public void onExitFragment() {
-		super.onExitFragment();
-
-		if(mWifiHandler != null) {
-			mWifiHandler.removeListener(this);
-		}
-
-		if(alertDialogChooseNetworkConnection != null) {
-			alertDialogChooseNetworkConnection.cancel();
-		}
-		if(alertDialogChooseNetworkCreation != null) {
-			alertDialogChooseNetworkCreation.cancel();
-		}
-		if(alertDialogAskForPassword != null) {
-			alertDialogAskForPassword.cancel();
-		}
-
-	}
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+            }
+        });
 
 
-	/*
-	 * Handle network information 
-	 */	
+        /**
+         * Handle Camera Refresh
+         */
 
-	private void setConnectionInfoMessage(int resId, Object... params) {
-		if(this.mIsActive) {
-			connectionInfoMessage.setText(String.format(getString(resId), params));
-		}
-	}
+        ImageView deviceConnectionRefresh = (ImageView) viewResult.findViewById(R.id.connectionInfoRefresh);
+        deviceConnectionRefresh.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                refreshConnection();
+            }
+        });
+
+        return viewResult;
+    }
 
 
 
-	@Override
-	public void onWifiConnecting(String ssid) {
-		setConnectionInfoMessage(R.string.connection_info_wifi_connecting, ssid);
-	}
+    @Override
+    public void onEnterFragment() {
+        super.onEnterFragment();
 
-	@Override
-	public void onWifiConnected(String ssid) {
-		setConnectionInfoMessage(R.string.connection_info_wifi_connected, ssid);
-		//before checking connection: give the camera some time to adjust to the new connection
-	    android.os.Handler handler = new android.os.Handler(); 
-	    handler.postDelayed(new Runnable() {
-			public void run() {
-				checkWSConnection();
-			}
-		}, 300);
-	}
+        if (mWifiHandler != null) {
+            mWifiHandler.addListener(mWifiListener);
+        }
 
-	@Override
-	public void onWifiDisconnected() {
-		setConnectionInfoMessage(R.string.connection_info_wifi_disconnected);
-		setStepCompleted(false);
-	}
+        refreshConnection();
+    }
 
-	@Override
-	public void onWifiStartScan() {
-		setConnectionInfoMessage(R.string.connection_info_scan_networks);		
-	}
-	
-	@Override
-	public void onWifiScanFinished(List<ScanResult> sonyCameraScanResults,
-			List<WifiConfiguration> sonyCameraWifiConfiguration) {
+    @Override
+    public void onExitFragment() {
+        super.onExitFragment();
 
-		/*
-		 * No Sony Camera network found in scan 
-		 */
-		if(sonyCameraScanResults.size() == 0) {
-			setConnectionInfoMessage(R.string.connection_info_wifi_not_found);
-		}
+        if (mWifiHandler != null) {
+            mWifiHandler.removeListener(mWifiListener);
+        }
 
-		/*
-		 * No Sony Camera network registered on this phone but we found only one in scan 
-		 */
-		else if(sonyCameraWifiConfiguration.size() == 0 && sonyCameraScanResults.size() == 1) {
-			askForNetworkPasswordThenConnect(sonyCameraScanResults.get(0));
-		}
+        if (alertDialogChooseNetworkConnection != null) {
+            alertDialogChooseNetworkConnection.cancel();
+        }
+        if (alertDialogChooseNetworkCreation != null) {
+            alertDialogChooseNetworkCreation.cancel();
+        }
+        if (alertDialogAskForPassword != null) {
+            alertDialogAskForPassword.cancel();
+        }
 
-		/*
-		 * No Sony Camera network registered on this phone but we found more than one in scan 
-		 */
-		else if(sonyCameraWifiConfiguration.size() == 0) {
-			selectNetworkForCreation(sonyCameraScanResults);
-		}
+    }
 
-		/*
-		 * There is only one Sony Camera known network connected
-		 */
-		else if(sonyCameraWifiConfiguration.size() == 1) {
-			mWifiHandler.connectToNetworkId(sonyCameraWifiConfiguration.get(0).networkId);
-		}
 
-		/*
-		 * There is more than one Sony Camera known network connected
-		 */
-		else {
-			selectNetworkForConnection(sonyCameraWifiConfiguration);
-		}
 
-	}
+    private void refreshConnection() {
 
-	private void checkWSConnection() {
+        setStepCompleted(false);
 
-		mCameraIO.testConnection(new TestConnectionListener() {
+        if(mWifiHandler == null) {
+            wifiError();
+            apiError();
+            return;
+        }
 
-			@Override
-			public void cameraConnected(final boolean isConnected) {
-
-				if(isConnected && mDeviceManager.getSelectedDevice() != null) {
-					if(mDeviceManager.getSelectedDevice().needInit()){
-						mCameraIO.initWebService(null);
-					}
-					mCameraIO.setShootMode("still");
-				}
-
-				if(getActivity() == null) {
-					return;
-				}
-
-				getActivity().runOnUiThread(new Runnable() {
-
-					@Override
-					public void run() {
-
-						setStepCompleted(isConnected);
-
-						setConnectionInfoMessage(isConnected ? R.string.connection_info_ok : R.string.connection_info_ws_failed);
-					}
-				});
-			}
-		});
-	}
-
+        if(mWifiHandler.getWifiState() != NetworkInfo.State.CONNECTED) {
+            wifiError();
+            mWifiHandler.checkForConnection();
+        }
+        else {
+            wifiOk();
+            apiError();
+            checkAPIConnection();
+        }
+    }
 
 
 
 	/*
-	 * Handle network prompts 
+     * Wifi
 	 */
 
-	private void askForNetworkPasswordThenConnect(final ScanResult scanResult) {
-
-		final EditText input = new EditText(getActivity());
-
-		alertDialogAskForPassword = new AlertDialog.Builder(getActivity())
-		.setTitle(String.format(getString(R.string.connection_enter_password), scanResult.SSID))
-		.setView(input)
-		.setPositiveButton(R.string.connection_enter_password_ok, 
-				new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-
-				String value = input.getText().toString(); 
-				mWifiHandler.createIfNeededThenConnectToWifi(scanResult.SSID, value);
-
-			}
-		})
-		.setNegativeButton(R.string.connection_enter_password_cancel, 
-				new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-				// Do nothing.
-			}
-		}).show();
-
-	}
-
-	private void selectNetworkForCreation(final List<ScanResult> scanResults) {
-
-		final ListView listView = new ListView(getActivity());
-
-		ListAdapter adapter = new ArrayAdapter<ScanResult>(getActivity(), 
-				android.R.layout.simple_list_item_1, scanResults) {
-
-			public View getView(int position, View convertView, ViewGroup parent) {
-
-				View view = super.getView(position, convertView, parent);
-				TextView textView = (TextView) view.findViewById(android.R.id.text1);
-				textView.setText((getItem(position)).SSID);
-				return textView;
-			}
-		};
-
-		listView.setAdapter(adapter);
-		listView.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> parent, final View view,
-					int position, long id) {
-
-				ScanResult scanResult = (ScanResult) parent.getItemAtPosition(position);
-				askForNetworkPasswordThenConnect(scanResult);
-			}
-		});
-
-		alertDialogChooseNetworkCreation = new AlertDialog.Builder(getActivity())
-		.setTitle(R.string.connection_choose_network)
-		.setView(listView)
-		.setNegativeButton(R.string.connection_choose_network_cancel, 
-				new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-				// Do nothing.
-			}
-		}).show();
-
-	}
-
-	private void selectNetworkForConnection(final List<WifiConfiguration> wifiConfigurations) {
-
-		final ListView listView = new ListView(getActivity());
-
-		ListAdapter adapter = new ArrayAdapter<WifiConfiguration>(getActivity(), 
-				android.R.layout.simple_list_item_1, wifiConfigurations) {
-
-			public View getView(int position, View convertView, ViewGroup parent) {
-
-				View view = super.getView(position, convertView, parent);
-				TextView textView = (TextView) view.findViewById(android.R.id.text1);
-				textView.setText((getItem(position)).SSID);
-				return textView;
-			}
-		};
-
-		listView.setAdapter(adapter);
-		listView.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> parent, final View view,
-					int position, long id) {
-
-				WifiConfiguration wc = (WifiConfiguration) parent.getItemAtPosition(position);
-				mWifiHandler.connectToNetworkId(wc.networkId);
-			}
-		});
-
-		alertDialogChooseNetworkConnection = new AlertDialog.Builder(getActivity())
-		.setTitle(R.string.connection_choose_network)
-		.setView(listView)
-		.setNegativeButton(R.string.connection_choose_network_cancel, 
-				new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-				// Do nothing.
-			}
-		}).show();
-
-	}
 
 
-	@Override
-	public Spanned getInformation() {
-		return Html.fromHtml(getString(R.string.connection_information_message));
-	}
+    private WifiListener mWifiListener = new WifiListener() {
+        @Override
+        public void onWifiConnecting(String ssid) {}
+
+        @Override
+        public void onWifiConnected(String ssid) {
+            wifiOk();
+            apiProgress();
+            //before checking connection: give the camera some time to adjust to the new connection
+            android.os.Handler handler = new android.os.Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    checkAPIConnection();
+                }
+            }, 300);
+        }
+
+        @Override
+        public void onWifiDisconnected() {
+            wifiError();
+        }
+
+        @Override
+        public void onWifiStartScan() {
+            wifiProgress();
+        }
+
+        @Override
+        public void onWifiScanFinished(List<ScanResult> sonyCameraScanResults,
+                                       List<WifiConfiguration> sonyCameraWifiConfiguration) {
+
+            /*
+             * No Sony Camera network found in scan
+             */
+            if (sonyCameraScanResults.size() == 0) {
+                wifiError();
+            }
+
+            /*
+             * No Sony Camera network registered on this phone but we found only one in scan
+             */
+            else if (sonyCameraWifiConfiguration.size() == 0 && sonyCameraScanResults.size() == 1) {
+                askForNetworkPasswordThenConnect(sonyCameraScanResults.get(0));
+            }
+
+            /*
+             * No Sony Camera network registered on this phone but we found more than one in scan
+             */
+            else if (sonyCameraWifiConfiguration.size() == 0) {
+                selectNetworkForCreation(sonyCameraScanResults);
+            }
+
+            /*
+             * There is only one Sony Camera known network connected
+             */
+            else if (sonyCameraWifiConfiguration.size() == 1) {
+                mWifiHandler.connectToNetworkId(sonyCameraWifiConfiguration.get(0).networkId);
+            }
+
+            /*
+             * There is more than one Sony Camera known network connected
+             */
+            else {
+                selectNetworkForConnection(sonyCameraWifiConfiguration);
+            }
+
+        }
+    };
+
+
+
+	/*
+	 * Handle network prompts
+	 */
+
+    private void askForNetworkPasswordThenConnect(final ScanResult scanResult) {
+
+        final EditText input = new EditText(getActivity());
+        input.setGravity(Gravity.CENTER_HORIZONTAL);
+        alertDialogAskForPassword = new AlertDialog.Builder(getActivity())
+                .setTitle(String.format(getString(R.string.connection_enter_password), scanResult.SSID))
+                .setView(input)
+                .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        wifiError();
+                    }
+                })
+                .setPositiveButton(R.string.connection_enter_password_ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                String value = input.getText().toString();
+                                mWifiHandler.createIfNeededThenConnectToWifi(scanResult.SSID, value);
+
+                            }
+                        })
+                .setNegativeButton(R.string.connection_enter_password_cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                wifiError();
+                            }
+                        }).show();
+
+    }
+
+    private void selectNetworkForCreation(final List<ScanResult> scanResults) {
+
+        final ListView listView = new ListView(getActivity());
+
+        ListAdapter adapter = new ArrayAdapter<ScanResult>(getActivity(),
+                android.R.layout.simple_list_item_1, scanResults) {
+
+            public View getView(int position, View convertView, ViewGroup parent) {
+
+                View view = super.getView(position, convertView, parent);
+                TextView textView = (TextView) view.findViewById(android.R.id.text1);
+                textView.setText((getItem(position)).SSID);
+                return textView;
+            }
+        };
+
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, final View view,
+                                    int position, long id) {
+
+                ScanResult scanResult = (ScanResult) parent.getItemAtPosition(position);
+                askForNetworkPasswordThenConnect(scanResult);
+            }
+        });
+
+        alertDialogChooseNetworkCreation = new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.connection_choose_network)
+                .setView(listView)
+                .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        wifiError();
+                    }
+                })
+                .setNegativeButton(R.string.connection_choose_network_cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                wifiError();
+                            }
+                        }).show();
+
+    }
+
+    private void selectNetworkForConnection(final List<WifiConfiguration> wifiConfigurations) {
+
+        final ListView listView = new ListView(getActivity());
+
+        ListAdapter adapter = new ArrayAdapter<WifiConfiguration>(getActivity(),
+                android.R.layout.simple_list_item_1, wifiConfigurations) {
+
+            public View getView(int position, View convertView, ViewGroup parent) {
+
+                View view = super.getView(position, convertView, parent);
+                TextView textView = (TextView) view.findViewById(android.R.id.text1);
+                textView.setText((getItem(position)).SSID);
+                return textView;
+            }
+        };
+
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, final View view,
+                                    int position, long id) {
+
+                WifiConfiguration wc = (WifiConfiguration) parent.getItemAtPosition(position);
+                mWifiHandler.connectToNetworkId(wc.networkId);
+            }
+        });
+
+        alertDialogChooseNetworkConnection = new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.connection_choose_network)
+                .setView(listView)
+                .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        wifiError();
+                    }
+                })
+                .setNegativeButton(R.string.connection_choose_network_cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                wifiError();
+                            }
+                        }).show();
+
+    }
+
+
+    private void wifiProgress() {
+        apiError();
+        connectionInfoNetworkState.setVisibility(View.GONE);
+        connectionInfoNetworkStateProgress.setVisibility(View.VISIBLE);
+    }
+
+    private void wifiError() {
+        apiError();
+        connectionInfoNetworkStateProgress.setVisibility(View.GONE);
+        connectionInfoNetworkState.setVisibility(View.VISIBLE);
+        connectionInfoNetworkState.setImageResource(R.drawable.error);
+        setStepCompleted(false);
+    }
+
+    private void wifiOk() {
+        connectionInfoNetworkStateProgress.setVisibility(View.GONE);
+        connectionInfoNetworkState.setVisibility(View.VISIBLE);
+        connectionInfoNetworkState.setImageResource(R.drawable.ok);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private void checkAPIConnection() {
+
+        apiProgress();
+
+        mCameraAPI.testConnection(new TestConnectionListener() {
+
+            @Override
+            public void cameraConnected(final boolean isConnected) {
+
+                if (isConnected) {
+                    mCameraAPI.initWebService(null);
+                    mCameraAPI.setShootMode("still");
+                }
+
+                if (getActivity() == null) {
+                    return;
+                }
+
+                getActivity().runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        setStepCompleted(isConnected);
+                        if(isConnected)
+                            apiOk();
+                        else
+                            apiError();
+                    }
+                });
+            }
+        });
+    }
+
+    private void apiProgress() {
+        wifiOk();
+        connectionInfoAPIState.setVisibility(View.GONE);
+        connectionInfoAPIStateProgress.setVisibility(View.VISIBLE);
+    }
+
+    private void apiError() {
+        connectionInfoAPIStateProgress.setVisibility(View.GONE);
+        connectionInfoAPIState.setVisibility(View.VISIBLE);
+        connectionInfoAPIState.setImageResource(R.drawable.error);
+    }
+
+    private void apiOk() {
+        wifiOk();
+        connectionInfoAPIStateProgress.setVisibility(View.GONE);
+        connectionInfoAPIState.setVisibility(View.VISIBLE);
+        connectionInfoAPIState.setImageResource(R.drawable.ok);
+    }
+
+
+
+
+
+
+    @Override
+    public Spanned getInformation() {
+        return Html.fromHtml(getString(R.string.connection_information_message));
+    }
 
 }

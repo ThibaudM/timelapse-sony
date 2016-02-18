@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-     <color name="customBlue">#ff33b5e5</color>
+
+     <color name="primary">#2196F3</color>
+     <color name="primary_dark">#1976D2</color>
+     <color name="accent">#2979FF</color>
+
+     <color name="toolbar_text">#FFFFFF</color>
+     <color name="background">#FFFFFF</color>
+
+     <color name="customBlue">@color/primary</color>
      <color name="errorRed">#FF8888</color>
 
 </resources>

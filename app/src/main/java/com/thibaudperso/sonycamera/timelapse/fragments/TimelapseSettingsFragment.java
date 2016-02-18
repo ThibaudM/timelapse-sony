@@ -18,7 +18,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.thibaudperso.sonycamera.R;
-import com.thibaudperso.sonycamera.sdk.CameraIO;
+import com.thibaudperso.sonycamera.sdk.CameraAPI;
 import com.thibaudperso.sonycamera.timelapse.StepFragment;
 
 public class TimelapseSettingsFragment extends StepFragment {
@@ -158,8 +158,8 @@ public class TimelapseSettingsFragment extends StepFragment {
 				intervalTime.setError(getString(R.string.timelapse_settings_positive_integer_error));
 				return false;
 			}
-			if(value < CameraIO.MIN_TIME_BETWEEN_CAPTURE) {
-				intervalTime.setError(getString(R.string.timelapse_settings_minimum_time_error, CameraIO.MIN_TIME_BETWEEN_CAPTURE));
+			if(value < CameraAPI.MIN_TIME_BETWEEN_CAPTURE) {
+				intervalTime.setError(getString(R.string.timelapse_settings_minimum_time_error, CameraAPI.MIN_TIME_BETWEEN_CAPTURE));
 				return false;
 			}
 		} catch(NumberFormatException e) {

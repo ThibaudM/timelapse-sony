@@ -12,6 +12,7 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,9 @@ public class WifiHandler {
 	private WifiManager mWifiManager;
 	private boolean wasWifiDisabled;
 	private WifiInfo lastWifiConnected;
-	private NetworkInfo.State cameraWifiState;
+
+	private NetworkInfo.State wifiState;
+	private boolean apiState;
 
 	private List<WifiListener> listeners;
 
@@ -34,11 +37,12 @@ public class WifiHandler {
 		mWifiManager.setWifiEnabled(true);
 		listeners = new ArrayList<>();
 
-		cameraWifiState = State.UNKNOWN;
+		wifiState = State.UNKNOWN;
+		apiState = false;
 	}
 
 	public void checkForConnection() {
-		cameraWifiState = State.DISCONNECTED;
+		wifiState = State.UNKNOWN;
 		WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
 
 		if(wifiInfo != null) {
@@ -101,7 +105,7 @@ public class WifiHandler {
 				continue;
 			}
 
-			cameraWifiState = State.CONNECTING;
+			wifiState = State.CONNECTING;
 
 			WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
 			if(wifiInfo != null) {
@@ -183,7 +187,8 @@ public class WifiHandler {
 	}
 
 	private void connected(String ssid) {
-		cameraWifiState = State.CONNECTED;
+
+		wifiState = State.CONNECTED;
 
 		// Workaround when there is a data connection more than the wifi one
 		// http://stackoverflow.com/questions/33237074/request-over-wifi-on-android-m
@@ -204,7 +209,7 @@ public class WifiHandler {
 	}
 
 	private void disconnected() {
-		cameraWifiState = State.DISCONNECTED;
+		wifiState = State.DISCONNECTED;
 		for(WifiListener listener : listeners) {
 			listener.onWifiDisconnected();
 		}
@@ -225,7 +230,7 @@ public class WifiHandler {
 
 			NetworkInfo.State state = networkInfo.getState();
 
-			if(cameraWifiState == State.CONNECTED && state == State.DISCONNECTED) {
+			if(wifiState == State.CONNECTED && state == State.DISCONNECTED) {
 
 				disconnected();
 
@@ -269,6 +274,8 @@ public class WifiHandler {
 				sonyCameraWifiConfiguration.add(wc);
 			}
 
+			Log.v("DEBUG", "Scan finished with: "+sonyCameraScanResults.size());
+
 			for(WifiListener listener : listeners) {
 				listener.onWifiScanFinished(sonyCameraScanResults, sonyCameraWifiConfiguration);
 			}
@@ -291,8 +298,8 @@ public class WifiHandler {
 		} catch (IllegalArgumentException ignored) { }
 	}
 
-	public State getCameraWifiState() {
-		return cameraWifiState;
+	public State getWifiState() {
+		return wifiState;
 	}
 
 

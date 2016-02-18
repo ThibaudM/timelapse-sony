@@ -19,20 +19,16 @@
     
     <!-- Connection Step Strings -->
     
-    <string name="connection_information_message"><![CDATA[Mettez votre appareil dans le mode <font color="#FF8888">Contrôl. via smartph.</font> 
+    <string name="connection_information_message"><![CDATA[Mettez votre appareil photo dans le mode <b>Contrôl. via smartph.</b>
         ou pairrez le par NFC (si c\'est possible)]]></string>
     
     <string name="connection_close_app">Pressez une seconde fois pour sortir.</string>
     <string name="connection_info">Informations de connexion</string>
     <string name="connection_refresh">Rafraichir la connexion</string>
-    <string name="connection_info_nothing">En attente de plus d\'informations</string>
-    <string name="connection_info_scan_networks">Analyse des réseaux</string>
-    <string name="connection_info_wifi_not_found">Pas de réseau Wifi d\'appareil photo Sony trouvé</string>
-    <string name="connection_info_wifi_connected">Connecté au wifi %1$s</string>
-    <string name="connection_info_wifi_connecting">En cours de connexion au wifi %1$s</string>
-    <string name="connection_info_wifi_disconnected">Réseau wifi de l\'appareil deconnecté</string>
-    <string name="connection_info_ok">La connexion est bonne</string>
-    <string name="connection_info_ws_failed">La connexion au WebService a échoué. Vérifiez le modèle de votre appareil.</string>
+    <string name="connection_info_network">Connection au réseau Wifi</string>
+    <string name="connection_info_network_state">Etat du réseau Wifi</string>
+    <string name="connection_info_api">Connection à l\'API Sony</string>
+    <string name="connection_info_api_state">Etat de la connexion à l\'API</string>
     <string name="connection_choose_network">Choisissez un réseau</string>
     <string name="connection_choose_network_cancel">Annuler</string>
     <string name="connection_enter_password">Entrez un mot de passe pour le réseau %1$s</string>

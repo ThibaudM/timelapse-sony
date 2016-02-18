@@ -15,9 +15,9 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import com.thibaudperso.sonycamera.R;
-import com.thibaudperso.sonycamera.sdk.CameraIO;
-import com.thibaudperso.sonycamera.sdk.CameraIO.ZoomAction;
-import com.thibaudperso.sonycamera.sdk.CameraIO.ZoomDirection;
+import com.thibaudperso.sonycamera.sdk.CameraAPI;
+import com.thibaudperso.sonycamera.sdk.CameraAPI.ZoomAction;
+import com.thibaudperso.sonycamera.sdk.CameraAPI.ZoomDirection;
 import com.thibaudperso.sonycamera.sdk.StartLiveviewListener;
 import com.thibaudperso.sonycamera.sdk.TakePictureListener;
 import com.thibaudperso.sonycamera.timelapse.StepFragment;
@@ -28,7 +28,7 @@ public class CameraSettingsFragment extends StepFragment {
 
 	private final static int TAKE_PICTURE_ACTIVITY_RESULT = 0x1;
 
-	private CameraIO mCameraIO;
+	private CameraAPI mCameraAPI;
 	
 	private SimpleStreamSurfaceView liveviewSurfaceView;
 
@@ -37,7 +37,7 @@ public class CameraSettingsFragment extends StepFragment {
 			Bundle savedInstanceState) {
 		
 		
-		mCameraIO = ((TimelapseApplication) getActivity().getApplication()).getCameraIO();
+		mCameraAPI = ((TimelapseApplication) getActivity().getApplication()).getCameraAPI();
 
 		View viewResult = inflater.inflate(R.layout.fragment_camera_settings, container, false);
 		
@@ -51,7 +51,7 @@ public class CameraSettingsFragment extends StepFragment {
 
             @Override
             public void onClick(View v) {
-            	mCameraIO.actZoom(ZoomDirection.IN);
+            	mCameraAPI.actZoom(ZoomDirection.IN);
             }
         });
 
@@ -59,7 +59,7 @@ public class CameraSettingsFragment extends StepFragment {
 
             @Override
             public void onClick(View v) {
-            	mCameraIO.actZoom(ZoomDirection.OUT);
+            	mCameraAPI.actZoom(ZoomDirection.OUT);
             }
         });
 
@@ -67,7 +67,7 @@ public class CameraSettingsFragment extends StepFragment {
 
             @Override
             public boolean onLongClick(View arg0) {
-            	mCameraIO.actZoom(ZoomDirection.IN, ZoomAction.START);
+            	mCameraAPI.actZoom(ZoomDirection.IN, ZoomAction.START);
                 return true;
             }
         });
@@ -76,7 +76,7 @@ public class CameraSettingsFragment extends StepFragment {
 
             @Override
             public boolean onLongClick(View arg0) {
-            	mCameraIO.actZoom(ZoomDirection.OUT, ZoomAction.START);
+            	mCameraAPI.actZoom(ZoomDirection.OUT, ZoomAction.START);
                 return true;
             }
         });
@@ -90,7 +90,7 @@ public class CameraSettingsFragment extends StepFragment {
 
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     if (System.currentTimeMillis() - downTime > 500) {
-                    	mCameraIO.actZoom(ZoomDirection.IN, ZoomAction.STOP);
+                    	mCameraAPI.actZoom(ZoomDirection.IN, ZoomAction.STOP);
                     }
                 }
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -109,7 +109,7 @@ public class CameraSettingsFragment extends StepFragment {
 
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     if (System.currentTimeMillis() - downTime > 500) {
-                    	mCameraIO.actZoom(ZoomDirection.OUT, ZoomAction.STOP);
+                    	mCameraAPI.actZoom(ZoomDirection.OUT, ZoomAction.STOP);
                     }
                 }
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -124,7 +124,7 @@ public class CameraSettingsFragment extends StepFragment {
 			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mCameraIO.setFlash(isChecked);
+				mCameraAPI.setFlash(isChecked);
 			}
 		});
 		
@@ -133,13 +133,13 @@ public class CameraSettingsFragment extends StepFragment {
 			
 			@Override
 			public void onClick(View v) {
-				mCameraIO.stopLiveView();
-				mCameraIO.takePicture(new TakePictureListener() {
+				mCameraAPI.stopLiveView();
+				mCameraAPI.takePicture(new TakePictureListener() {
 					
 					@Override
 					public void onResult(String url) {
 						
-						mCameraIO.startLiveView(null);						
+						mCameraAPI.startLiveView(null);
 						
 						Intent intent = new Intent();
 						intent.setAction(android.content.Intent.ACTION_VIEW);
@@ -149,7 +149,7 @@ public class CameraSettingsFragment extends StepFragment {
 					}
 					
 					@Override
-					public void onError(CameraIO.ResponseCode responseCode, String responseMsg) {
+					public void onError(CameraAPI.ResponseCode responseCode, String responseMsg) {
 						//TODO
 					}
 				});	
@@ -199,11 +199,11 @@ public class CameraSettingsFragment extends StepFragment {
 
 	private void startLiveView() {
 
-		if(liveviewSurfaceView.isStarted() && mCameraIO != null) {
+		if(liveviewSurfaceView.isStarted() && mCameraAPI != null) {
 			return;
 		}
 
-		mCameraIO.startLiveView(new StartLiveviewListener() {
+		mCameraAPI.startLiveView(new StartLiveviewListener() {
 			@Override
 			public void onResult(String liveviewUrl) {
 				liveviewSurfaceView.start(liveviewUrl);

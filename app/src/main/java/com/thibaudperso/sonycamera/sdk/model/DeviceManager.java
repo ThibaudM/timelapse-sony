@@ -37,7 +37,7 @@ public class DeviceManager {
 		for(Device device : mDevicesList) {
 			if(device.getId() == currentCameraId) {
 				mSelectedDevice = device;
-				mApplication.getCameraIO().setDevice(device);
+				mApplication.getCameraAPI().setDevice(device);
 			}
 		}
 		
@@ -62,7 +62,7 @@ public class DeviceManager {
 				
 				mSelectedDevice = device;
 				
-				mApplication.getCameraIO().setDevice(device);
+				mApplication.getCameraAPI().setDevice(device);
 
 				return;
 			}
