@@ -70,4 +70,29 @@
         <model>HDR-PJ530</model>
         <webservice>http://10.0.0.1:10000/sony/camera</webservice>
     </camera>
+    <camera needInit="true">
+        <id>15</id>
+        <model>FDR-X1000V</model>
+        <webservice>http://192.168.122.1:8080/sony/camera</webservice>
+    </camera>
+    <camera needInit="true">
+        <id>16</id>
+        <model>DSC-HX60</model>
+        <webservice>http://192.168.122.1:8080/sony/camera</webservice>
+    </camera>
+    <camera needInit="true">
+        <id>17</id>
+        <model>DSC-HX90V</model>
+        <webservice>http://192.168.122.1:8080/sony/camera</webservice>
+    </camera>
+    <camera needInit="true">
+        <id>18</id>
+        <model>FDR-AX100</model>
+        <webservice>http://10.0.0.1:10000/sony/camera</webservice>
+    </camera>
+    <camera needInit="true">
+        <id>19</id>
+        <model>DSC-WX350</model>
+        <webservice>http://10.0.0.1:10000/sony/camera</webservice>
+    </camera>
 </cameras>

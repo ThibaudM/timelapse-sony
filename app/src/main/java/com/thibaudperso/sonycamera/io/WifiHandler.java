@@ -1,9 +1,11 @@
 package com.thibaudperso.sonycamera.io;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
@@ -12,6 +14,7 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.support.v4.content.ContextCompat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,12 +54,19 @@ public class WifiHandler {
 			}
 		}
 
-		for(WifiListener listener : listeners) {
-			listener.onWifiStartScan();
-		}
+		if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION)
+				== PackageManager.PERMISSION_GRANTED) {
 
-		mContext.registerReceiver(scanResultsBroadcastReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));	
-		mWifiManager.startScan();
+			mContext.registerReceiver(scanResultsBroadcastReceiver,
+					new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+
+
+			for(WifiListener listener : listeners) {
+				listener.onWifiStartScan();
+			}
+
+			mWifiManager.startScan();
+		}
 
 	}
 
