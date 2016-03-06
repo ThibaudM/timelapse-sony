@@ -1,10 +1,10 @@
 Timelapse - Sony Camera
-===================
+=======================
 
 Want [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=LFFFQZD9UNKRC&lc=FR&item_name=Thibaud%20Michel&item_number=1&currency_code=EUR&bn=PP-DonationsBF%3abtn_donate_LG%2egif%3aNonHosted)?  
 
 Project type: **Android**  
-Current version: **2.0.3**  
+Current version: **2.0.4**  
 Google Play store link: https://play.google.com/store/apps/details?id=com.thibaudperso.sonycamera  
 
 
@@ -20,7 +20,7 @@ You just need to:
 
 
 Frequently Asked Questions
-----------
+--------------------------
 
 #### Is this app works with my camera?
 Is your camera has a Wifi connection ? If not this app is not compatible.
@@ -49,10 +49,11 @@ Cameras list
 ------------
 
 #### Working Devices
-
 * A7 (α7)
-* DSC-HX50V
 * DSC-HX400V
+* DSC-HX50V
+* DSC-HX60
+* DSC-HX90V
 * DSC-QX10 (Read [this](https://us.en.kb.sony.com/app/answers/detail/a_id/43716/c/65,66/p/40096,90706,90707/) to know where pictures are saved)
 * DSC-QX30
 * DSC-QX100
@@ -60,6 +61,8 @@ Cameras list
 * DSC-RX100M2 (known issue with short delays)
 * DSC-RX100M3
 * DSC-WX80
+* DSC-WX350
+* FDR-AX100
 * FDR-X1000V
 * ILCE-5100 (α5100)
 * ILCE-6000 (α6000)
@@ -70,16 +73,12 @@ Cameras list
 #### Not tested devices
 * ILCE-5000 (α5000)
 * ILCA-77M2 (α77 II)
-* DSC-WX350
 * DSC-WX220
 * DSC-WX220B
 * DSC-HX50
-* DSC-HX60
 * DSC-HX60V
 * DSC-HX90
-* DSC-HX90V
 * DSC-QX1
-* FDR-AX100
 * FDR-AX100E
 * HDR-AS20
 * HDR-AS100V
