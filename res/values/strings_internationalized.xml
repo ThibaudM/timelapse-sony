@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="camera_settings_zoom_out">-</string>
-    <string name="camera_settings_zoom_in">+</string>
-</resources>

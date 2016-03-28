@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">TimeLapse</string>
+    
+    <!-- Step Activity Strings -->
+    
+    <string name="action_previous">Précédent</string>
+    <string name="action_next">Suivant</string>
+    <string name="action_start">Commencer</string>
+    <string name="action_stop">Arrêter</string>
+    <string name="action_finish">Quitter</string>
+    <string name="action_keep_display_on">Garder l\'écran activé</string>
+    
+    <string name="information_button_description">Plus d\'informations</string>
+    
+    <string name="connection_nfc_error">Un problème est survenu lors du pairage du NFC, merci de rééssayer</string>
+    
+    
+    <!-- Connection Step Strings -->
+    
+    <string name="connection_information_message"><![CDATA[Mettez votre appareil dans le mode <font color="#FF8888">Contrôl. via smartph.</font> 
+        ou pairrez le par NFC (si c\'est possible)]]></string>
+    
+    <string name="connection_close_app">Pressez une seconde fois pour sortir.</string>
+    <string name="connection_info">Informations de connexion</string>
+    <string name="connection_refresh">Rafraichir la connexion</string>
+    <string name="connection_info_nothing">En attente de plus d\'informations</string>
+    <string name="connection_info_scan_networks">Analyse des réseaux</string>
+    <string name="connection_info_wifi_not_found">Pas de réseau Wifi d\'appareil photo Sony trouvé</string>
+    <string name="connection_info_wifi_connected">Connecté au wifi %1$s</string>
+    <string name="connection_info_wifi_connecting">En cours de connexion au wifi %1$s</string>
+    <string name="connection_info_wifi_disconnected">Réseau wifi de l\'appareil deconnecté</string>
+    <string name="connection_info_ok">La connexion est bonne</string>
+    <string name="connection_info_ws_failed">La connexion au WebService a échoué. Vérifiez le modèle de votre appareil.</string>
+    <string name="connection_choose_network">Choisissez un réseau</string>
+    <string name="connection_choose_network_cancel">Annuler</string>
+    <string name="connection_enter_password">Entrez un mot de passe pour le réseau %1$s</string>
+    <string name="connection_enter_password_ok">Rejoindre</string>
+    <string name="connection_enter_password_cancel">Annuler</string>
+    
+    <string name="connection_camera_model">Modèle de l\'appareil</string>
+    <string name="connection_choose_camera_model">Choisissez votre appareil</string>
+    <string name="connection_choose_camera_model_ok">Choisir</string>
+    <string name="connection_choose_camera_model_cancel">Annuler</string>
+    
+    
+    <!-- Camera Settings Step Strings -->
+    
+    <string name="camera_settings_information_message"><![CDATA[Vous pouvez prendre une photo pour ajuster 
+        votre champ de vision. Le zoom n\'est disponible que sur certains appareils.<br /><br />
+        Plus de paramètres vont bientôt être disponible pour les appareils qui les supportes]]></string>
+    <string name="camera_settings_zoom_title">Zoom</string>
+    <string name="camera_settings_flash_title">Flash</string>    
+    
+    
+	<!-- Timelapse Settings Step Strings -->
+    
+    <string name="timelapse_settings_information_message"><![CDATA[C\'est la dernière étape avant la capture.<br /><br />
+        Faites attention avec le <u>RX100 mk2</u> et peut-être d\'autres appareil 
+        quand vous utilisez un <u>intervalle inférieur à 5sec</u>.]]></string>
+             
+    <string name="timelapse_settings_initial_delay">Délai initial (s)</string>
+    <string name="timelapse_settings_initial_delay_default">0</string>
+
+    <string name="timelapse_settings_interval_time">Intervalle entre les captures (s)</string>
+	<string name="timelapse_settings_interval_time_default">10</string>
+    
+    <string name="timelapse_settings_frames_count">Nombre de captures</string>
+    <string name="timelapse_settings_frames_count_unlimited">Illimité</string>
+    
+    <string name="timelapse_settings_show_last_image_review">Afficher la dernière photo prise</string>
+    <string name="timelapse_settings_show_last_image_review_on">Afficher</string>
+   	<string name="timelapse_settings_show_last_image_review_off">Cacher</string>
+   	
+    <string name="timelapse_settings_positive_integer_error">Ce chiffre doit être un entier positif</string>
+    <string name="timelapse_settings_minimum_time_error">Le temps minimum entre 2 captures doit être de %1$d secondes minimum</string>
+
+
+	<!-- Capture Step Strings -->
+	
+    <string name="capture_begin_time">Début</string>
+    <string name="capture_begin_time_default">00:00</string>
+    
+    <string name="capture_end_time">Fin</string>
+    <string name="capture_end_time_default">00:00</string>
+    
+    <string name="capture_progress">Avancement</string>
+    <string name="capture_progress_default">0%</string>
+    
+    <string name="capture_duration">Durée</string>
+    <string name="capture_duration_default">0s</string>
+
+    <string name="capture_frames_count_down">Nb restant</string>
+    <string name="capture_frames_count_down_default">0</string>
+    
+    <string name="capture_frames_count">Photos</string>
+    <string name="capture_frames_count_default">0</string>
+    
+    <string name="capture_battery_life">Batterie Tel</string>
+    <string name="capture_battery_life_default">100%</string>
+    
+    <string name="capture_next_picture">Photo suivante</string>
+    <string name="capture_next_picture_default">0s</string>
+    
+    <string name="capture_last_image_preview">Dernière photo prise</string>
+
+    <string name="capture_countdown_before_start_message">Le timelapse commence dans %1$d secondes</string> 
+    
+    <string name="capture_frames_overlapping_title">Erreur d\'intervalle</string>
+    <string name="capture_frames_overlapping_message"><![CDATA[L\'intervalle que vous avez choisi entre chaque photo est trop court. 
+        Nous essayerons de prendre la prochaine photo dès que c\'est possible.<br/><br/>
+        La prise de la photo prend <font color="#FF8888">trop de temps</font>. 
+        Sur certains appareils il se peut que ce delai soit du au firmware.]]></string>
+    <string name="capture_frames_overlapping_ok">Continuer</string>
+    <string name="capture_frames_overlapping_cancel">Stopper le Timelapse</string>
+    
+
+    <!-- Finish Step Strings -->
+    
+    <string name="finish_message">Le timelapse est terminé !</string>
+    <string name="finish_with_errors_message">Le timelapse s\'est terminé avec des erreurs !</string>
+    <string name="finish_restart">Recommencer un nouveau timelapse</string>
+    
+    <string name="finish_summary_overlapping_frames_message"><![CDATA[L\'intervalle que vous avez choisi entre chaque photo est trop court.<br/>
+        Du coup, <font color="#FF8888">l\'intervalle entre deux photos peut avoir varié</font> et dans certains cas être différent
+        de celui que vous avez choisi.]]></string>
+    
+</resources>

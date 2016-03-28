@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">TimeLapse</string>
+
+
+    <!-- Step Activity Strings -->
+    
+    <string name="action_previous">Previous</string>
+    <string name="action_next">Next</string>
+    <string name="action_start">Start</string>
+    <string name="action_stop">Stop</string>
+    <string name="action_finish">Quit</string>
+    <string name="action_keep_display_on">Keep display on</string>
+    
+    <string name="information_button_description">More information</string>
+    
+    <string name="connection_nfc_error">A problem occurred during pairing of Camera. Please try again</string>
+    
+    
+    <!-- Connection Step Strings -->
+
+    <string name="connection_information_message"><![CDATA[Put your camera in <font color="#FF8888">Ctrl with Smartphone</font> mode 
+        or pair it by NFC (if it\'s possible)]]></string>
+        
+    <string name="connection_close_app">Press a second time to exit.</string>
+    <string name="connection_info">Connection information</string>
+    <string name="connection_refresh">Refresh connection</string>
+    <string name="connection_info_nothing">Waiting more information</string>
+    <string name="connection_info_scan_networks">Scanning networks</string>
+    <string name="connection_info_wifi_not_found">No Sony camera network found</string>
+    <string name="connection_info_wifi_connected">Wifi connected to %1$s</string>
+    <string name="connection_info_wifi_connecting">Wifi connecting to %1$s</string>
+    <string name="connection_info_wifi_disconnected">Wifi disconnected</string>
+    <string name="connection_info_ok">Connection is OK</string>
+    <string name="connection_info_ws_failed">Connection to WebService failed. Check your device model.</string>
+    <string name="connection_choose_network">Choose network</string>
+    <string name="connection_choose_network_cancel">Cancel</string>
+    <string name="connection_enter_password">Enter password for %1$s network</string>
+    <string name="connection_enter_password_ok">Join</string>
+    <string name="connection_enter_password_cancel">Cancel</string>
+        
+    <string name="connection_camera_model">Camera model</string>
+    <string name="connection_choose_camera_model">Choose your camera model</string>
+    <string name="connection_choose_camera_model_ok">Choose</string>
+    <string name="connection_choose_camera_model_cancel">Cancel</string>
+    
+    
+    <!-- Camera Settings Step Strings -->
+    
+    <string name="camera_settings_information_message"><![CDATA[You can take a picture to adjust
+        your field of view. Zoom is available only on few devices.<br /><br />
+        More settings will be available in the future for supported devices]]></string>
+    <string name="camera_settings_zoom_title">Zoom</string>
+    <string name="camera_settings_flash_title">Flash</string>
+    
+    
+    <!-- Timelapse Settings Step Strings -->
+    
+    <string name="timelapse_settings_information_message"><![CDATA[This is the last step before capture. <br /><br />
+        On <u>RX100 mk2</u> and maybe on other devices 
+        be careful with <u>interval less than 5sec</u>.]]></string>
+        
+    <string name="timelapse_settings_initial_delay">Initial delay (s)</string>
+    <string name="timelapse_settings_initial_delay_default">0</string>
+    
+    <string name="timelapse_settings_interval_time">Interval between frames (s)</string>
+    <string name="timelapse_settings_interval_time_default">10</string>
+    
+    <string name="timelapse_settings_frames_count">Frames count</string>
+    <string name="timelapse_settings_frames_count_unlimited">Unlimited</string>
+
+    <string name="timelapse_settings_show_last_image_review">Show last picture taken</string>
+    <string name="timelapse_settings_show_last_image_review_on">Show</string>
+   	<string name="timelapse_settings_show_last_image_review_off">Hide</string>
+    
+    <string name="timelapse_settings_positive_integer_error">It has to be a positive integer</string>
+    <string name="timelapse_settings_minimum_time_error">Minimum time between 2 frames has to be at least %1$d seconds</string>
+
+    
+    <!-- Capture Step Strings -->
+    
+    <string name="capture_begin_time">Start</string>
+    <string name="capture_begin_time_default">00:00</string>
+    
+    <string name="capture_end_time">End</string>
+    <string name="capture_end_time_default">00:00</string>
+    
+    <string name="capture_progress">Progress</string>
+    <string name="capture_progress_default">0%</string>
+    
+    <string name="capture_duration">Duration</string>
+    <string name="capture_duration_default">0s</string>
+
+    <string name="capture_frames_count_down">Frames remaining</string>
+    <string name="capture_frames_count_down_default">0</string>
+    
+    <string name="capture_frames_count">Frames count</string>
+    <string name="capture_frames_count_default">0</string>
+    
+    <string name="capture_battery_life">Phone Battery</string>
+    <string name="capture_battery_life_default">100%</string>
+    
+    <string name="capture_next_picture">Next picture</string>
+    <string name="capture_next_picture_default">0s</string>
+    
+    <string name="capture_last_image_preview">Last picture taken</string>
+
+    <string name="capture_countdown_before_start_message">Timelapse starts in %1$d seconds</string>    
+    
+    <string name="capture_frames_overlapping_title">Interval error</string>
+    <string name="capture_frames_overlapping_message"><![CDATA[The interval between frames is too short.<br/><br/>
+        The minimum possible interval will be used but it <font color="#FF8888">is longer</font> than you chose and 
+        may <font color="#FF8888">vary</font>.]]></string>
+    <string name="capture_frames_overlapping_ok">Continue</string>
+    <string name="capture_frames_overlapping_cancel">Cancel Timelapse</string>
+    
+    <!-- Finish Step Strings -->
+    
+    <string name="finish_message">Timelapse finished !</string>
+    <string name="finish_with_errors_message">Timelapse finished with errors!</string>
+    <string name="finish_restart">Restart a new timelapse</string>
+    
+    <string name="finish_summary_overlapping_frames_message"><![CDATA[The chosen interval between frames was too short.<br/>
+        Therefore the <font color="#FF8888">effective interval between frames may have varied</font> and is at least in some cases 
+        different from your chosen one.]]></string>
+    
+</resources>

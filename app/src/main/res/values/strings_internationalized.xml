@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Units Strings -->
+
+    <string name="seconds" translatable="false">%1$ds</string>
+    <string name="percent1f" translatable="false">%1$.1f%%</string>
+    <string name="percent" translatable="false">%1$d%%</string>
+
+
+    <string name="camera_settings_zoom_out" translatable="false">-</string>
+    <string name="camera_settings_zoom_in" translatable="false">+</string>
+</resources>
