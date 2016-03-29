@@ -336,32 +336,32 @@ FinishFragmentListener, CaptureFragmentListener {
 
 	@Override
 	public void onBackPressed() {
-		//exit only on second press
-		if(doubleBackToExitPressedOnce){
-			if (mPager.getCurrentItem() == 0) {
-				// If the user is currently looking at the first step, allow the system to handle the
-				// Back button. This calls finish() on this activity and pops the back stack.
+		// exit only on second press if we are at the first step
+		if(mPager.getCurrentItem() == 0){
+			if(doubleBackToExitPressedOnce){
+				// Allow the system to handle the Back button
+				// This calls finish() on this activity and pops the back stack.
 				super.onBackPressed();
 				exit();
 			} else {
-				// Otherwise, select the previous step.
-				int newItem = mPager.getCurrentItem() - 1;
-				//CaptureFragment can't be reached by BackPressed, jump to CaptureSettings instead 
-				if(newItem == 3)
-					newItem--;
-				mPager.setCurrentItem(newItem);
+				//first press is okay
+				this.doubleBackToExitPressedOnce = true;
+				Toast.makeText(this, R.string.connection_close_app, Toast.LENGTH_SHORT).show();
+				//reset first press if 2 seconds have passed without further press
+				new android.os.Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						doubleBackToExitPressedOnce=false;
+					}
+				}, 2000);
 			}
 		} else {
-			//first press is okay
-			this.doubleBackToExitPressedOnce = true;
-			Toast.makeText(this, R.string.connection_close_app, Toast.LENGTH_SHORT).show();
-			//reset first press if 2 seconds have passed without further press
-		    new android.os.Handler().postDelayed(new Runnable() {
-		        @Override
-		        public void run() {
-		            doubleBackToExitPressedOnce=false;                       
-		        }
-		    }, 2000);
+			// Otherwise, select the previous step.
+			int newItem = mPager.getCurrentItem() - 1;
+			//CaptureFragment can't be reached by BackPressed, jump to CaptureSettings instead
+			if(newItem == 3)
+				newItem--;
+			mPager.setCurrentItem(newItem);
 		}
 	}
 
