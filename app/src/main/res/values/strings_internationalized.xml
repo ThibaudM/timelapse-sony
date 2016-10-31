@@ -4,6 +4,7 @@
     <!-- Units Strings -->
 
     <string name="seconds" translatable="false">%1$ds</string>
+    <string name="seconds1f" translatable="false">%1$fs</string>
     <string name="percent1f" translatable="false">%1$.1f%%</string>
     <string name="percent" translatable="false">%1$d%%</string>
 

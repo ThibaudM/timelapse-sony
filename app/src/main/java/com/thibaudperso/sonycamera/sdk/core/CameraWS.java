@@ -1,6 +1,7 @@
 package com.thibaudperso.sonycamera.sdk.core;
 
 import android.content.Context;
+import android.os.Handler;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -61,37 +62,53 @@ public class CameraWS {
             return;
         }
 
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.POST, mWSUrl, inputJsonObject, new Response.Listener<JSONObject>() {
+        final Handler handler = new Handler();
 
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST,
+                mWSUrl, inputJsonObject, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(final JSONObject response) {
+
+                if (listener == null) {
+                    return;
+                }
+
+                handler.post(new Runnable() {
                     @Override
-                    public void onResponse(JSONObject response) {
-
-                        if (listener != null) {
-                            if (response.has("result")) {
-                                try {
-                                    listener.cameraResponse(response.getJSONArray("result"));
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                    listener.cameraError(response);
-                                }
-                            } else {
-                                //if no "results" element is present, there has probably an error occured
-                                //and a "error" element is there instead
+                    public void run() {
+                        if (response.has("result")) {
+                            try {
+                                listener.cameraResponse(response.getJSONArray("result"));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                                 listener.cameraError(response);
                             }
-                        }
-
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (listener != null) {
-                            listener.cameraError(null);
+                        } else {
+                            //if no "results" element is present, there has probably an error occured
+                            //and a "error" element is there instead
+                            listener.cameraError(response);
                         }
                     }
                 });
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (listener == null) {
+                    return;
+                }
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.cameraError(null);
+                    }
+                });
+            }
+        });
 
         if (timeout != 0) {
             jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(

@@ -6,12 +6,10 @@
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
 
-
         <!--<item name="android:windowBackground">@color/background</item>-->
 
-        <!--<item name="android:windowAnimationStyle">@style/MyCustomAnimation.Activity</item>-->
+        <item name="android:windowAnimationStyle">@style/MyCustomAnimation.Activity</item>
     </style>
-
 
     <style name="MyCustomAnimation.Activity" parent="@android:style/Animation.Activity">
         <item name="android:activityOpenEnterAnimation">@anim/enter</item>

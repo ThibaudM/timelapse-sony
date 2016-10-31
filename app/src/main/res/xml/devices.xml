@@ -90,4 +90,29 @@
         <model>FDR-AX100</model>
         <webservice>http://10.0.0.1:10000/sony/camera</webservice>
     </camera>
+    <camera needInit="true">
+        <id>19</id>
+        <model>DSC-WX350</model>
+        <webservice>http://10.0.0.1:10000/sony/camera</webservice>
+    </camera>
+    <camera needInit="true">
+        <id>20</id>
+        <model>HDR-AZ1</model>
+        <webservice>http://192.168.122.1:8080/sony/camera</webservice>
+    </camera>
+    <camera needInit="true">
+        <id>21</id>
+        <model>A6300</model>
+        <webservice>http://192.168.122.1:8080/sony/camera</webservice>
+    </camera>
+    <camera needInit="true">
+        <id>22</id>
+        <model>FDR-AX33</model>
+        <webservice>http://192.168.122.1:10000/sony/camera</webservice>
+    </camera>
+    <camera needInit="true">
+        <id>23</id>
+        <model>RX10 mk2</model>
+        <webservice>http://192.168.122.1:8080/sony/camera</webservice>
+    </camera>
 </cameras>

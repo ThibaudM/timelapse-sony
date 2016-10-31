@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.thibaudperso.sonycamera.sdk.core.CameraWS;
 import com.thibaudperso.sonycamera.sdk.core.CameraWSListener;
-import com.thibaudperso.sonycamera.sdk.core.TestConnectionListener;
+import com.thibaudperso.sonycamera.timelapse.control.io.TestConnectionListener;
 import com.thibaudperso.sonycamera.sdk.model.Device;
 
 import org.json.JSONArray;
@@ -20,15 +20,15 @@ public class CameraAPI {
 
 	public enum ZoomDirection { IN, OUT }
 	public enum ZoomAction { START, STOP }
-	
+
 	public enum ResponseCode {
 		NONE(-1), //means no code available
 		OK(0),
 		LONG_SHOOTING(40403),
 		NOT_AVAILABLE_NOW(1);
-		
+
 		private int value;
-		
+
 		ResponseCode(int value){ this.value = value; }
 		public int getValue(){ return value; }
 		public static ResponseCode find(int value){
@@ -37,12 +37,13 @@ public class CameraAPI {
 					return el;
 			return NONE; //if not an appropriate found
 		}
-		
+
 	}
 
 	public static int MIN_TIME_BETWEEN_CAPTURE = 1;
 
 	private CameraWS mCameraWS;
+	private boolean isDeviceInitialized = false;
 
 	public CameraAPI(Context context) {
 
@@ -52,14 +53,23 @@ public class CameraAPI {
 
 	public void setDevice(Device device) {
 		mCameraWS.setWSUrl(device.getWebService());
+		isDeviceInitialized = false;
+	}
+
+	public void initialize() {
+		if(isDeviceInitialized) {
+			return;
+		}
+		initWebService(null);
+		setShootMode("still");
+		isDeviceInitialized = true;
 	}
 
 	/**
 	 * Sets the shoot mode, "still" or "movie". This needs to be set to "still"
 	 * on some camcorders, because they default to video.
 	 *
-	 * @param mode
-	 *            either "still" or "movie".
+	 * @param mode either "still" or "movie".
 	 */
 	public void setShootMode(String mode) {
 		JSONArray params = new JSONArray().put(mode);
@@ -69,11 +79,11 @@ public class CameraAPI {
 	public void takePicture(final TakePictureListener listener) {
 		mCameraWS.sendRequest("actTakePicture", new JSONArray(), getTakePictureListener(listener));
 	}
-	
+
 	public void awaitTakePicture(final TakePictureListener listener) {
 		mCameraWS.sendRequest("awaitTakePicture", new JSONArray(), getTakePictureListener(listener));
 	}
-	
+
 	private CameraWSListener getTakePictureListener(final TakePictureListener listener){
 		return new CameraWSListener() {
 
@@ -96,12 +106,12 @@ public class CameraAPI {
 			@Override
 			public void cameraError(JSONObject jsonResponse) {
 				if(listener != null) {
-					
+
 					if(jsonResponse == null) {
 						listener.onError(ResponseCode.NONE, "json response is null");
 						return;
 					}
-					
+
 					int responseCode = -1;
 					String responseMsg = null;
 					// whole JSON is of format {"id":38,"error":[1,"Not Available Now"]}
@@ -181,32 +191,29 @@ public class CameraAPI {
 		this.getVersion(new GetVersionListener() {
 			@Override
 			public void onResult(int version) {
-				listener.cameraConnected(true);
+				listener.isConnected(true);
 			}
 
 			@Override
 			public void onError(String error) {
-				listener.cameraConnected(false);
+				listener.isConnected(false);
 			}
 		});
 
 	}
-	
-	public void closeConnection() {
 
-		// Not enough
-		// mCameraWS.testConnection(timeout, listener);
+	public void closeConnection() {
 
 		mCameraWS.sendRequest("stopRecMode", new JSONArray(), new CameraWSListener() {
 
 			@Override
 			public void cameraResponse(JSONArray jsonResponse) {
-				Log.w("DEBUG","success closing connection.");			
+				Log.w("DEBUG","success closing connection.");
 			}
 
 			@Override
-			public void cameraError(JSONObject jsonResponse) {	
-				Log.w("DEBUG","error closing connection.");				
+			public void cameraError(JSONObject jsonResponse) {
+				Log.w("DEBUG","error closing connection.");
 			}
 		}, 200);
 
@@ -260,20 +267,21 @@ public class CameraAPI {
 		mCameraWS.sendRequest("actZoom", params, null);
 	}
 
-	
+
 	public void setFlash(final boolean enableFlash) {
 
-		JSONArray params = new JSONArray().put(enableFlash ? "true" : "false");
+        // TODO can be "auto" also
+		JSONArray params = new JSONArray().put(enableFlash ? "on" : "off");
 		mCameraWS.sendRequest("setFlashMode", params, new CameraWSListener() {
-			
+
 			@Override
 			public void cameraResponse(JSONArray jsonResponse) {
 				Log.v("DEBUG", "ok: "+jsonResponse);
 			}
-			
+
 			@Override
 			public void cameraError(JSONObject jsonResponse) {
-				Log.v("DEBUG", "err: "+jsonResponse);				
+				Log.v("DEBUG", "err: "+jsonResponse);
 			}
 		});
 	}

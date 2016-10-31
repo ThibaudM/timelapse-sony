@@ -39,8 +39,16 @@
     <string name="connection_choose_camera_model">Choisissez votre appareil</string>
     <string name="connection_choose_camera_model_ok">Choisir</string>
     <string name="connection_choose_camera_model_cancel">Annuler</string>
-    
-    
+
+    <string name="alert_disconnect_camera_title">Disconnect camera</string>
+    <string name="alert_disconnect_camera_message">Do you want to disconnect the camera from the smartphone ?</string>
+    <string name="alert_disconnect_camera_yes">Disconnect</string>
+    <string name="alert_disconnect_camera_no">Stay connected</string>
+
+
+    <string name="connection_continue_automatic">Connexion automatique</string>
+    <string name="connection_continue_button">Continuer</string>
+
     <!-- Camera Settings Step Strings -->
     
     <string name="camera_settings_information_message"><![CDATA[Vous pouvez prendre une photo pour ajuster 
@@ -114,12 +122,9 @@
 
     <!-- Finish Step Strings -->
     
-    <string name="finish_message">Le timelapse est terminé !</string>
-    <string name="finish_with_errors_message">Le timelapse s\'est terminé avec des erreurs !</string>
-    <string name="finish_restart">Recommencer un nouveau timelapse</string>
-    
-    <string name="finish_summary_overlapping_frames_message"><![CDATA[L\'intervalle que vous avez choisi entre chaque photo est trop court.<br/>
-        Du coup, <font color="#FF8888">l\'intervalle entre deux photos peut avoir varié</font> et dans certains cas être différent
-        de celui que vous avez choisi.]]></string>
+    <string name="finish_message"><![CDATA[<p>Le timelapse est terminé !</p>
+        <p><b>Vos photos ont été stockées dans la mémoire de votre téléphone.</b> Si ça ne peut
+        pas être le cas, elles sont stockées au même endroit que quand vous prennez une photo.
+        </p>]]></string>
     
 </resources>

@@ -40,7 +40,14 @@
     <string name="connection_choose_camera_model">Wähle dein Kameramodell</string>
     <string name="connection_choose_camera_model_ok">OK</string>
     <string name="connection_choose_camera_model_cancel">Abbrechen</string>
-    
+
+    <string name="alert_disconnect_camera_title">Disconnect camera</string> <!-- TODO -->
+    <string name="alert_disconnect_camera_message">Do you want to disconnect the camera from the smartphone ?</string> <!-- TODO -->
+    <string name="alert_disconnect_camera_yes">Disconnect</string> <!-- TODO -->
+    <string name="alert_disconnect_camera_no">Stay connected</string> <!-- TODO -->
+
+    <string name="connection_continue_automatic">Automatic connection</string> <!-- TODO -->
+    <string name="connection_continue_button">Continue</string> <!-- TODO -->
     
     <!-- Camera Settings Step Strings -->
     

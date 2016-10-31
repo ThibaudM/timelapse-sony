@@ -11,4 +11,5 @@
      <color name="customBlue">@color/primary</color>
      <color name="errorRed">#FF8888</color>
 
+     <color name="white">#FFFFFF</color>
 </resources>

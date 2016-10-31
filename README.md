@@ -1,10 +1,10 @@
 Timelapse - Sony Camera
-===================
+=======================
 
 Want [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=LFFFQZD9UNKRC&lc=FR&item_name=Thibaud%20Michel&item_number=1&currency_code=EUR&bn=PP-DonationsBF%3abtn_donate_LG%2egif%3aNonHosted)?  
 
 Project type: **Android**  
-Current version: **2.0.3**  
+Current version: **2.1.0**  
 Google Play store link: https://play.google.com/store/apps/details?id=com.thibaudperso.sonycamera  
 
 
@@ -20,7 +20,7 @@ You just need to:
 
 
 Frequently Asked Questions
-----------
+--------------------------
 
 #### Is this app works with my camera?
 Is your camera has a Wifi connection ? If not this app is not compatible.
@@ -49,7 +49,6 @@ Cameras list
 ------------
 
 #### Working Devices
-
 * A7 (α7)
 * DSC-HX400V
 * DSC-HX50V
@@ -62,10 +61,13 @@ Cameras list
 * DSC-RX100M2 (known issue with short delays)
 * DSC-RX100M3
 * DSC-WX80
+* DSC-WX350
 * FDR-AX100
 * FDR-X1000V
+* HDR-AZ1
 * ILCE-5100 (α5100)
 * ILCE-6000 (α6000)
+* ILCE-6300 (α6300)
 * NEX-5R
 * NEX-6
 
@@ -73,7 +75,6 @@ Cameras list
 #### Not tested devices
 * ILCE-5000 (α5000)
 * ILCA-77M2 (α77 II)
-* DSC-WX350
 * DSC-WX220
 * DSC-WX220B
 * DSC-HX50

@@ -2,35 +2,42 @@ package com.thibaudperso.sonycamera.timelapse;
 
 import android.app.Application;
 
-import com.thibaudperso.sonycamera.io.WifiHandler;
+import com.thibaudperso.sonycamera.timelapse.control.io.IOHandler;
+import com.thibaudperso.sonycamera.timelapse.control.io.WifiHandler;
 import com.thibaudperso.sonycamera.sdk.CameraAPI;
 import com.thibaudperso.sonycamera.sdk.model.DeviceManager;
 
 public class TimelapseApplication extends Application {
 
-	private CameraAPI mCameraAPI;
 	private DeviceManager mDeviceManager;
-	private WifiHandler mWifiHandler;
+	private IOHandler mIOHandler;
 	
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		
-		mCameraAPI = new CameraAPI(this);
+
+		mIOHandler = new IOHandler(this);
 		mDeviceManager = new DeviceManager(this);
-		mWifiHandler = new WifiHandler(this);
 	}
-	
-	
+
+
+	public IOHandler getIOHandler() {
+		return mIOHandler;
+	}
+
+	/*
+	 * A shortcut for an access to camera ws
+	 */
 	public CameraAPI getCameraAPI() {
-		return mCameraAPI;
+		return mIOHandler.getCameraAPI();
 	}
-	
-	public WifiHandler getWifiHandler() {
-		return mWifiHandler;
-	}
-	
+
+
 	public DeviceManager getDeviceManager() {
 		return mDeviceManager;
+	}
+
+	public WifiHandler getWifiHandler() {
+		return mIOHandler.getWifiHandler();
 	}
 }
