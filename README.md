@@ -53,6 +53,7 @@ Camera list
 * DSC-HX400V
 * DSC-HX50V
 * DSC-HX60
+* DSC-HX90
 * DSC-HX90V
 * DSC-QX10 (Read [this](https://us.en.kb.sony.com/app/answers/detail/a_id/43716/c/65,66/p/40096,90706,90707/) to know where pictures are saved)
 * DSC-QX30
