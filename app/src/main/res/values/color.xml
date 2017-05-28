@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
      <color name="primary">#2196F3</color>
      <color name="primary_dark">#1976D2</color>
      <color name="accent">#2979FF</color>
 
-     <color name="toolbar_text">#FFFFFF</color>
-     <color name="background">#FFFFFF</color>
+     <color name="toolbar_text" tools:ignore="UnusedResources">#FFFFFF</color>
+     <color name="background" tools:ignore="UnusedResources">#FFFFFF</color>
 
-     <color name="customBlue">@color/primary</color>
-     <color name="errorRed">#FF8888</color>
+     <color name="customBlue" tools:ignore="UnusedResources">@color/primary</color>
+     <color name="errorRed" tools:ignore="UnusedResources">#FF8888</color>
 
-     <color name="white">#FFFFFF</color>
+     <color name="white" tools:ignore="UnusedResources">#FFFFFF</color>
 </resources>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/processingError"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="#10000000"
+              android:gravity="center_vertical"
+              android:orientation="vertical"
+              android:padding="10dp"
+              android:visibility="gone">
+
+    <RelativeLayout
+        android:id="@+id/processing_error_first_line"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/processing_error_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/ic_error_red_24dp"/>
+
+        <ImageView
+            android:id="@+id/processing_error_expand_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/ic_arrow_drop_down_black_24dp"/>
+
+        <TextView
+            android:id="@+id/processing_error_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/processing_error_icon"
+            android:layout_toLeftOf="@id/processing_error_expand_details"
+            android:layout_toRightOf="@id/processing_error_icon"
+            android:layout_toStartOf="@id/processing_error_expand_details"
+            android:text="@string/processing_error"
+            android:textStyle="bold"/>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/processing_error_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:animateLayoutChanges="true"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/processing_error_ws_unreachable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/processing_error_ws_unreachable"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/processing_error_long_shot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/processing_error_long_shot"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/processing_error_unknown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/processing_error_unknown"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+</LinearLayout>

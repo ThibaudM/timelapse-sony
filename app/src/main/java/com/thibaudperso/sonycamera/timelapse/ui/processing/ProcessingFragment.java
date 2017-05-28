@@ -2,17 +2,17 @@ package com.thibaudperso.sonycamera.timelapse.ui.processing;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
-import android.preference.PreferenceManager;
+import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
+import android.text.Html;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,147 +26,146 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.Volley;
 import com.thibaudperso.sonycamera.R;
-import com.thibaudperso.sonycamera.sdk.CameraAPI;
-import com.thibaudperso.sonycamera.sdk.TakePictureListener;
+import com.thibaudperso.sonycamera.sdk.CameraWS;
+import com.thibaudperso.sonycamera.sdk.model.PictureResponse;
 import com.thibaudperso.sonycamera.timelapse.TimelapseApplication;
-import com.thibaudperso.sonycamera.timelapse.control.TimelapseSettings;
-import com.thibaudperso.sonycamera.timelapse.ui.finish.FinishActivity;
+import com.thibaudperso.sonycamera.timelapse.model.ApiRequestsList;
+import com.thibaudperso.sonycamera.timelapse.model.IntervalometerSettings;
+import com.thibaudperso.sonycamera.timelapse.model.TimelapseData;
+import com.thibaudperso.sonycamera.timelapse.service.IntervalometerService;
+import com.thibaudperso.sonycamera.timelapse.ui.connection.ConnectionActivity;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Locale;
+
+import static com.thibaudperso.sonycamera.R.id.settings_frames_count;
+import static com.thibaudperso.sonycamera.R.id.start_time;
+import static com.thibaudperso.sonycamera.timelapse.service.IntervalometerService.ACTION_API_RESPONSE;
+import static com.thibaudperso.sonycamera.timelapse.service.IntervalometerService.ACTION_FINISHED;
+import static com.thibaudperso.sonycamera.timelapse.service.IntervalometerService.ACTION_REQUEST_SENT;
+import static com.thibaudperso.sonycamera.timelapse.service.IntervalometerService.EXTRA_NUMBER;
+import static com.thibaudperso.sonycamera.timelapse.service.IntervalometerService.EXTRA_PICTURE;
+
 
 public class ProcessingFragment extends Fragment {
 
 
     private final static String TIME_FORMAT = "HH:mm";
 
-    private CameraAPI mCameraAPI;
+    private LocalBroadcastManager mBroadcastManager;
+    private Intent mServiceIntent;
 
-    private TextView batteryView;
-    private TextView framesCountView;
-    private ImageView imageReviewView;
-    private ProgressBar nextPictureProgressBar;
-    private TextView nextPictureProgressValue;
-    private ProgressBar overallProgressBar;
-    private TextView overallProgressValue;
-    private TextView processingErrorMessageView;
+    private View mRootView;
+    private TextView mStartTimeTextView;
+    private TextView mChronometerTextView;
+    private TextView mFramesCountTextView;
 
+    private ImageView mImageReviewView;
+    private View mNextPictureLayout;
+    private ProgressBar mNextPictureProgressBar;
+    private ProgressBar mNextPictureCaptureProgressBar;
+    private TextView mNextPictureProgressValue;
+    private View mOverallProgressLayout;
+    private ProgressBar mOverallProgressBar;
+    private TextView mOverallProgressValue;
+    private View mFinishLayout;
 
-    private boolean showLastFramePreview;
-    private int intervalTime;
-    private int framesCount;
-    private boolean isUnlimitedMode;
+    private View mStopView;
+    private View mRestartView;
 
-    private WakeLock wakeLock;
-    private int overlapsNumber;
+    private View mErrorLayout;
+    private ImageView mErrorExpandImageView;
+    private View mErrorDetailsLayout;
+    private TextView mErrorWsUnreachable;
+    private TextView mErrorLongShot;
+    private TextView mErrorUnknown;
 
-    private RequestQueue imagesQueue;
-    private Calendar nextPictureCalendar;
-    private Handler mCountdownHandler;
+    private TimelapseData mTimelapseData;
+    private IntervalometerSettings mSettings;
+    private ApiRequestsList mApiRequestsList;
 
-    private Handler mTimelapseHandler;
-    private int totalFrames;
-
+    private CountDownTimer mCountDownTimer;
+    private RequestQueue mImagesQueue;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mBroadcastManager = LocalBroadcastManager.getInstance(getContext());
+
+        mImagesQueue = Volley.newRequestQueue(getActivity());
+        mServiceIntent = new Intent(getActivity(), IntervalometerService.class);
+
+        mTimelapseData = ((TimelapseApplication) getActivity().getApplication()).getTimelapseData();
+        mSettings = mTimelapseData.getSettings();
+        mApiRequestsList = mTimelapseData.getApiRequestsList();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        mRootView = inflater.inflate(R.layout.fragment_processing, container, false);
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        mStartTimeTextView = ((TextView) mRootView.findViewById(start_time));
+        mFramesCountTextView = ((TextView) mRootView.findViewById(settings_frames_count));
+        mChronometerTextView = ((TextView) mRootView.findViewById(R.id.chronometer));
+        mOverallProgressLayout = mRootView.findViewById(R.id.progress_layout);
+        mOverallProgressBar = (ProgressBar) mRootView.findViewById(R.id.progress_bar);
+        mOverallProgressValue = (TextView) mRootView.findViewById(R.id.progress);
+        mNextPictureLayout = mRootView.findViewById(R.id.next_picture_layout);
+        mNextPictureProgressBar = (ProgressBar) mRootView.findViewById(R.id.next_picture_progress_bar);
+        mNextPictureProgressValue = (TextView) mRootView.findViewById(R.id.next_picture_progress);
+        mNextPictureCaptureProgressBar = (ProgressBar) mRootView.findViewById(R.id
+                .next_picture_progress_bar_capture);
+        mImageReviewView = (ImageView) mRootView.findViewById(R.id.image_review);
+        mFinishLayout = mRootView.findViewById(R.id.finish_layout);
 
-        int initialDelay = preferences.getInt(TimelapseSettings.PREFERENCES_INITIAL_DELAY,
-                TimelapseSettings.DEFAULT_INITIAL_DELAY);
-        intervalTime = preferences.getInt(TimelapseSettings.PREFERENCES_INTERVAL_TIME,
-                TimelapseSettings.DEFAULT_INTERVAL_TIME);
-        totalFrames = preferences.getInt(TimelapseSettings.PREFERENCES_FRAMES_COUNT,
-                TimelapseSettings.DEFAULT_FRAMES_COUNT);
-        showLastFramePreview = preferences.getBoolean(TimelapseSettings.PREFERENCES_LAST_PICTURE_REVIEW,
-                TimelapseSettings.DEFAULT_LAST_PICTURE_REVIEW);
+        mErrorLayout = mRootView.findViewById(R.id.processingError);
+        mErrorExpandImageView = (ImageView) mRootView.findViewById(R.id.processing_error_expand_details);
+        mErrorDetailsLayout = mRootView.findViewById(R.id.processing_error_details);
+        mErrorWsUnreachable = (TextView) mRootView.findViewById(R.id.processing_error_ws_unreachable);
+        mErrorLongShot = (TextView) mRootView.findViewById(R.id.processing_error_long_shot);
+        mErrorUnknown = (TextView) mRootView.findViewById(R.id.processing_error_unknown);
 
-        isUnlimitedMode = totalFrames == 0;
-        framesCount = 0;
-        overlapsNumber = 0;
+        mStopView = mRootView.findViewById(R.id.processing_stop);
+        mRestartView = mRootView.findViewById(R.id.processing_restart);
 
+        ((TextView) mRootView.findViewById(R.id.processing_error_message)).
+                setText(Html.fromHtml(getString(R.string.processing_error)));
 
-        mCameraAPI = ((TimelapseApplication) getActivity().getApplication()).getCameraAPI();
-
-        //prepare wakelock for capture
-        PowerManager powerManager = (PowerManager) getActivity().getSystemService(Context.POWER_SERVICE);
-        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "TimelapseProcessWakeLock");
-
-        imagesQueue = Volley.newRequestQueue(getActivity());
-
-
-        View rootView = inflater.inflate(R.layout.fragment_processing, container, false);
-
-        TextView startTimeView = ((TextView) rootView.findViewById(R.id.startTime));
-        TextView framesCountTitleView = ((TextView) rootView.findViewById(R.id.framesCountTitle));
-        framesCountView = ((TextView) rootView.findViewById(R.id.framesCount));
-        batteryView = ((TextView) rootView.findViewById(R.id.battery));
-        overallProgressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
-        overallProgressValue = (TextView) rootView.findViewById(R.id.progress);
-        nextPictureProgressBar = (ProgressBar) rootView.findViewById(R.id.nextPictureProgressBar);
-        nextPictureProgressValue = (TextView) rootView.findViewById(R.id.nextPictureProgress);
-        imageReviewView = (ImageView) rootView.findViewById(R.id.imageReview);
-        processingErrorMessageView = (TextView) rootView.findViewById(R.id.processingErrorMessage);
-
-
-		/*
-         * Set activity fields
-		 */
-
-        // Set start time
-        nextPictureCalendar = Calendar.getInstance();
-        nextPictureCalendar.add(Calendar.SECOND, initialDelay);
-        String beginTime = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault())
-                .format(nextPictureCalendar.getTime());
-        startTimeView.setText(beginTime);
-
-        // Set frame counts
-        framesCountTitleView.setText(isUnlimitedMode ? R.string.capture_frames_count :
-                R.string.capture_frames_count_down);
-        framesCountView.setText(String.valueOf(isUnlimitedMode ? 0 : totalFrames));
-
-
-        // Set progress bar
-        if (!isUnlimitedMode) {
-            overallProgressBar.setProgress(0);
-            overallProgressBar.setMax(totalFrames);
-            overallProgressValue.setText(getString(R.string.capture_progress_default));
-        } else {
-            rootView.findViewById(R.id.progressLayout).setVisibility(View.GONE);
-        }
-
-
-        // Set next picture progress bar
-        nextPictureProgressBar.setMax(intervalTime * 100);
-        nextPictureProgressBar.setProgress(0);
-        overallProgressValue.setText(String.format(getString(R.string.percent), 0));
-
-
-        mTimelapseHandler = new Handler();
-        mTimelapseHandler.postDelayed(mTimelapseRunnable, initialDelay * 1000);
-
-        // Register wake lock to make sure the CPU keeps the app running
-        wakeLock.acquire();
-
-        rootView.findViewById(R.id.processingStop).setOnClickListener(new View.OnClickListener() {
+        mStopView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mTimelapseHandler.removeCallbacks(mTimelapseRunnable);
-                Intent intent = new Intent(getContext(), FinishActivity.class);
+                askToStopProcessing();
+            }
+        });
+
+        mRestartView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().finish();
+                Intent intent = new Intent(getContext(), ConnectionActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
         });
 
-        return rootView;
+        mErrorLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (mErrorDetailsLayout.getVisibility() == View.GONE) {
+                    mErrorDetailsLayout.setVisibility(View.VISIBLE);
+                    mErrorExpandImageView.setImageResource(R.drawable.ic_arrow_drop_up_black_24dp);
+                } else {
+                    mErrorDetailsLayout.setVisibility(View.GONE);
+                    mErrorExpandImageView.setImageResource(R.drawable.ic_arrow_drop_down_black_24dp);
+                }
+            }
+        });
+
+        return mRootView;
     }
 
 
@@ -174,10 +173,14 @@ public class ProcessingFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        getActivity().registerReceiver(this.myBatteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        mBroadcastManager.registerReceiver(mBroadcastReceiver,
+                new IntentFilter(ACTION_REQUEST_SENT));
+        mBroadcastManager.registerReceiver(mBroadcastReceiver,
+                new IntentFilter(ACTION_API_RESPONSE));
+        mBroadcastManager.registerReceiver(mBroadcastReceiver,
+                new IntentFilter(ACTION_FINISHED));
 
-        mCountdownHandler = new Handler();
-        mCountdownHandler.post(mCountdownRunnable);
+        setSpecificDisplay();
 
     }
 
@@ -186,142 +189,301 @@ public class ProcessingFragment extends Fragment {
     public void onPause() {
         super.onPause();
 
-        mCountdownHandler.removeCallbacks(mCountdownRunnable);
-        getActivity().unregisterReceiver(myBatteryReceiver);
+        if (mCountDownTimer != null) {
+            mCountDownTimer.cancel();
+        }
+
+        mBroadcastManager.unregisterReceiver(mBroadcastReceiver);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        mTimelapseHandler.removeCallbacks(mTimelapseRunnable);
-        wakeLock.release();
     }
 
 
+    void askToStopProcessing() {
+        askToStopProcessing(null);
+    }
 
-    private Runnable mCountdownRunnable = new Runnable() {
+    void askToStopProcessing(final TimelapseStopListener listener) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+                .setTitle(R.string.processing_stop)
+                .setMessage(R.string.processing_stop_confirmation_message)
+                .setPositiveButton(R.string.processing_stop_confirmation_message_ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        stopProcessing();
+                        if(listener != null) {
+                            listener.onStop();
+                        }
+                    }
+                })
+                .setNegativeButton(R.string.processing_stop_confirmation_message_cancel, null);
+
+        builder.create().show();
+    }
+
+    interface TimelapseStopListener {
+        void onStop();
+    }
+
+
+    void stopProcessing() {
+        mServiceIntent.setAction(IntervalometerService.ACTION_STOP);
+        getActivity().startService(mServiceIntent);
+
+        if (mCountDownTimer != null) {
+            mCountDownTimer.cancel();
+        }
+    }
+
+
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
-        public void run() {
-            double timeToNextPicture = (nextPictureCalendar.getTimeInMillis() - System.currentTimeMillis()) / 1000.;
-            nextPictureProgressBar.setProgress((int) ((intervalTime - timeToNextPicture) * 100));
-            nextPictureProgressValue.setText(String.format(getString(R.string.seconds),
-                    (int) timeToNextPicture + 1));
-            mCountdownHandler.postDelayed(this, 100);
+        public void onReceive(Context context, Intent intent) {
+
+            switch (intent.getAction()) {
+
+                case ACTION_REQUEST_SENT:
+                    onRequestSentToCamera(intent.getExtras());
+                    break;
+
+                case ACTION_API_RESPONSE:
+                    onPictureReceived(intent.getExtras());
+                    break;
+
+                case ACTION_FINISHED:
+                    setSpecificDisplay();
+            }
+
         }
     };
 
-    private Runnable mTimelapseRunnable = new Runnable() {
-        @Override
-        public void run() {
 
-            takePicture();
-
-            nextPictureCalendar.add(Calendar.SECOND, intervalTime);
-            framesCount++;
-
-            if (isUnlimitedMode)
-                framesCountView.setText(String.valueOf(framesCount));
-            else {
-
-                float progressPercent = (float) framesCount / totalFrames * 100;
-                overallProgressBar.setProgress(framesCount);
-                overallProgressValue.setText(String.format(getString(R.string.percent), (int) progressPercent));
-                framesCountView.setText(String.valueOf(totalFrames - framesCount));
-            }
-
-            if (isUnlimitedMode || totalFrames != framesCount)
-                mTimelapseHandler.postDelayed(this, intervalTime * 1000);
-            else {
-                mCountdownHandler.removeCallbacks(mCountdownRunnable);
-                nextPictureProgressValue.setText(String.format(getString(R.string.seconds), 0));
-            }
-        }
-    };
+    private void setSpecificDisplay() {
 
 
-    private void takePicture() {
+        long initialDelayMillis = mSettings.initialDelay * 1000;
+        long intervalTimeMillis = mSettings.intervalTime * 1000;
+
         /*
-		 * Take a picture and notify the counter when it is done
-		 * this is necessary in order to avoid a further takePicture() while the camera
-		 * is still working on the last one
-		 */
-        mCameraAPI.takePicture(new TakePictureListener() {
+         * Set progress bar
+         */
+        if (!mSettings.isUnlimitedMode()) {
+            mOverallProgressBar.setMax((int) (initialDelayMillis +
+                    (mSettings.framesCount - 1) * intervalTimeMillis));
+        } else {
+            mRootView.findViewById(R.id.progress_layout).setVisibility(View.GONE);
+        }
 
-            @Override
-            public void onResult(String url) {
 
-                if (showLastFramePreview) {
+        /*
+         * Set start time
+         */
+        String beginTime = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault())
+                .format(mTimelapseData.getStartTime() + initialDelayMillis);
+        mStartTimeTextView.setText(beginTime);
 
-                    ImageRequest request = new ImageRequest(url,
-                            new Response.Listener<Bitmap>() {
-                                @Override
-                                public void onResponse(Bitmap bitmap) {
-                                    setPreviewImage(bitmap);
-                                }
-                            }, 0, 0, ImageView.ScaleType.CENTER_INSIDE, null,
-                            new Response.ErrorListener() {
-                                public void onErrorResponse(VolleyError error) {
-                                    Log.v("DEBUG", error.getLocalizedMessage());
-                                }
-                            });
-                    imagesQueue.add(request);
-                }
 
+        /*
+         * Set frames count title
+         */
+        mFramesCountTextView.setText(String.valueOf(mApiRequestsList.getRequestsSent()));
+
+
+        /*
+         * Start timer
+         */
+        if (!mTimelapseData.isTimelapseIsFinished()) {
+
+            long elapsedTime;
+            long timeRemaining;
+
+            // If we are waiting the first frame
+            if (mApiRequestsList.getRequestsSent() == 0) {
+                elapsedTime = System.currentTimeMillis() - mTimelapseData.getStartTime();
+                timeRemaining = initialDelayMillis - elapsedTime;
+            } else {
+                elapsedTime = System.currentTimeMillis() - mApiRequestsList.getLastRequestSent();
+                timeRemaining = intervalTimeMillis - elapsedTime;
             }
 
-            @Override
-            public void onError(CameraAPI.ResponseCode responseCode, String responseMsg) {
-                // Had an error, let's see which
+            startTimer(timeRemaining, elapsedTime);
 
-                overlapsNumber++;
-
-                String errorMessage;
-
-                switch (responseCode) {
-                    case LONG_SHOOTING:
-                        // Shooting not yet finished
-                        // await picture and call this listener when finished
-                        // (or when again an error occurs)
-                        mCameraAPI.awaitTakePicture(this);
-                        errorMessage = getString(R.string.capture_frames_overlapping_message);
-                        break;
-                    default:
-                        errorMessage = getString(R.string.capture_frames_overlapping_message_old_api);
-                }
-
-                processingErrorMessageView.setText(String.format(errorMessage, overlapsNumber));
-                processingErrorMessageView.setVisibility(View.VISIBLE);
+            if (mApiRequestsList.isTakingPicture()) {
+                mNextPictureCaptureProgressBar.setVisibility(View.VISIBLE);
             }
-        });
+        }
+
+
+        /*
+         * Remove and add some views when it's finished
+         */
+        else {
+
+            getActivity().setTitle(R.string.title_finish);
+            mNextPictureLayout.setVisibility(View.GONE);
+            mStopView.setVisibility(View.GONE);
+            mImageReviewView.setVisibility(View.GONE);
+            mOverallProgressLayout.setVisibility(View.GONE);
+            mRestartView.setVisibility(View.VISIBLE);
+            mFinishLayout.setVisibility(View.VISIBLE);
+
+            long totalElapsedTime = mApiRequestsList.getLastRequestSent() - mTimelapseData
+                    .getStartTime();
+            mChronometerTextView.setText(DateUtils.formatElapsedTime(totalElapsedTime / 1000));
+        }
+
+        String lastPictureUrl = mApiRequestsList.getLastPictureUrl();
+        if (lastPictureUrl != null) {
+            showImage(lastPictureUrl);
+        }
+
+        displayErrorMessage();
     }
 
 
-    private void setPreviewImage(final Bitmap preview) {
+    private void onRequestSentToCamera(Bundle extras) {
 
-        if (getActivity() == null) {
+        mNextPictureCaptureProgressBar.setVisibility(View.VISIBLE);
+
+        int nRequest = extras.getInt(EXTRA_NUMBER);
+
+        mFramesCountTextView.setText(String.valueOf(nRequest));
+
+        if (!mSettings.isUnlimitedMode() && nRequest == mSettings.framesCount) {
             return;
         }
-        getActivity().runOnUiThread(new Runnable() {
 
-            @Override
-            public void run() {
-                imageReviewView.setImageBitmap(preview);
-            }
-        });
-
+        long offset = System.currentTimeMillis() - mTimelapseData.getApiRequestsList()
+                .getLastRequestSent();
+        startTimer(mSettings.intervalTime * 1000 - offset, offset);
     }
 
-    /**
-     * Handler for battery state
-     */
-    private BroadcastReceiver myBatteryReceiver = new BroadcastReceiver() {
 
-        @Override
-        public void onReceive(Context arg0, Intent arg1) {
-            int bLevel = arg1.getIntExtra("level", 0);
-            batteryView.setText(String.format(getString(R.string.percent), bLevel));
+    private void onPictureReceived(Bundle extras) {
+
+        PictureResponse pictureResponse =
+                (PictureResponse) extras.getSerializable(EXTRA_PICTURE);
+
+        if (pictureResponse == null || mTimelapseData.isTimelapseIsFinished()) return;
+
+        if (pictureResponse.status == CameraWS.ResponseCode.OK) {
+            showImage(pictureResponse.url);
+        } else {
+            displayErrorMessage();
         }
-    };
+
+        if (!mApiRequestsList.isTakingPicture()) {
+            mNextPictureCaptureProgressBar.setVisibility(View.GONE);
+        }
+    }
+
+    private void displayErrorMessage() {
+
+        if (mApiRequestsList.getNumberOfSkippedFrames() == 0) return;
+
+        mErrorLayout.setVisibility(View.VISIBLE);
+
+        if (mApiRequestsList.getResponsesLongShot() > 0) {
+            mErrorLongShot.setVisibility(View.VISIBLE);
+            mErrorLongShot.setText(String.format(getString(R.string.processing_error_long_shot),
+                    mApiRequestsList.getResponsesLongShot()));
+        }
+
+        if (mApiRequestsList.getResponsesWsUnreachable() > 0) {
+            mErrorWsUnreachable.setVisibility(View.VISIBLE);
+            mErrorWsUnreachable.setText(String.format(getString(
+                    R.string.processing_error_ws_unreachable),
+                    mApiRequestsList.getResponsesWsUnreachable()));
+        }
+
+        if (mApiRequestsList.getResponsesUnknown() > 0) {
+            mErrorUnknown.setVisibility(View.VISIBLE);
+            mErrorUnknown.setText(String.format(getString(R.string.processing_error_unknown),
+                    mApiRequestsList.getResponsesUnknown()));
+        }
+    }
+
+
+    private void startTimer(final long timeInMillis, final long offset) {
+
+        mNextPictureProgressBar.setMax((int) (timeInMillis + offset));
+        mCountDownTimer = new CountDownTimer(timeInMillis, 142) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                updateProgressBar(millisUntilFinished);
+            }
+
+            @Override
+            public void onFinish() {
+                updateProgressBar(0);
+            }
+
+            private void updateProgressBar(double millisUntilFinished) {
+
+                // Prevent null pointers when fragment is not attached to an activity during screen
+                // rotation
+                if (getActivity() == null) return;
+
+                /*
+                 * Update next picture progress
+                 */
+                mNextPictureProgressBar.setProgress((int) ((offset + timeInMillis -
+                        millisUntilFinished)));
+                mNextPictureProgressValue.setText(String.format(getString(R.string.seconds),
+                        ((int) millisUntilFinished / 1000)));
+
+                /*
+                 * Update chronometer
+                 */
+                long totalElapsedTime = System.currentTimeMillis() - mTimelapseData.getStartTime();
+                long elapsedTimeFromFirstFrame = Math.max(totalElapsedTime - mSettings
+                        .initialDelay * 1000, 0);
+                mChronometerTextView.setText(DateUtils.formatElapsedTime
+                        (elapsedTimeFromFirstFrame / 1000));
+
+                /*
+                 * Update overall progress if it's not unlimited mode
+                 */
+                if (!mSettings.isUnlimitedMode()) {
+                    int totalTime = mOverallProgressBar.getMax();
+                    totalElapsedTime = Math.min(totalElapsedTime, totalTime);
+                    double ratio = (double) totalElapsedTime / totalTime;
+                    mOverallProgressBar.setProgress((int) totalElapsedTime);
+                    mOverallProgressValue.setText(String.format(getString(R.string.percent1f),
+                            (int) (ratio * 100)));
+                }
+            }
+
+        }.start();
+    }
+
+    private void showImage(String url) {
+        ImageRequest request = new ImageRequest(url,
+                new Response.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(final Bitmap bitmap) {
+                        if (getActivity() == null) return;
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mImageReviewView.setImageBitmap(bitmap);
+                            }
+                        });
+                    }
+                }, 0, 0, ImageView.ScaleType.CENTER_INSIDE, null,
+                new Response.ErrorListener() {
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                });
+        mImagesQueue.add(request);
+    }
+
+    boolean isFinished() {
+        return mFinishLayout.getVisibility() == View.VISIBLE;
+    }
 
 }

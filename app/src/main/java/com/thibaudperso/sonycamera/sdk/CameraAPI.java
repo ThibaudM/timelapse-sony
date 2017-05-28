@@ -1,288 +1,247 @@
 package com.thibaudperso.sonycamera.sdk;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.thibaudperso.sonycamera.sdk.core.CameraWS;
-import com.thibaudperso.sonycamera.sdk.core.CameraWSListener;
-import com.thibaudperso.sonycamera.timelapse.control.io.TestConnectionListener;
 import com.thibaudperso.sonycamera.sdk.model.Device;
+import com.thibaudperso.sonycamera.sdk.model.PictureResponse;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Thibaud Michel
- *
  */
 public class CameraAPI {
 
-	public enum ZoomDirection { IN, OUT }
-	public enum ZoomAction { START, STOP }
+    public enum ZoomDirection {IN, OUT}
 
-	public enum ResponseCode {
-		NONE(-1), //means no code available
-		OK(0),
-		LONG_SHOOTING(40403),
-		NOT_AVAILABLE_NOW(1);
+    public enum ZoomAction {START, STOP}
 
-		private int value;
+    private CameraWS mCameraWS;
 
-		ResponseCode(int value){ this.value = value; }
-		public int getValue(){ return value; }
-		public static ResponseCode find(int value){
-			for(ResponseCode el : ResponseCode.values())
-				if(el.getValue() == value)
-					return el;
-			return NONE; //if not an appropriate found
-		}
+    private List<DeviceChangedListener> mDeviceChangedListeners;
 
-	}
+    private boolean mIsDeviceInitialized = false;
 
-	public static int MIN_TIME_BETWEEN_CAPTURE = 1;
+    public CameraAPI(Context context) {
 
-	private CameraWS mCameraWS;
-	private boolean isDeviceInitialized = false;
+        mCameraWS = new CameraWS(context);
+        mDeviceChangedListeners = new ArrayList<>();
 
-	public CameraAPI(Context context) {
+    }
 
-		mCameraWS = new CameraWS(context);
+    public void setDevice(Device device) {
+        mCameraWS.setWSUrl(device.getWebService());
+        initialize();
 
-	}
+        for (DeviceChangedListener listener : mDeviceChangedListeners) listener.onNewDevice(device);
+    }
 
-	public void setDevice(Device device) {
-		mCameraWS.setWSUrl(device.getWebService());
-		isDeviceInitialized = false;
-	}
+    private void initialize() {
+        if (mIsDeviceInitialized) {
+            return;
+        }
+        initWebService(null);
+        setShootMode("still");
+        mIsDeviceInitialized = true;
+    }
 
-	public void initialize() {
-		if(isDeviceInitialized) {
-			return;
-		}
-		initWebService(null);
-		setShootMode("still");
-		isDeviceInitialized = true;
-	}
+    /**
+     * Sets the shoot mode, "still" or "movie". This needs to be set to "still"
+     * on some camcorders, because they default to video.
+     *
+     * @param mode either "still" or "movie".
+     */
+    public void setShootMode(String mode) {
+        JSONArray params = new JSONArray().put(mode);
+        mCameraWS.sendRequest("setShootMode", params, null);
+    }
 
-	/**
-	 * Sets the shoot mode, "still" or "movie". This needs to be set to "still"
-	 * on some camcorders, because they default to video.
-	 *
-	 * @param mode either "still" or "movie".
-	 */
-	public void setShootMode(String mode) {
-		JSONArray params = new JSONArray().put(mode);
-		mCameraWS.sendRequest("setShootMode", params, null);
-	}
+    public void takePicture(final TakePictureListener listener) {
+        mCameraWS.sendRequest("actTakePicture", new JSONArray(), getTakePictureListener(listener));
+    }
 
-	public void takePicture(final TakePictureListener listener) {
-		mCameraWS.sendRequest("actTakePicture", new JSONArray(), getTakePictureListener(listener));
-	}
+    public void awaitTakePicture(final TakePictureListener listener) {
+        mCameraWS.sendRequest("awaitTakePicture", new JSONArray(), getTakePictureListener(listener));
+    }
 
-	public void awaitTakePicture(final TakePictureListener listener) {
-		mCameraWS.sendRequest("awaitTakePicture", new JSONArray(), getTakePictureListener(listener));
-	}
+    private CameraWS.Listener getTakePictureListener(final TakePictureListener listener) {
+        return new CameraWS.Listener() {
 
-	private CameraWSListener getTakePictureListener(final TakePictureListener listener){
-		return new CameraWSListener() {
+            @Override
+            public void cameraResponse(CameraWS.ResponseCode responseCode, Object response) {
 
-			@Override
-			public void cameraResponse(JSONArray jsonResponse) {
+                if (listener == null) return;
 
-				if(listener == null) {
-					return;
-				}
+                PictureResponse output = new PictureResponse();
+                output.time = System.currentTimeMillis();
+                output.status = responseCode;
 
-				String url;
-				try {
-					url = jsonResponse.getJSONArray(0).getString(0);
-					listener.onResult(url);
-				} catch (Exception e) {
-					listener.onError(ResponseCode.NONE, e.getMessage());
-				}
-			}
+                if (responseCode == CameraWS.ResponseCode.OK) {
 
-			@Override
-			public void cameraError(JSONObject jsonResponse) {
-				if(listener != null) {
+                    try {
+                        output.status = CameraWS.ResponseCode.OK;
+                        output.url = ((JSONArray) response).getJSONArray(0).getString(0);
 
-					if(jsonResponse == null) {
-						listener.onError(ResponseCode.NONE, "json response is null");
-						return;
-					}
+                    } catch (Exception e) {
+                        output.status = CameraWS.ResponseCode.RESPONSE_NOT_WELL_FORMATED;
+                    }
+                }
 
-					int responseCode = -1;
-					String responseMsg = null;
-					// whole JSON is of format {"id":38,"error":[1,"Not Available Now"]}
-					try {
-						if(jsonResponse.has("error")){
-							JSONArray arr = jsonResponse.getJSONArray("error");
-							responseCode = arr.getInt(0);
-							responseMsg = arr.getString(1);
-						}
-						listener.onError(ResponseCode.find(responseCode),responseMsg);
-					} catch (JSONException err){
-						listener.onError(ResponseCode.NONE, err.toString());
-					}
-				}
-			}
-		};
-	}
+                listener.onResult(output);
+            }
+        };
+    }
 
-	public void initWebService(final InitWebServiceListener listener) {
+    private void initWebService(final InitWebServiceListener listener) {
 
-		mCameraWS.sendRequest("startRecMode", new JSONArray(), new CameraWSListener() {
+        mCameraWS.sendRequest("startRecMode", new JSONArray(), new CameraWS.Listener() {
+            @Override
+            public void cameraResponse(CameraWS.ResponseCode responseCode, Object response) {
 
-			@Override
-			public void cameraResponse(JSONArray jsonResponse) {
-				if(listener == null) {
-					return;
-				}
+                if (listener == null) return;
 
-				listener.onResult();
-			}
+                listener.onResult(responseCode);
 
-			@Override
-			public void cameraError(JSONObject jsonResponse) {
-				if(listener == null) {
-					return;
-				}
+            }
+        });
 
-				listener.onError("Error");
-			}
-		});
+    }
 
-	}
+    public void getVersion(final VersionListener listener) {
 
-	public void getVersion(final GetVersionListener listener) {
+        mCameraWS.sendRequest("getVersions", new JSONArray(), new CameraWS.Listener() {
 
-		mCameraWS.sendRequest("getVersions", new JSONArray(), new CameraWSListener() {
+            @Override
+            public void cameraResponse(CameraWS.ResponseCode responseCode, Object response) {
 
-			@Override
-			public void cameraResponse(JSONArray jsonResponse) {
-				if(listener == null) {
-					return;
-				}
+                if (listener == null) return;
 
-				int version;
-				try {
-					version = jsonResponse.getJSONArray(0).getInt(0);
-					listener.onResult(version);
-				} catch (Exception e) {
-					listener.onError(e.getMessage());
-				}
-			}
+                int version = 0;
+                CameraWS.ResponseCode status = responseCode;
 
-			@Override
-			public void cameraError(JSONObject jsonResponse) {
-				if(listener == null) {
-					return;
-				}
+                if (responseCode == CameraWS.ResponseCode.OK) {
 
-				listener.onError("Error");
-			}
-		});
+                    try {
+                        version = ((JSONArray) response).getJSONArray(0).getInt(0);
+                    } catch (Exception e) {
+                        status = CameraWS.ResponseCode.RESPONSE_NOT_WELL_FORMATED;
+                    }
+                }
 
-	}
+                listener.onResult(status, version);
+            }
 
-	public void testConnection(final TestConnectionListener listener) {
+        });
 
-		this.getVersion(new GetVersionListener() {
-			@Override
-			public void onResult(int version) {
-				listener.isConnected(true);
-			}
+    }
 
-			@Override
-			public void onError(String error) {
-				listener.isConnected(false);
-			}
-		});
+    public void testConnection(final TestConnectionListener listener) {
 
-	}
+        this.getVersion(new VersionListener() {
+            @Override
+            public void onResult(CameraWS.ResponseCode responseCode, int version) {
 
-	public void closeConnection() {
+                if (listener == null) return;
 
-		mCameraWS.sendRequest("stopRecMode", new JSONArray(), new CameraWSListener() {
+                listener.isConnected(responseCode == CameraWS.ResponseCode.OK);
+            }
+        });
 
-			@Override
-			public void cameraResponse(JSONArray jsonResponse) {
-				Log.w("DEBUG","success closing connection.");
-			}
+    }
 
-			@Override
-			public void cameraError(JSONObject jsonResponse) {
-				Log.w("DEBUG","error closing connection.");
-			}
-		}, 200);
-
-	}
+    public void closeConnection() {
+        mCameraWS.sendRequest("stopRecMode", new JSONArray(), null, 200);
+    }
 
 
-	public void startLiveView(final StartLiveviewListener listener) {
+    public void startLiveView(final StartLiveviewListener listener) {
 
-		mCameraWS.sendRequest("startLiveview", new JSONArray(), new CameraWSListener() {
+        mCameraWS.sendRequest("startLiveview", new JSONArray(), new CameraWS.Listener() {
 
-			@Override
-			public void cameraResponse(JSONArray jsonResponse) {
-				if(listener == null) {
-					return;
-				}
+            @Override
+            public void cameraResponse(CameraWS.ResponseCode responseCode, Object response) {
 
-				try {
-					listener.onResult(jsonResponse.getString(0));
-				} catch (Exception e) {
-					listener.onError(e.getMessage());
-				}
-			}
+                if (listener == null) return;
 
-			@Override
-			public void cameraError(JSONObject jsonResponse) {
-				if(listener == null) {
-					return;
-				}
+                String url = null;
+                CameraWS.ResponseCode status = responseCode;
 
-				listener.onError("Error");
-			}
-		});
-	}
+                if (responseCode == CameraWS.ResponseCode.OK) {
 
-	public void stopLiveView() {
+                    try {
+                        url = ((JSONArray) response).getString(0);
+                    } catch (Exception e) {
+                        status = CameraWS.ResponseCode.RESPONSE_NOT_WELL_FORMATED;
+                    }
+                }
 
-		mCameraWS.sendRequest("stopLiveview", new JSONArray(), null);
-	}
+                listener.onResult(status, url);
+            }
+        });
+    }
+
+    public void stopLiveView() {
+
+        mCameraWS.sendRequest("stopLiveview", new JSONArray(), null);
+    }
 
 
-	public void actZoom(final ZoomDirection zoomDir) {
+    public void actZoom(final ZoomDirection zoomDir) {
 
-		JSONArray params = new JSONArray().put(zoomDir == ZoomDirection.IN ? "in" : "out").put("1shot");
-		mCameraWS.sendRequest("actZoom", params, null);
-	}
+        JSONArray params = new JSONArray().put(zoomDir == ZoomDirection.IN ? "in" : "out").put("1shot");
+        mCameraWS.sendRequest("actZoom", params, null);
+    }
 
-	public void actZoom(final ZoomDirection zoomDir, final ZoomAction zoomAct) {
+    public void actZoom(final ZoomDirection zoomDir, final ZoomAction zoomAct) {
 
-		JSONArray params = new JSONArray().put(zoomDir == ZoomDirection.IN ? "in" : "out").
-				put(zoomAct == ZoomAction.START ? "start" : "stop");
-		mCameraWS.sendRequest("actZoom", params, null);
-	}
+        JSONArray params = new JSONArray().put(zoomDir == ZoomDirection.IN ? "in" : "out").
+                put(zoomAct == ZoomAction.START ? "start" : "stop");
+        mCameraWS.sendRequest("actZoom", params, null);
+    }
 
 
-	public void setFlash(final boolean enableFlash) {
+    public void setFlash(final boolean enableFlash) {
 
         // TODO can be "auto" also
-		JSONArray params = new JSONArray().put(enableFlash ? "on" : "off");
-		mCameraWS.sendRequest("setFlashMode", params, new CameraWSListener() {
+        // But this functionnality is not well implemented in all API
+        JSONArray params = new JSONArray().put(enableFlash ? "on" : "off");
+        mCameraWS.sendRequest("setFlashMode", params, null);
+    }
 
-			@Override
-			public void cameraResponse(JSONArray jsonResponse) {
-				Log.v("DEBUG", "ok: "+jsonResponse);
-			}
 
-			@Override
-			public void cameraError(JSONObject jsonResponse) {
-				Log.v("DEBUG", "err: "+jsonResponse);
-			}
-		});
-	}
+    public void addDeviceChangedListener(DeviceChangedListener listener) {
+        mDeviceChangedListeners.add(listener);
+    }
+
+    public void removeDeviceChangedListener(DeviceChangedListener listener) {
+        mDeviceChangedListeners.remove(listener);
+    }
+
+    public interface DeviceChangedListener {
+        void onNewDevice(Device device);
+    }
+
+    public interface InitWebServiceListener {
+        void onResult(CameraWS.ResponseCode responseCode);
+    }
+
+    public interface TakePictureListener {
+        void onResult(PictureResponse response);
+    }
+
+    public interface VersionListener {
+        void onResult(CameraWS.ResponseCode responseCode, int version);
+    }
+
+    public interface TestConnectionListener {
+        void isConnected(boolean isConnected);
+    }
+
+    public interface StartLiveviewListener {
+        void onResult(CameraWS.ResponseCode responseCode, String liveviewUrl);
+    }
+
 }

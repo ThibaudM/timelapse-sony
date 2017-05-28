@@ -3,13 +3,20 @@
 
     <!-- Units Strings -->
 
-    <string name="seconds" translatable="false">%1$ds</string>
-    <string name="seconds1f" translatable="false">%1$fs</string>
+    <string name="seconds" translatable="false">%1$d s</string>
     <string name="percent1f" translatable="false">%1$.1f%%</string>
-    <string name="percent" translatable="false">%1$d%%</string>
 
 
     <string name="camera_settings_zoom_out" translatable="false">-</string>
     <string name="camera_settings_zoom_in" translatable="false">+</string>
+
+    <string name="processing_frames_count_default" translatable="false">0</string>
+    <string name="processing_chronometer_default" translatable="false">0:00:00</string>
+    <string name="processing_next_picture_default" translatable="false">0 s</string>
+    <string name="processing_begin_time_default" translatable="false">00:00</string>
+    <string name="processing_progress_default" translatable="false">0%</string>
+
+    <string name="settings_initial_delay_default" translatable="false">0</string>
+    <string name="settings_interval_time_default" translatable="false">10</string>
 
 </resources>

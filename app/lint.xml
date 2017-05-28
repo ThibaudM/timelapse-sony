@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="UnusedResources">
+        <ignore path="src/main/res/drawable-hdpi/ic_battery_life.png" />
+        <ignore path="src/main/res/drawable-hdpi/ic_restart.png" />
+        <ignore path="src/main/res/drawable-hdpi/ic_review_image.png" />
+        <ignore path="src/main/res/drawable-hdpi/ic_switch_device.png" />
+        <ignore path="src/main/res/drawable-hdpi/ic_take_picture.png" />
+        <ignore path="src/main/res/drawable-hdpi/ic_timelapse_start.png" />
+        <ignore path="src/main/res/drawable-hdpi/ic_timelapse_stop.png" />
+        <ignore path="src/main/res/drawable-mdpi/ic_battery_life.png" />
+        <ignore path="src/main/res/drawable-mdpi/ic_restart.png" />
+        <ignore path="src/main/res/drawable-mdpi/ic_review_image.png" />
+        <ignore path="src/main/res/drawable-mdpi/ic_switch_device.png" />
+        <ignore path="src/main/res/drawable-mdpi/ic_take_picture.png" />
+        <ignore path="src/main/res/drawable-mdpi/ic_timelapse_start.png" />
+        <ignore path="src/main/res/drawable-mdpi/ic_timelapse_stop.png" />
+        <ignore path="src/main/res/drawable-xhdpi/ic_battery_life.png" />
+        <ignore path="src/main/res/drawable-xhdpi/ic_restart.png" />
+        <ignore path="src/main/res/drawable-xhdpi/ic_review_image.png" />
+        <ignore path="src/main/res/drawable-xhdpi/ic_switch_device.png" />
+        <ignore path="src/main/res/drawable-xhdpi/ic_take_picture.png" />
+        <ignore path="src/main/res/drawable-xhdpi/ic_timelapse_start.png" />
+        <ignore path="src/main/res/drawable-xhdpi/ic_timelapse_stop.png" />
+        <ignore path="src/main/res/drawable/dialog_bubble.9.png" />
+        <ignore path="src/main/res/drawable/information.png" />
+    </issue>
+</lint>

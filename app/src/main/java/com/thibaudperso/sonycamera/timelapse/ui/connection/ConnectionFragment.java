@@ -6,18 +6,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
+import android.nfc.NfcAdapter;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.text.Html;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,7 +25,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.EditText;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -36,57 +34,70 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.thibaudperso.sonycamera.R;
-import com.thibaudperso.sonycamera.sdk.CameraAPI;
 import com.thibaudperso.sonycamera.sdk.model.Device;
-import com.thibaudperso.sonycamera.sdk.model.DeviceManager;
 import com.thibaudperso.sonycamera.timelapse.TimelapseApplication;
-import com.thibaudperso.sonycamera.timelapse.control.io.IOHandler;
-import com.thibaudperso.sonycamera.timelapse.control.io.TestConnectionListener;
-import com.thibaudperso.sonycamera.timelapse.control.io.WifiHandler;
-import com.thibaudperso.sonycamera.timelapse.ui.settings.TimelapseSettingsActivity;
+import com.thibaudperso.sonycamera.timelapse.control.DeviceManager;
+import com.thibaudperso.sonycamera.timelapse.control.connection.NFCHandler;
+import com.thibaudperso.sonycamera.timelapse.control.connection.StateMachineConnection;
+import com.thibaudperso.sonycamera.timelapse.ui.adjustments.AdjustmentsActivity;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+
+import static com.thibaudperso.sonycamera.timelapse.Constants.PREF_AUTOMATIC_CONTINUE;
+import static com.thibaudperso.sonycamera.timelapse.control.connection.StateMachineConnection.State.BAD_API_ACCESS;
+import static com.thibaudperso.sonycamera.timelapse.control.connection.StateMachineConnection.State.CHECK_API;
+import static com.thibaudperso.sonycamera.timelapse.control.connection.StateMachineConnection.State.GOOD_API_ACCESS;
+import static com.thibaudperso.sonycamera.timelapse.control.connection.StateMachineConnection.State.WIFI_DISABLED;
 
 public class ConnectionFragment extends Fragment {
 
-    private static final String PREF_AUTOMATIC_CONTINUE = "pref_auto_continue";
+    private final static int ADJUSTMENTS_ACTIVITY_RESULT = 0x1;
     private static final int PERMISSIONS_REQUEST_COARSE_LOCATION = 1;
-    private static final int REQUEST_CODE_NEXT_STEP = 1;
+    public static final String EXTRA_EXIT = "exit";
+
+    private TimelapseApplication mApplication;
 
     private DeviceManager mDeviceManager;
-    private IOHandler mIOHandler;
-    private WifiHandler mWifiHandler;
-    private CameraAPI mCameraAPI;
+    private StateMachineConnection mStateMachineConnection;
 
-    private AlertDialog alertDialogChooseNetworkConnection;
-    private AlertDialog alertDialogChooseNetworkCreation;
-    private AlertDialog alertDialogAskForPassword;
+    private NfcAdapter mNfcAdapter;
 
-    private ImageView connectionInfoNetworkState, connectionInfoAPIState;
-    private ProgressBar connectionInfoNetworkStateProgress, connectionInfoAPIStateProgress;
+    private AlertDialog mAlertDialogChooseNetworkConnection;
+
+    private Spinner mCameraSpinner;
+    private ArrayAdapter<Device> mAdapter;
+
+    private ImageView mConnectionInfoWifiEnabled, mConnectionInfoNetworkState,
+            mConnectionInfoAPIState;
+    private ProgressBar mConnectionInfoWifiEnabledProgress, mConnectionInfoNetworkStateProgress,
+            mConnectionInfoAPIStateProgress;
+    private ImageView mConnectionDeviceListUpdateButton;
+    private ProgressBar mConnectionDeviceListUpdateProgress;
 
     private boolean mAutomaticContinue = true;
-    private boolean mDontCheckNextIO = false;
+    private boolean mSkipNextState = false;
 
-    private CheckBox connectionAutomaticCheckbox;
-    private FloatingActionButton connectionContinueButton;
+    private CheckBox mConnectionAutomaticCheckbox;
+    private FloatingActionButton mConnectionContinueButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        TimelapseApplication application = (TimelapseApplication) getActivity().getApplication();
+        mApplication = (TimelapseApplication) getActivity().getApplication();
 
-        mDeviceManager = application.getDeviceManager();
-        mIOHandler = application.getIOHandler();
-        mWifiHandler = mIOHandler.getWifiHandler();
-        mCameraAPI = application.getCameraAPI();
+        mDeviceManager = mApplication.getDeviceManager();
+        mStateMachineConnection = mApplication.getStateMachineConnection();
 
-
-        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(application);
-        mAutomaticContinue = preferences.getBoolean(PREF_AUTOMATIC_CONTINUE, mAutomaticContinue);
-
+        if (android.os.Build.VERSION.SDK_INT >= 10) {
+            mNfcAdapter = NfcAdapter.getDefaultAdapter(getContext());
+        }
     }
 
     @Override
@@ -95,38 +106,39 @@ public class ConnectionFragment extends Fragment {
 
         View viewResult = inflater.inflate(R.layout.fragment_connection, container, false);
 
-        connectionInfoNetworkState = (ImageView) viewResult.findViewById(R.id.connectionInfoNetworkState);
-        connectionInfoAPIState = (ImageView) viewResult.findViewById(R.id.connectionInfoAPIState);
-        connectionInfoNetworkStateProgress = (ProgressBar) viewResult.findViewById(R.id.connectionInfoNetworkStateProgress);
-        connectionInfoAPIStateProgress = (ProgressBar) viewResult.findViewById(R.id.connectionInfoAPIStateProgress);
-        ((TextView) viewResult.findViewById(R.id.connectionInfoMessage)).setText(
+        mConnectionDeviceListUpdateButton = (ImageView) viewResult.findViewById(R.id.connection_camera_list_update);
+        mConnectionDeviceListUpdateProgress = (ProgressBar) viewResult.findViewById(R.id.connection_camera_list_update_progress);
+        mConnectionInfoWifiEnabled = (ImageView) viewResult.findViewById(R.id.connection_info_wifi_enabled_icon);
+        mConnectionInfoNetworkState = (ImageView) viewResult.findViewById(R.id.connection_info_network_state);
+        mConnectionInfoAPIState = (ImageView) viewResult.findViewById(R.id.connection_info_api_state);
+        mConnectionInfoWifiEnabledProgress = (ProgressBar) viewResult.findViewById(R.id.connection_info_wifi_enabled_progress);
+        mConnectionInfoNetworkStateProgress = (ProgressBar) viewResult.findViewById(R.id.connection_info_network_state_progress);
+        mConnectionInfoAPIStateProgress = (ProgressBar) viewResult.findViewById(R.id.connection_info_api_state_progress);
+        ((TextView) viewResult.findViewById(R.id.connection_info_message)).setText(
                 Html.fromHtml(getString(R.string.connection_information_message)));
 
 
-        /**
+        /*
          * Handle Camera spinner
          */
-        final Spinner cameraSpinner = (Spinner) viewResult.findViewById(R.id.connectionCameraSpinner);
+        mCameraSpinner = (Spinner) viewResult.findViewById(R.id.connection_camera_spinner);
 
-        ArrayAdapter<Device> adapter = new ArrayAdapter<>(getActivity(),
+        mAdapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, mDeviceManager.getDevices());
-        adapter.sort(Device.COMPARE_BY_DEVICEMODEL);
-        cameraSpinner.setAdapter(adapter);
+        mCameraSpinner.setAdapter(mAdapter);
 
-        int defaultPosition = adapter.getPosition(mDeviceManager.getSelectedDevice());
-        cameraSpinner.setSelection(defaultPosition, false);
+        updateList();
 
         // http://stackoverflow.com/a/9375624/2239938
-        cameraSpinner.post(new Runnable() {
+        mCameraSpinner.post(new Runnable() {
             @Override
             public void run() {
-                cameraSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+                mCameraSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
                     @Override
                     public void onItemSelected(AdapterView<?> arg0, View view,
                                                int position, long id) {
-                        mDeviceManager.setSelectedDevice((Device) cameraSpinner.getItemAtPosition(position));
-                        checkAPIConnection();
+                        mDeviceManager.setSelectedDevice((Device) mCameraSpinner.getItemAtPosition(position));
                     }
 
                     @Override
@@ -136,76 +148,194 @@ public class ConnectionFragment extends Fragment {
             }
         });
 
-
-        /**
-         * Handle Camera Refresh
-         */
-
-        viewResult.findViewById(R.id.connectionInfoRefresh).setOnClickListener(new OnClickListener() {
-
+        viewResult.findViewById(R.id.connection_camera_list_update).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkIO();
+                mConnectionDeviceListUpdateButton.setVisibility(View.GONE);
+                mConnectionDeviceListUpdateProgress.setVisibility(View.VISIBLE);
+                mDeviceManager.getLastListOfDevicesFromInternet(new DeviceManager.Listener() {
+                    @Override
+                    public void onDevicesListChanged(List<Device> devices) {
+                        mAdapter.notifyDataSetChanged();
+                        updateList();
+
+                        Toast.makeText(getContext(), R.string.connection_camera_list_updated,
+                                Toast.LENGTH_SHORT).show();
+
+                        mConnectionDeviceListUpdateButton.setVisibility(View.VISIBLE);
+                        mConnectionDeviceListUpdateProgress.setVisibility(View.GONE);
+                    }
+                });
             }
         });
 
-        connectionAutomaticCheckbox = ((CheckBox) viewResult.findViewById(R.id.connectionAutomaticCheckbox));
-        connectionAutomaticCheckbox.setChecked(mAutomaticContinue);
-        connectionContinueButton = (FloatingActionButton) viewResult.findViewById(R.id.connectionSettingsButton);
-        connectionContinueButton.setVisibility(View.GONE);
-        connectionContinueButton.setOnClickListener(new OnClickListener() {
+
+        mConnectionAutomaticCheckbox = ((CheckBox) viewResult.findViewById(R.id.connection_automatic_checkbox));
+        mConnectionAutomaticCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                final SharedPreferences.Editor editor = PreferenceManager
+                        .getDefaultSharedPreferences(getContext()).edit();
+                editor.putBoolean(PREF_AUTOMATIC_CONTINUE, isChecked);
+                editor.apply();
+            }
+        });
+        mConnectionContinueButton = (FloatingActionButton) viewResult.findViewById(R.id.connection_settings_button);
+        mConnectionContinueButton.setVisibility(View.GONE);
+        mConnectionContinueButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 nextStep();
             }
         });
 
+        initConnectionInfo();
+
+
+        MobileAds.initialize(getContext(), getString(R.string.ads_pub_id));
+        AdView adView = (AdView) viewResult.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(getString(R.string.ads_test_device))
+                .build();
+        adView.loadAd(adRequest);
+
         return viewResult;
     }
 
+    private void updateList() {
+        mAdapter.sort(Device.COMPARE_BY_DEVICEMODEL);
+
+        int defaultPosition = mAdapter.getPosition(mDeviceManager.getSelectedDevice());
+        mCameraSpinner.setSelection(defaultPosition, false);
+    }
 
     @Override
     public void onResume() {
         super.onResume();
-        mWifiHandler.addListener(mWifiListener);
 
-        checkIO();
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mApplication);
+        mAutomaticContinue = preferences.getBoolean(PREF_AUTOMATIC_CONTINUE, mAutomaticContinue);
+        mConnectionAutomaticCheckbox.setChecked(mAutomaticContinue);
+
+
+        initConnectionInfo();
+
+        updateUI(mStateMachineConnection.getCurrentState());
+
+        mStateMachineConnection.addListener(mStateMachineListener);
+
+        if (mNfcAdapter != null && Build.VERSION.SDK_INT > 10) {
+            mNfcAdapter.enableForegroundDispatch(getActivity(),
+                    NFCHandler.getPendingIntent(getActivity()),
+                    NFCHandler.getIntentFilterArray(), NFCHandler.getTechListArray());
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mWifiHandler.removeListener(mWifiListener);
+        mStateMachineConnection.removeListener(mStateMachineListener);
+
+        if (mNfcAdapter != null && Build.VERSION.SDK_INT > 10) {
+            mNfcAdapter.disableForegroundDispatch(getActivity());
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
 
-
-        if (alertDialogChooseNetworkConnection != null) {
-            alertDialogChooseNetworkConnection.cancel();
+        if (mAlertDialogChooseNetworkConnection != null) {
+            mAlertDialogChooseNetworkConnection.cancel();
         }
-        if (alertDialogChooseNetworkCreation != null) {
-            alertDialogChooseNetworkCreation.cancel();
-        }
-        if (alertDialogAskForPassword != null) {
-            alertDialogAskForPassword.cancel();
-        }
-
     }
 
+    private StateMachineConnection.Listener
+            mStateMachineListener = new StateMachineConnection.Listener() {
+        @Override
+        public void onNewState(StateMachineConnection.State previousState,
+                               StateMachineConnection.State newState) {
+            updateUI(newState);
+        }
+    };
 
+    private void updateUI(StateMachineConnection.State newState) {
 
-    private void checkIO() {
-
-        if(mDontCheckNextIO) {
-            mDontCheckNextIO = false;
+        if(mSkipNextState) {
+            mSkipNextState = false;
             return;
         }
 
-        if (checkWifi()) {
-            checkAPIConnection();
+        if (Collections.singletonList(GOOD_API_ACCESS).contains(newState)) {
+            apiOk();
+        }
+
+        if (Arrays.asList(GOOD_API_ACCESS, BAD_API_ACCESS, CHECK_API).contains(newState)) {
+            wifiOk();
+        }
+
+        if (!Collections.singletonList(WIFI_DISABLED).contains(newState)) {
+            wifiEnabledOk();
+        }
+
+        switch (newState) {
+
+            case WIFI_ENABLED:
+                wifiEnabledOk();
+                break;
+
+            case WIFI_DISABLED:
+                wifiEnabledError();
+                break;
+
+            case WIFI_CONNECTED:
+                wifiError();
+                apiError();
+                break;
+
+            case WIFI_DISCONNECTED:
+                wifiError();
+                apiError();
+                break;
+
+            case SONY_WIFI:
+                wifiOk();
+                break;
+
+            case CHECK_API:
+                apiProgress();
+                break;
+
+            case NOT_SONY_WIFI:
+                wifiError();
+                break;
+
+            case BAD_API_ACCESS:
+                apiError();
+                break;
+
+            case GOOD_API_ACCESS:
+                apiOk();
+                stepFinished();
+                break;
+
+            case WIFI_SCAN:
+                wifiProgress();
+                break;
+
+            case NO_WIFI_SCAN_PERMISSION:
+                askForScanPermission();
+                break;
+
+            case MULTIPLE_SONY_SCAN_DETECTED:
+                selectNetworkForConnection(mStateMachineConnection.getWifiConfigurations());
+                break;
+
         }
     }
 
@@ -215,221 +345,62 @@ public class ConnectionFragment extends Fragment {
      * Wifi
 	 */
 
-    private boolean checkWifi() {
+    private void askForScanPermission() {
 
-        if (!mWifiHandler.isConnected()) {
-            wifiError();
+        String permission = Manifest.permission.ACCESS_COARSE_LOCATION;
 
-            String permission = Manifest.permission.ACCESS_COARSE_LOCATION;
+        if (!ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permission)) {
 
-            if (ContextCompat.checkSelfPermission(getContext(), permission)
-                    == PackageManager.PERMISSION_GRANTED) {
-                wifiProgress();
-                mWifiHandler.scanWifiConnections(mWifiScanListener);
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(R.string.connection_permission_message);
+            builder.setPositiveButton(R.string.connection_permission_ok,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                                    PERMISSIONS_REQUEST_COARSE_LOCATION);
+                        }
+                    });
+            builder.setNegativeButton(R.string.connection_permission_cancel,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Toast.makeText(getContext(), R.string.connection_permission_cancel_message,
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
 
-            }
-            else if (!ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permission)) {
+            builder.create().show();
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage(R.string.connection_permission_message);
-                builder.setPositiveButton(R.string.connection_permission_ok,
-                        new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                                PERMISSIONS_REQUEST_COARSE_LOCATION);
-                    }
-                });
-                builder.setNegativeButton(R.string.connection_permission_cancel,
-                        new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(getContext(), R.string.connection_permission_cancel_message,
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
-
-                builder.create().show();
-
-            } else {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                        PERMISSIONS_REQUEST_COARSE_LOCATION);
-            }
-            return false;
+        } else {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    PERMISSIONS_REQUEST_COARSE_LOCATION);
         }
-
-        wifiOk();
-        return true;
     }
-
 
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[],
                                            @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSIONS_REQUEST_COARSE_LOCATION: {
 
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == PERMISSIONS_REQUEST_COARSE_LOCATION
+                && grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    mWifiHandler.scanWifiConnections(mWifiScanListener);
+            mStateMachineConnection.notifyWifiScanPermissionAccepted();
 
-                } else {
-                    Toast.makeText(getContext(), R.string.connection_permission_cancel_message,
-                            Toast.LENGTH_LONG).show();
-                }
-            }
+        } else {
+            Toast.makeText(getContext(), R.string.connection_permission_cancel_message,
+                    Toast.LENGTH_LONG).show();
         }
+
     }
 
-    private WifiHandler.ScanListener mWifiScanListener = new WifiHandler.ScanListener() {
-        @Override
-        public void onWifiScanFinished(List<ScanResult> sonyCameraScanResults,
-                                       List<WifiConfiguration> knownSonyCameraConfigurations) {
-            /*
-             * No Sony Camera network found in scan
-             */
-            if (sonyCameraScanResults.size() == 0) {
-                wifiError();
-            }
-
-            /*
-             * No Sony Camera network registered on this phone but we found only one in scan
-             */
-            else if (knownSonyCameraConfigurations.size() == 0 && sonyCameraScanResults.size() == 1) {
-                askForNetworkPasswordThenConnect(sonyCameraScanResults.get(0));
-            }
-
-            /*
-             * No Sony Camera network registered on this phone but we found more than one in scan
-             */
-            else if (knownSonyCameraConfigurations.size() == 0) {
-                selectNetworkForCreation(sonyCameraScanResults);
-            }
-
-            /*
-             * There is only one Sony Camera known network connected
-             */
-            else if (knownSonyCameraConfigurations.size() == 1) {
-                mWifiHandler.connectToNetworkId(knownSonyCameraConfigurations.get(0).networkId);
-            }
-
-            /*
-             * There is more than one Sony Camera known network connected
-             */
-            else {
-                selectNetworkForConnection(knownSonyCameraConfigurations);
-            }
-        }
-    };
-
-
-    private WifiHandler.Listener mWifiListener = new WifiHandler.Listener() {
-        @Override
-        public void onWifiConnecting(String ssid) {
-        }
-
-        @Override
-        public void onWifiConnected(String ssid) {
-
-            wifiOk();
-            //before checking connection: give the camera some time to adjust to the new connection
-            new Handler().postDelayed(new Runnable() {
-                public void run() {
-                    checkAPIConnection();
-                }
-            }, 300);
-        }
-
-        @Override
-        public void onWifiDisconnected() {
-            wifiError();
-        }
-    };
 
 
     /*
      * Handle network prompts
 	 */
-
-    private void askForNetworkPasswordThenConnect(final ScanResult scanResult) {
-
-        final EditText input = new EditText(getActivity());
-        input.setGravity(Gravity.CENTER_HORIZONTAL);
-        alertDialogAskForPassword = new AlertDialog.Builder(getActivity())
-                .setTitle(String.format(getString(R.string.connection_enter_password), scanResult.SSID))
-                .setView(input)
-                .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        wifiError();
-                    }
-                })
-                .setPositiveButton(R.string.connection_enter_password_ok,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-
-                                String value = input.getText().toString();
-                                mWifiHandler.createIfNeededThenConnectToWifi(scanResult.SSID, value);
-
-                            }
-                        })
-                .setNegativeButton(R.string.connection_enter_password_cancel,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                wifiError();
-                            }
-                        }).show();
-
-    }
-
-    private void selectNetworkForCreation(final List<ScanResult> scanResults) {
-
-        final ListView listView = new ListView(getActivity());
-
-        ListAdapter adapter = new ArrayAdapter<ScanResult>(getActivity(),
-                android.R.layout.simple_list_item_1, scanResults) {
-
-            @NonNull
-            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-
-                View view = super.getView(position, convertView, parent);
-                TextView textView = (TextView) view.findViewById(android.R.id.text1);
-                textView.setText((getItem(position)).SSID);
-                return textView;
-            }
-        };
-
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, final View view,
-                                    int position, long id) {
-
-                ScanResult scanResult = (ScanResult) parent.getItemAtPosition(position);
-                askForNetworkPasswordThenConnect(scanResult);
-            }
-        });
-
-        alertDialogChooseNetworkCreation = new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.connection_choose_network)
-                .setView(listView)
-                .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        wifiError();
-                    }
-                })
-                .setNegativeButton(R.string.connection_choose_network_cancel,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                wifiError();
-                            }
-                        }).show();
-
-    }
 
     private void selectNetworkForConnection(final List<WifiConfiguration> wifiConfigurations) {
 
@@ -443,7 +414,10 @@ public class ConnectionFragment extends Fragment {
 
                 View view = super.getView(position, convertView, parent);
                 TextView textView = (TextView) view.findViewById(android.R.id.text1);
-                textView.setText((getItem(position)).SSID);
+                WifiConfiguration network = getItem(position);
+                if (network != null) {
+                    textView.setText(network.SSID);
+                }
                 return textView;
             }
         };
@@ -456,11 +430,11 @@ public class ConnectionFragment extends Fragment {
                                     int position, long id) {
 
                 WifiConfiguration wc = (WifiConfiguration) parent.getItemAtPosition(position);
-                mWifiHandler.connectToNetworkId(wc.networkId);
+                mStateMachineConnection.tryToConnectToNetworkId(wc.networkId);
             }
         });
 
-        alertDialogChooseNetworkConnection = new AlertDialog.Builder(getActivity())
+        mAlertDialogChooseNetworkConnection = new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.connection_choose_network)
                 .setView(listView)
                 .setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -479,96 +453,88 @@ public class ConnectionFragment extends Fragment {
     }
 
 
-    private void wifiProgress() {
+    private void initConnectionInfo() {
+        wifiEnabledError();
+        wifiError();
         apiError();
-        connectionInfoNetworkState.setVisibility(View.GONE);
-        connectionInfoNetworkStateProgress.setVisibility(View.VISIBLE);
+        mConnectionContinueButton.setVisibility(View.GONE);
+    }
+
+
+    private void wifiEnabledError() {
+        mConnectionInfoWifiEnabledProgress.setVisibility(View.GONE);
+        mConnectionInfoWifiEnabled.setVisibility(View.VISIBLE);
+        mConnectionInfoWifiEnabled.setImageResource(R.drawable.error);
+    }
+
+    private void wifiEnabledOk() {
+        mConnectionInfoWifiEnabledProgress.setVisibility(View.GONE);
+        mConnectionInfoWifiEnabled.setVisibility(View.VISIBLE);
+        mConnectionInfoWifiEnabled.setImageResource(R.drawable.ok);
+    }
+
+    private void wifiProgress() {
+        mConnectionInfoNetworkState.setVisibility(View.GONE);
+        mConnectionInfoNetworkStateProgress.setVisibility(View.VISIBLE);
     }
 
     private void wifiError() {
-        apiError();
-        connectionInfoNetworkStateProgress.setVisibility(View.GONE);
-        connectionInfoNetworkState.setVisibility(View.VISIBLE);
-        connectionInfoNetworkState.setImageResource(R.drawable.error);
+        mConnectionInfoNetworkStateProgress.setVisibility(View.GONE);
+        mConnectionInfoNetworkState.setVisibility(View.VISIBLE);
+        mConnectionInfoNetworkState.setImageResource(R.drawable.error);
     }
 
     private void wifiOk() {
-        connectionInfoNetworkStateProgress.setVisibility(View.GONE);
-        connectionInfoNetworkState.setVisibility(View.VISIBLE);
-        connectionInfoNetworkState.setImageResource(R.drawable.ok);
+        mConnectionInfoNetworkStateProgress.setVisibility(View.GONE);
+        mConnectionInfoNetworkState.setVisibility(View.VISIBLE);
+        mConnectionInfoNetworkState.setImageResource(R.drawable.ok);
     }
 
-
-
-
-    private boolean mAPITesting = false;
-
-    private void checkAPIConnection() {
-
-        if (mAPITesting || !mWifiHandler.isConnected()) {
-            return;
-        }
-
-        mAPITesting = true;
-        connectionContinueButton.setVisibility(View.GONE);
-        apiProgress();
-
-        mCameraAPI.testConnection(new TestConnectionListener() {
-
-            @Override
-            public void isConnected(final boolean isConnected) {
-
-                if (isConnected) {
-                    mCameraAPI.initialize();
-                    apiOk();
-                    stepFinished();
-                } else {
-                    apiError();
-                }
-
-                mAPITesting = false;
-            }
-        });
-    }
 
     private void apiProgress() {
-        connectionInfoAPIState.setVisibility(View.GONE);
-        connectionInfoAPIStateProgress.setVisibility(View.VISIBLE);
+        mConnectionInfoAPIState.setVisibility(View.GONE);
+        mConnectionInfoAPIStateProgress.setVisibility(View.VISIBLE);
     }
 
     private void apiError() {
-        connectionInfoAPIStateProgress.setVisibility(View.GONE);
-        connectionInfoAPIState.setVisibility(View.VISIBLE);
-        connectionInfoAPIState.setImageResource(R.drawable.error);
+        mConnectionInfoAPIStateProgress.setVisibility(View.GONE);
+        mConnectionInfoAPIState.setVisibility(View.VISIBLE);
+        mConnectionInfoAPIState.setImageResource(R.drawable.error);
     }
 
     private void apiOk() {
-        connectionInfoAPIStateProgress.setVisibility(View.GONE);
-        connectionInfoAPIState.setVisibility(View.VISIBLE);
-        connectionInfoAPIState.setImageResource(R.drawable.ok);
+        mConnectionInfoAPIStateProgress.setVisibility(View.GONE);
+        mConnectionInfoAPIState.setVisibility(View.VISIBLE);
+        mConnectionInfoAPIState.setImageResource(R.drawable.ok);
     }
 
 
     private void stepFinished() {
-        if (connectionAutomaticCheckbox.isChecked()) {
+        if (mConnectionAutomaticCheckbox.isChecked()) {
             nextStep();
         } else {
-            connectionContinueButton.setVisibility(View.VISIBLE);
+            mConnectionContinueButton.setVisibility(View.VISIBLE);
         }
     }
 
     private void nextStep() {
-        Intent intent = new Intent(getContext(), TimelapseSettingsActivity.class);
-        startActivityForResult(intent, REQUEST_CODE_NEXT_STEP);
+        startActivityForResult(new Intent(getContext(), AdjustmentsActivity.class),
+                ADJUSTMENTS_ACTIVITY_RESULT);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == REQUEST_CODE_NEXT_STEP) {
-            mDontCheckNextIO = true;
-            wifiError();
-            connectionContinueButton.setVisibility(View.GONE);
+
+        if (requestCode == ADJUSTMENTS_ACTIVITY_RESULT) {
+            if (data != null && data.hasExtra(EXTRA_EXIT)
+                    && data.getExtras().getBoolean(EXTRA_EXIT, false)) {
+                getActivity().finish();
+            }
         }
+
+        // This variable is used as a workaround for the long asynchronous time of disconnection
+        mSkipNextState = true;
     }
+
 }

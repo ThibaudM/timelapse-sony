@@ -1,14 +1,18 @@
 package com.thibaudperso.sonycamera.timelapse.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.TextView;
+import android.util.Pair;
+import android.widget.FrameLayout;
 
 import com.thibaudperso.sonycamera.R;
-import com.thibaudperso.sonycamera.timelapse.control.io.WifiHandler;
 import com.thibaudperso.sonycamera.timelapse.TimelapseApplication;
+import com.thibaudperso.sonycamera.timelapse.control.connection.NFCHandler;
+import com.thibaudperso.sonycamera.timelapse.control.connection.StateMachineConnection;
 
 
 /**
@@ -18,7 +22,11 @@ import com.thibaudperso.sonycamera.timelapse.TimelapseApplication;
 public abstract class SingleFragmentActivity extends AppCompatActivity {
 
     protected TimelapseApplication mApplication;
-    protected WifiHandler mWifiHandler;
+    protected StateMachineConnection mStateMachineConnection;
+
+    private Snackbar mSnackBarConnectionLost;
+    protected boolean mEnableStateMachineConnection = true;
+    protected boolean mNotConnectedMessage = true;
 
     protected abstract Fragment createFragment();
 
@@ -27,72 +35,88 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         mApplication = ((TimelapseApplication) getApplication());
-//        mWifiHandler = mApplication.getWifiHandler();
+        mStateMachineConnection = mApplication.getStateMachineConnection();
 
         setContentView(R.layout.activity_fragment);
         FragmentManager manager = getSupportFragmentManager();
-        Fragment fragment = manager.findFragmentById(R.id.fragmentContainer);
+        Fragment fragment = manager.findFragmentById(R.id.fragment_container);
 
         if (fragment == null) {
             fragment = createFragment();
             manager.beginTransaction()
-                    .add(R.id.fragmentContainer, fragment)
+                    .add(R.id.fragment_container, fragment)
                     .commit();
         }
 
-        ((TextView)findViewById(R.id.guideTitle)).setText(getGuideTitle());
+        setTitle(getString(R.string.app_name) + " - " + getGuideTitle());
     }
 
-    protected abstract String getGuideTitle();
+    @Override
+    protected void onStart() {
+        super.onStart();
 
-    public void setGuideTitle(String title) {
-        ((TextView)findViewById(R.id.guideTitle)).setText(title);
+        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.fragment_container);
+        if(frameLayout != null && frameLayout.getChildCount() > 0) {
+            mSnackBarConnectionLost = Snackbar.make(frameLayout.getChildAt(0),
+                    getString(R.string.connection_with_camera_lost), Snackbar.LENGTH_INDEFINITE);
+        } else {
+            mNotConnectedMessage = false;
+        }
+
     }
-
 
     @Override
     protected void onResume() {
         super.onResume();
-//        mWifiHandler.addListener(mWifiListener);
+
+        if(mNotConnectedMessage)
+            mStateMachineConnection.addListener(mStateMachineConnectionListener);
+
+        if (mEnableStateMachineConnection)
+            mStateMachineConnection.start();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-//        mWifiHandler.removeListener(mWifiListener);
+
+        if (mEnableStateMachineConnection)
+            mStateMachineConnection.stop();
+
+        if(mNotConnectedMessage)
+            mStateMachineConnection.removeListener(mStateMachineConnectionListener);
+
     }
 
-//    private WifiHandler.Listener mWifiListener = new WifiHandler.Listener() {
-//        @Override
-//        public void onWifiConnecting(String ssid) {
-//
-//        }
-//
-//        @Override
-//        public void onWifiConnected(String ssid) {
-//
-//            if(!(SingleFragmentActivity.this instanceof ConnectionActivity)) {
-//                // Hide message wifi disconnected
-//            }
-//        }
-//
-//        @Override
-//        public void onWifiDisconnected() {
-//
-//            if(!(SingleFragmentActivity.this instanceof ConnectionActivity)) {
-//                // Show message wifi disconnected
-//            }
-//
-//        }
-//
-//        @Override
-//        public void onWifiStartScan() {
-//
-//        }
-//
-//        @Override
-//        public void onWifiScanFinished(List<ScanResult> sonyCameraScanResults, List<WifiConfiguration> sonyCameraWifiConfiguration) {
-//
-//        }
-//    };
+
+    protected abstract String getGuideTitle();
+
+    private StateMachineConnection.Listener
+            mStateMachineConnectionListener = new StateMachineConnection.Listener() {
+        @Override
+        public void onNewState(StateMachineConnection.State previousState,
+                               StateMachineConnection.State newState) {
+
+            if (newState != StateMachineConnection.State.GOOD_API_ACCESS) {
+                mSnackBarConnectionLost.show();
+            } else {
+                mSnackBarConnectionLost.dismiss();
+            }
+        }
+    };
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        try {
+            Pair<String, String> loginPwd = NFCHandler.parseIntent(intent);
+            if(loginPwd == null) {
+                return;
+            }
+            mApplication.getWifiHandler()
+                    .createIfNeededThenConnectToWifi(loginPwd.first, loginPwd.second);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

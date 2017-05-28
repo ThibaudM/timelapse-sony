@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.3'
+    compileSdkVersion 25
+    buildToolsVersion '25.0.2'
 
     defaultConfig {
         applicationId "com.thibaudperso.sonycamera"
-        minSdkVersion 11
-        targetSdkVersion 23
+        minSdkVersion 9
+        targetSdkVersion 25
     }
     buildTypes {
         release {
@@ -20,6 +20,7 @@ android {
 
 dependencies {
     compile 'com.mcxiaoke.volley:library:1.0.19'
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.android.support:design:23.4.0'
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:design:25.3.1'
+    compile 'com.google.android.gms:play-services-ads:10.2.4'
 }

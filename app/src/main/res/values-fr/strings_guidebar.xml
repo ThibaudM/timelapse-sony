@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="guidebar_title_connection">Connection</string>
-    <string name="guidebar_title_camera_settings">Paramètres - Caméra</string>
-    <string name="guidebar_title_timelapse_settings">Paramètres - Timelapse</string>
-    <string name="guidebar_title_processing">Process</string>
-    <string name="guidebar_title_finish">Fin</string>
-</resources>

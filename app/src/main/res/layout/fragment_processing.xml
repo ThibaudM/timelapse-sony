@@ -13,176 +13,225 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin">
 
-        <TextView
-            android:id="@+id/processingErrorMessage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:text="@string/capture_frames_overlapping_message_old_api"
-            android:textColor="@color/errorRed"
-            android:visibility="gone"/>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:baselineAligned="false">
+            android:baselineAligned="false"
+            android:weightSum="100">
 
             <RelativeLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_weight="30">
 
                 <ImageView
-                    android:id="@+id/startTimeIcon"
+                    android:id="@+id/start_time_icon"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
-                    android:layout_alignBottom="@+id/startTimeTitle"
+                    android:layout_alignBottom="@+id/start_time_title"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginBottom="2dp"
-                    android:contentDescription="@string/capture_begin_time"
+                    android:contentDescription="@string/processing_begin_time"
+                    android:src="@drawable/ic_time_black_24dp"/>
+
+                <TextView
+                    android:id="@+id/start_time_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="18dp"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginStart="3dp"
+                    android:layout_toEndOf="@+id/start_time_icon"
+                    android:layout_toRightOf="@+id/start_time_icon"
+                    android:text="@string/processing_begin_time"
+                    android:textAllCaps="true"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:id="@+id/start_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/start_time_icon"
+                    android:text="@string/processing_begin_time_default"
+                    android:textSize="32sp"/>
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="40">
+
+                <ImageView
+                    android:id="@+id/chronometer_icon"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignBottom="@+id/chronometer_title"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginBottom="2dp"
+                    android:contentDescription="@string/processing_chronometer_title"
                     android:src="@drawable/ic_timer_black_24dp"/>
 
                 <TextView
-                    android:id="@+id/startTimeTitle"
+                    android:id="@+id/chronometer_title"
                     android:layout_width="match_parent"
                     android:layout_height="18dp"
                     android:layout_marginLeft="3dp"
                     android:layout_marginStart="3dp"
-                    android:layout_toEndOf="@+id/startTimeIcon"
-                    android:layout_toRightOf="@+id/startTimeIcon"
-                    android:text="@string/capture_begin_time"
+                    android:layout_toEndOf="@+id/chronometer_icon"
+                    android:layout_toRightOf="@+id/chronometer_icon"
+                    android:text="@string/processing_chronometer_title"
                     android:textAllCaps="true"
                     android:textSize="14sp"/>
 
                 <TextView
-                    android:id="@+id/startTime"
+                    android:id="@+id/chronometer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/startTimeIcon"
-                    android:text="@string/capture_begin_time_default"
+                    android:layout_below="@+id/chronometer_icon"
+                    android:text="@string/processing_chronometer_default"
                     android:textSize="32sp"/>
             </RelativeLayout>
 
             <RelativeLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_weight="30">
 
                 <ImageView
-                    android:id="@+id/framesCountIcon"
+                    android:id="@+id/frames_count_icon"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
-                    android:layout_alignBottom="@+id/framesCountTitle"
+                    android:layout_alignBottom="@+id/frames_count_title"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginBottom="2dp"
-                    android:contentDescription="@string/capture_frames_count"
+                    android:contentDescription="@string/processing_frames_count"
                     android:src="@drawable/ic_frames_count_black_24dp"/>
 
                 <TextView
-                    android:id="@+id/framesCountTitle"
+                    android:id="@+id/frames_count_title"
                     android:layout_width="match_parent"
                     android:layout_height="18dp"
                     android:layout_marginLeft="3dp"
                     android:layout_marginStart="3dp"
-                    android:layout_toEndOf="@+id/framesCountIcon"
-                    android:layout_toRightOf="@+id/framesCountIcon"
-                    android:text="@string/capture_frames_count"
+                    android:layout_toEndOf="@+id/frames_count_icon"
+                    android:layout_toRightOf="@+id/frames_count_icon"
+                    android:text="@string/processing_frames_count"
                     android:textAllCaps="true"
                     android:textSize="14sp"/>
 
                 <TextView
-                    android:id="@+id/framesCount"
+                    android:id="@+id/settings_frames_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/framesCountIcon"
-                    android:text="@string/capture_frames_count_default"
+                    android:layout_below="@+id/frames_count_icon"
+                    android:text="@string/processing_frames_count_default"
                     android:textSize="32sp"/>
 
             </RelativeLayout>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
-
-                <ImageView
-                    android:id="@+id/batteryIcon"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:layout_alignBottom="@+id/batteryTitle"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginBottom="2dp"
-                    android:contentDescription="@string/capture_battery_life"
-                    android:src="@drawable/ic_battery_life"/>
-
-                <TextView
-                    android:id="@+id/batteryTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="18dp"
-                    android:layout_marginLeft="3dp"
-                    android:layout_marginStart="3dp"
-                    android:layout_toEndOf="@+id/batteryIcon"
-                    android:layout_toRightOf="@+id/batteryIcon"
-                    android:text="@string/capture_battery_life"
-                    android:textAllCaps="true"
-                    android:textSize="14sp"/>
-
-                <TextView
-                    android:id="@+id/battery"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/batteryIcon"
-                    android:text="@string/capture_battery_life_default"
-                    android:textSize="32sp"/>
-            </RelativeLayout>
         </LinearLayout>
 
+
         <RelativeLayout
-            android:id="@+id/progressLayout"
+            android:id="@+id/next_picture_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
+            android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/progressIcon"
+                android:id="@+id/next_picture_progress_icon"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                android:layout_alignBottom="@+id/progressTitle"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginBottom="2dp"
-                android:contentDescription="@string/capture_progress"
+                android:layout_centerVertical="true"
+                android:contentDescription="@string/processing_progress"
                 android:src="@drawable/ic_progress"/>
 
             <TextView
-                android:id="@+id/progressTitle"
-                android:layout_width="match_parent"
+                android:id="@+id/next_picture_progress_title"
+                android:layout_width="wrap_content"
                 android:layout_height="18dp"
-                android:layout_marginLeft="3dp"
-                android:layout_marginStart="3dp"
-                android:layout_toEndOf="@+id/progressIcon"
-                android:layout_toLeftOf="@+id/progress"
-                android:layout_toRightOf="@+id/progressIcon"
-                android:layout_toStartOf="@+id/progress"
-                android:text="@string/capture_progress"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@+id/next_picture_progress_icon"
+                android:layout_toRightOf="@+id/next_picture_progress_icon"
+                android:text="@string/processing_next_picture"
                 android:textAllCaps="true"
                 android:textSize="14sp"/>
 
             <ProgressBar
-                android:id="@+id/progressBar"
+                android:id="@+id/next_picture_progress_bar_capture"
+                style="?android:attr/progressBarStyleSmallTitle"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@id/next_picture_progress_title"
+                android:layout_toRightOf="@id/next_picture_progress_title"
+                android:indeterminate="true"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/next_picture_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:text="@string/processing_next_picture_default"/>
+
+            <ProgressBar
+                android:id="@+id/next_picture_progress_bar"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_below="@+id/progressIcon"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/next_picture_progress_icon"
+                android:layout_marginTop="20dp"
                 android:max="10"
                 android:progress="8"/>
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/progress_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/progress_icon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_alignBottom="@+id/progress_title"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:contentDescription="@string/processing_progress"
+                android:src="@drawable/ic_progress"/>
+
+            <TextView
+                android:id="@+id/progress_title"
+                android:layout_width="wrap_content"
+                android:layout_height="18dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@+id/progress_icon"
+                android:layout_toLeftOf="@+id/progress"
+                android:layout_toRightOf="@+id/progress_icon"
+                android:layout_toStartOf="@+id/progress"
+                android:text="@string/processing_progress"
+                android:textAllCaps="true"
+                android:textSize="14sp"/>
+
 
             <TextView
                 android:id="@+id/progress"
@@ -190,75 +239,103 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:layout_alignTop="@+id/progressTitle"
-                android:text="@string/capture_progress_default"/>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
-
-            <ImageView
-                android:id="@+id/nextPictureProgressIcon"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_alignBottom="@+id/nextPictureProgressTitle"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginBottom="2dp"
-                android:contentDescription="@string/capture_progress"
-                android:src="@drawable/ic_progress"/>
-
-            <TextView
-                android:id="@+id/nextPictureProgressTitle"
-                android:layout_width="match_parent"
-                android:layout_height="18dp"
-                android:layout_marginLeft="3dp"
-                android:layout_marginStart="3dp"
-                android:layout_toEndOf="@+id/nextPictureProgressIcon"
-                android:layout_toLeftOf="@+id/nextPictureProgress"
-                android:layout_toRightOf="@+id/nextPictureProgressIcon"
-                android:layout_toStartOf="@+id/nextPictureProgress"
-                android:text="@string/capture_next_picture"
-                android:textAllCaps="true"
-                android:textSize="14sp"/>
+                android:layout_centerVertical="true"
+                android:text="@string/processing_progress_default"/>
 
             <ProgressBar
-                android:id="@+id/nextPictureProgressBar"
+                android:id="@+id/progress_bar"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_below="@+id/nextPictureProgressIcon"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/progress_icon"
+                android:layout_marginTop="20dp"
                 android:max="10"
                 android:progress="8"/>
 
-            <TextView
-                android:id="@+id/nextPictureProgress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignTop="@+id/nextPictureProgressTitle"
-                android:text="@string/capture_next_picture_default"/>
         </RelativeLayout>
 
 
+        <LinearLayout
+            android:id="@+id/finish_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/finish_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/ic_check_green_24dp"/>
+
+                <TextView
+                    android:id="@+id/finish_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@id/finish_icon"
+                    android:layout_toRightOf="@id/finish_icon"
+                    android:text="@string/processing_finish_title"
+                    android:textStyle="bold"/>
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/finish_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/processing_finish_message">
+            </TextView>
+
+        </LinearLayout>
+
+
+        <include
+            layout="@layout/layout_process_errors"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"/>
+
         <ImageView
-            android:id="@+id/imageReview"
+            android:id="@+id/image_review"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="10dp"
-            android:contentDescription="@string/capture_last_image_preview"/>
+            android:contentDescription="@string/processing_last_image_preview"/>
+
+
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/processingStop"
+        android:id="@+id/processing_stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:src="@drawable/ic_stop_white_24dp"
         app:fabSize="normal"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/processing_restart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_replay_white_24dp"
+        android:visibility="gone"
+        app:fabSize="normal"/>
+
 </android.support.design.widget.CoordinatorLayout>
