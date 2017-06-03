@@ -89,7 +89,6 @@ public class CameraWS {
             throw new RequestNotWellFormatedException(e);
         }
 
-        Log.v("DEBUG", "Request URL: "+mWSUrl);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST,
                 mWSUrl, inputJsonObject, new Response.Listener<JSONObject>() {
 

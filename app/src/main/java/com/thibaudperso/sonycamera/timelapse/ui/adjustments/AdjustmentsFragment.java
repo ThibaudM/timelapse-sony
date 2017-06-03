@@ -36,6 +36,7 @@ import com.thibaudperso.sonycamera.timelapse.ui.settings.SettingsActivity;
 
 import java.io.File;
 
+import static android.support.v4.content.FileProvider.getUriForFile;
 import static com.thibaudperso.sonycamera.timelapse.Constants.PREF_AUTOMATIC_CONTINUE;
 
 public class AdjustmentsFragment extends Fragment {
@@ -219,15 +220,25 @@ public class AdjustmentsFragment extends Fragment {
         // data network to try to download this image (by default) and it will fail. So we need to
         // use the current process to download and store it in a public directory.
 
-        mTemporaryPreviewPicture = new File(getContext().getExternalCacheDir(), PREVIEW_PICTURE_NAME);
+        File imgPath = new File(getContext().getExternalCacheDir(), "images");
+        if (!imgPath.exists()) {
+            if (!imgPath.mkdir()) {
+                throw new RuntimeException("Impossible to create " + imgPath.toString());
+            }
+        }
+        mTemporaryPreviewPicture = new File(imgPath, PREVIEW_PICTURE_NAME);
 
         Request request = new FileRequest<>(url, mTemporaryPreviewPicture,
                 new Response.Listener<File>() {
                     @Override
                     public void onResponse(File file) {
+                        Uri uri = getUriForFile(getContext(),
+                                "com.thibaudperso.sonycamera.fileprovider",
+                                mTemporaryPreviewPicture);
                         Intent intent = new Intent();
                         intent.setAction(android.content.Intent.ACTION_VIEW);
-                        intent.setDataAndType(Uri.fromFile(mTemporaryPreviewPicture), "image/jpeg");
+                        intent.setDataAndType(uri, "image/jpeg");
+                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         startActivityForResult(intent, PREVIEW_PICTURE_ACTIVITY_RESULT);
                         getActivity().overridePendingTransition(0, 0);
                     }
@@ -282,7 +293,7 @@ public class AdjustmentsFragment extends Fragment {
         public void onNewState(StateMachineConnection.State previousState,
                                StateMachineConnection.State newState) {
 
-            if(!mIsFragmentResumed) return;
+            if (!mIsFragmentResumed) return;
 
             if (newState == StateMachineConnection.State.GOOD_API_ACCESS) {
                 startLiveView();

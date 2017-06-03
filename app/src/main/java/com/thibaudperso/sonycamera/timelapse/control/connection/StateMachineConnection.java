@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.thibaudperso.sonycamera.timelapse.Constants.LOG_TAG;
 import static com.thibaudperso.sonycamera.timelapse.control.connection.StateMachineConnection.State.BAD_API_ACCESS;
 import static com.thibaudperso.sonycamera.timelapse.control.connection.StateMachineConnection.State.CHECK_API;
 import static com.thibaudperso.sonycamera.timelapse.control.connection.StateMachineConnection.State.GOOD_API_ACCESS;
@@ -60,7 +61,7 @@ public class StateMachineConnection {
 
     public void start() {
 
-        Log.d("DEBUG", " ----------- StateMachineConnection START -----------");
+        Log.d(LOG_TAG, " ----------- StateMachineConnection START -----------");
         mCurrentState.process(this);
 
         mWifiHandler.setListener(mWifiListener);
@@ -73,7 +74,7 @@ public class StateMachineConnection {
 
     public void stop() {
 
-        Log.d("DEBUG", " ----------- StateMachineConnection STOP -----------");
+        Log.d(LOG_TAG, " ----------- StateMachineConnection STOP -----------");
         mCurrentState.stopAsyncTasks();
 
         mWifiHandler.setListener(null);
@@ -483,7 +484,7 @@ public class StateMachineConnection {
     private void setCurrentState(State newState) {
         if (Arrays.asList(newState.previousPossibleStates()).contains(mCurrentState)) {
 
-            Log.d("DEBUG", "State: " + mCurrentState + " ---> " + newState);
+            Log.d(LOG_TAG, "State: " + mCurrentState + " ---> " + newState);
             for (Listener listener : mListeners) listener.onNewState(mCurrentState, newState);
 
             mCurrentState.stopAsyncTasks();

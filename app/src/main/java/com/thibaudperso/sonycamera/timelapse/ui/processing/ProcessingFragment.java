@@ -453,7 +453,7 @@ public class ProcessingFragment extends Fragment {
                     double ratio = (double) totalElapsedTime / totalTime;
                     mOverallProgressBar.setProgress((int) totalElapsedTime);
                     mOverallProgressValue.setText(String.format(getString(R.string.percent1f),
-                            (int) (ratio * 100)));
+                            ratio * 100));
                 }
             }
 
