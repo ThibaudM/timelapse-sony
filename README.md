@@ -4,7 +4,7 @@ Timelapse - Sony Camera
 Want to [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=LFFFQZD9UNKRC&lc=FR&item_name=Thibaud%20Michel&item_number=1&currency_code=EUR&bn=PP-DonationsBF%3abtn_donate_LG%2egif%3aNonHosted)?  
 
 Project type: **Android**  
-Current version: **2.1.0**  
+Current version: **3.0.1**  
 Google Play store link: https://play.google.com/store/apps/details?id=com.thibaudperso.sonycamera  
 
 
@@ -51,10 +51,12 @@ Camera list
 #### Working Devices
 * A7 (α7)
 * DSC-HX400V
+* DSC-HX50
 * DSC-HX50V
 * DSC-HX60
 * DSC-HX90
 * DSC-HX90V
+* DSC-QX1
 * DSC-QX10 (Read [this](https://us.en.kb.sony.com/app/answers/detail/a_id/43716/c/65,66/p/40096,90706,90707/) to know where pictures are saved)
 * DSC-QX30
 * DSC-QX100
@@ -66,6 +68,7 @@ Camera list
 * FDR-AX100
 * FDR-X1000V
 * HDR-AZ1
+* HDR-AS20
 * ILCE-5100 (α5100)
 * ILCE-6000 (α6000)
 * ILCE-6300 (α6300)
@@ -78,11 +81,10 @@ Camera list
 * ILCA-77M2 (α77 II)
 * DSC-WX220
 * DSC-WX220B
-* DSC-HX50
+* DSC-WX500
 * DSC-HX60V
 * DSC-QX1
 * FDR-AX100E
-* HDR-AS20
 * HDR-AS100V
 * PXW-SF5
 
@@ -95,7 +97,7 @@ You can find current associations in the [xml/devices.xml](https://github.com/Th
 If your device is not listed in this file, don't worry, maybe we can add it.
 
 #### Step 1
-Firstly, try with one of the 3 following devices: A5100, RX-10, RX-100 mk2, maybe one works with your camera. In this case, let me know by email what is your camera name and which device you have selected.
+Firstly, try with one of the 4 following devices: A5100, RX-10, RX-100 mk2, HDR-AS20, maybe one works with your camera. In this case, let me know by email what is your camera name and which device you have selected.
 
 #### Step 2
 If Step 1, didn't work, 

@@ -120,4 +120,24 @@
         <model>DSC-HX90</model>
         <webservice>http://192.168.122.1:8080/sony/camera</webservice>
     </camera>
+    <camera>
+        <id>25</id>
+        <model>HDR-AS20</model>
+        <webservice>http://192.168.122.1:10000/sony/camera</webservice>
+    </camera>
+    <camera>
+        <id>26</id>
+        <model>DSC-HX50</model>
+        <webservice>http://10.0.0.1:10000/camera</webservice>
+    </camera>
+    <camera>
+        <id>27</id>
+        <model>QX-1</model>
+        <webservice>http://192.168.122.1:8080/sony/camera</webservice>
+    </camera>
+    <camera>
+        <id>28</id>
+        <model>DSC-WX500</model>
+        <webservice>http://192.168.122.1:8080/sony/camera</webservice>
+    </camera>
 </cameras>
