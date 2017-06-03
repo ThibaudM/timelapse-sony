@@ -56,7 +56,7 @@ Camera list
 * DSC-HX60
 * DSC-HX90
 * DSC-HX90V
-* DSC-QX1
+* ILCE-QX1
 * DSC-QX10 (Read [this](https://us.en.kb.sony.com/app/answers/detail/a_id/43716/c/65,66/p/40096,90706,90707/) to know where pictures are saved)
 * DSC-QX30
 * DSC-QX100
@@ -65,6 +65,7 @@ Camera list
 * DSC-RX100M3
 * DSC-WX80
 * DSC-WX350
+* DSC-WX500
 * FDR-AX100
 * FDR-X1000V
 * HDR-AZ1
@@ -81,7 +82,6 @@ Camera list
 * ILCA-77M2 (α77 II)
 * DSC-WX220
 * DSC-WX220B
-* DSC-WX500
 * DSC-HX60V
 * DSC-QX1
 * FDR-AX100E
@@ -93,7 +93,7 @@ Adding a new camera device
 --------------------------
 
 In timelapse-sony application, each Sony camera has an associated API address.  
-You can find current associations in the [xml/devices.xml](https://github.com/ThibaudM/timelapse-sony/blob/master/app/src/main/res/xml/devices.xml) file.  
+You can find current associations in the [raw/devices.xml](https://github.com/ThibaudM/timelapse-sony/blob/master/app/src/main/res/raw/devices.xml) file.  
 If your device is not listed in this file, don't worry, maybe we can add it.
 
 #### Step 1
