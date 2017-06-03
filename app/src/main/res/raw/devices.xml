@@ -115,7 +115,7 @@
         <model>RX10 mk2</model>
         <webservice>http://192.168.122.1:8080/sony/camera</webservice>
     </camera>
-    <camera needInit="true">
+    <camera>
         <id>24</id>
         <model>DSC-HX90</model>
         <webservice>http://192.168.122.1:8080/sony/camera</webservice>
