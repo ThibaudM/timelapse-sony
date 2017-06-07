@@ -89,6 +89,16 @@ Camera list
 * PXW-SF5
 
 
+
+State Machine for connection
+----------------------------
+
+[State Machine](docs/timelapse-sony-connection.png)
+
+
+
+
+
 Adding a new camera device
 --------------------------
 
