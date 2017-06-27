@@ -1,14 +1,17 @@
 package com.thibaudperso.sonycamera.timelapse.control.connection;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.support.v4.content.ContextCompat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +35,10 @@ public class WifiHandler {
     }
 
     void connectToNetworkId(int netId) {
+
+        if(mWifiManager == null) {
+            return;
+        }
 
         /*
          * Check if network id exists
@@ -158,7 +165,9 @@ public class WifiHandler {
                     mListener.wifiDisabled();
                 }
 
-            } else if (intent.getAction().equals(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)) {
+            } else if (intent.getAction().equals(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION) &&
+                    ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION)
+                     == PackageManager.PERMISSION_GRANTED) {
 
                 final List<WifiConfiguration> knownSonyCameraConfigurations = new ArrayList<>();
                 for (ScanResult sr : mWifiManager.getScanResults()) {

@@ -9,10 +9,12 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.thibaudperso.sonycamera.BuildConfig;
 import com.thibaudperso.sonycamera.sdk.CameraAPI;
 import com.thibaudperso.sonycamera.sdk.model.Device;
 import com.thibaudperso.sonycamera.timelapse.TimelapseApplication;
@@ -46,7 +48,7 @@ public class StateMachineConnection {
         WifiInfo wifiInfo;
         List<WifiConfiguration> scanResults;
         int forceConnectionToNetworkId = -1;
-        int apiRemainingAttempts = 0;
+        int apiAttempts = 0;
     }
 
 
@@ -68,8 +70,10 @@ public class StateMachineConnection {
         mCameraAPI.addDeviceChangedListener(mDeviceChangedListener);
 
         WifiManager wifiManager = (WifiManager) mApplication.getSystemService(Context.WIFI_SERVICE);
-        mWifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "WifiLock2");
-        mWifiLock.acquire();
+        if(Build.VERSION.SDK_INT > 12) {
+            mWifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "WifiLock2");
+            mWifiLock.acquire();
+        }
     }
 
     public void stop() {
@@ -80,7 +84,7 @@ public class StateMachineConnection {
         mWifiHandler.setListener(null);
         mCameraAPI.removeDeviceChangedListener(mDeviceChangedListener);
 
-        if (mWifiLock.isHeld())
+        if (mWifiLock != null && mWifiLock.isHeld())
             mWifiLock.release();
 
     }
@@ -228,7 +232,7 @@ public class StateMachineConnection {
                     }
                 }
 
-                sm.mStateRegistry.apiRemainingAttempts = 3;
+                sm.mStateRegistry.apiAttempts = 1;
                 sm.setCurrentState(State.CHECK_API);
             }
 
@@ -407,18 +411,16 @@ public class StateMachineConnection {
 
             @Override
             public void process(final StateMachineConnection sm) {
-//                if (sm.mStateRegistry.apiRemainingAttempts > 0) {
-//                    sm.mStateRegistry.apiRemainingAttempts--;
 
-                    mIgnoreNextAsyncResponse = false;
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (mIgnoreNextAsyncResponse) return;
-                            sm.setCurrentState(CHECK_API);
-                        }
-                    }, 1000);
-//                }
+                mIgnoreNextAsyncResponse = false;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mIgnoreNextAsyncResponse) return;
+                        sm.mStateRegistry.apiAttempts++;
+                        sm.setCurrentState(CHECK_API);
+                    }
+                }, 1000);
             }
 
             @Override
@@ -482,17 +484,18 @@ public class StateMachineConnection {
 
 
     private void setCurrentState(State newState) {
-        if (Arrays.asList(newState.previousPossibleStates()).contains(mCurrentState)) {
 
-            Log.d(LOG_TAG, "State: " + mCurrentState + " ---> " + newState);
-            for (Listener listener : mListeners) listener.onNewState(mCurrentState, newState);
-
-            mCurrentState.stopAsyncTasks();
-            mCurrentState = newState;
-            mCurrentState.process(this);
-        } else {
+        if (BuildConfig.DEBUG && !Arrays.asList(newState.previousPossibleStates()).contains(mCurrentState)) {
             throw new RuntimeException("Current State: " + mCurrentState + ", new State: " + newState);
         }
+
+        Log.d(LOG_TAG, "State: " + mCurrentState + " ---> " + newState);
+        for (Listener listener : mListeners) listener.onNewState(mCurrentState, newState);
+
+        mCurrentState.stopAsyncTasks();
+        mCurrentState = newState;
+        mCurrentState.process(this);
+
     }
 
 

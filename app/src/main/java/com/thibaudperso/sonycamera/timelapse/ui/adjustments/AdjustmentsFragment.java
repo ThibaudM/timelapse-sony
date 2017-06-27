@@ -220,7 +220,7 @@ public class AdjustmentsFragment extends Fragment {
         // data network to try to download this image (by default) and it will fail. So we need to
         // use the current process to download and store it in a public directory.
 
-        File imgPath = new File(getContext().getExternalCacheDir(), "images");
+        File imgPath = new File(getContext().getCacheDir(), "images");
         if (!imgPath.exists()) {
             if (!imgPath.mkdir()) {
                 throw new RuntimeException("Impossible to create " + imgPath.toString());

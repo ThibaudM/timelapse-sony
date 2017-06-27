@@ -1,7 +1,6 @@
 package com.thibaudperso.sonycamera.sdk;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -14,8 +13,6 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import static com.thibaudperso.sonycamera.timelapse.Constants.LOG_TAG;
 
 /**
  * @author Thibaud Michel
@@ -109,9 +106,6 @@ public class CameraWS {
                         ResponseCode errorCode = ResponseCode.find(arr.getInt(0));
                         String errorMessage = arr.getString(1);
                         listener.cameraResponse(errorCode, errorMessage);
-                        Log.d(LOG_TAG, "Request: " + inputJsonObject);
-                        Log.d(LOG_TAG, "Error code: " + arr.getInt(0) + ", error message: " +
-                                arr);
                     } else {
                         listener.cameraResponse(ResponseCode.RESPONSE_NOT_WELL_FORMATED,
                                 response);
@@ -119,8 +113,7 @@ public class CameraWS {
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    listener.cameraResponse(ResponseCode.RESPONSE_NOT_WELL_FORMATED,
-                            response);
+                    listener.cameraResponse(ResponseCode.RESPONSE_NOT_WELL_FORMATED, response);
 
                 }
             }
@@ -129,6 +122,7 @@ public class CameraWS {
             @Override
             public void onErrorResponse(VolleyError error) {
                 if (listener == null) return;
+                error.printStackTrace();
                 listener.cameraResponse(ResponseCode.WS_UNREACHABLE, null);
             }
         }
@@ -144,7 +138,6 @@ public class CameraWS {
 
         mJsonQueue.add(jsObjRequest);
     }
-
 
     public interface Listener {
 

@@ -2,14 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           package="com.thibaudperso.sonycamera"
-          android:versionCode="18"
-          android:versionName="3.0.1">
+          android:versionCode="19"
+          android:versionName="3.0.2">
 
     <uses-sdk tools:overrideLibrary="   com.google.android.gms.ads,
                                         com.google.android.gms.ads.impl,
                                         com.google.android.gms.clearcut,
                                         com.google.android.gms.base,
                                         com.google.android.gms.gass,
+                                        com.google.android.gms.safetynet,
                                         com.google.android.gms.tasks,
                                         com.google.android.gms"/>
 

@@ -34,7 +34,7 @@ public class ProcessingActivity extends SingleFragmentActivity {
     @Override
     public void onBackPressed() {
 
-        if(mFragment.isFinished()) {
+        if(mFragment == null || mFragment.isFinished()) {
             super.onBackPressed();
             return;
         }

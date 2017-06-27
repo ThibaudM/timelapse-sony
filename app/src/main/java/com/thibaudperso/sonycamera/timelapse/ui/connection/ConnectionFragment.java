@@ -162,8 +162,11 @@ public class ConnectionFragment extends Fragment {
                         Toast.makeText(getContext(), R.string.connection_camera_list_updated,
                                 Toast.LENGTH_SHORT).show();
 
-                        mConnectionDeviceListUpdateButton.setVisibility(View.VISIBLE);
-                        mConnectionDeviceListUpdateProgress.setVisibility(View.GONE);
+                        if (mConnectionDeviceListUpdateButton != null &&
+                                mConnectionDeviceListUpdateProgress != null) {
+                            mConnectionDeviceListUpdateButton.setVisibility(View.VISIBLE);
+                            mConnectionDeviceListUpdateProgress.setVisibility(View.GONE);
+                        }
                     }
                 });
             }
@@ -266,7 +269,7 @@ public class ConnectionFragment extends Fragment {
 
     private void updateUI(StateMachineConnection.State newState) {
 
-        if(mSkipNextState) {
+        if (mSkipNextState) {
             mSkipNextState = false;
             return;
         }
