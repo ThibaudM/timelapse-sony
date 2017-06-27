@@ -140,4 +140,9 @@
         <model>DSC-WX500</model>
         <webservice>http://192.168.122.1:8080/sony/camera</webservice>
     </camera>
+    <camera>
+        <id>29</id>
+        <model>ILCA-77M2</model>
+        <webservice>http://192.168.122.1:8080/sony/camera</webservice>
+    </camera>
 </cameras>
