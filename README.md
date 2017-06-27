@@ -93,7 +93,7 @@ Camera list
 State Machine for connection
 ----------------------------
 
-[State Machine](docs/timelapse-sony-connection.png)
+![State Machine](docs/timelapse-sony-connection.png)
 
 
 
