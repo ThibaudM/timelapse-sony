@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="guidebar_title_connection">Kamera verbinden</string>
-    <string name="guidebar_title_camera_settings">Kamera-Einstellungen</string>
-    <string name="guidebar_title_timelapse_settings">Timelapse-Einstellungen</string>
-    <string name="guidebar_title_capture">Aufnahme</string>
-    <string name="guidebar_title_finish">Beendet</string>
-</resources>

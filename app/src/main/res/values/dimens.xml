@@ -4,6 +4,6 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
-    <dimen name="guide_textsize">18dp</dimen>
+    <dimen name="guide_textsize">18sp</dimen>
     
 </resources>
