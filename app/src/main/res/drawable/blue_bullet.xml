@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="oval">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:shape="oval"
+    tools:ignore="UnusedResources">
 
    <solid 
-       android:color="#ff33b5e5"/>
+       android:color="@color/accent"/>
 
    <size 
        android:width="20dp"

@@ -7,13 +7,11 @@ public class Device {
 	private int mId;
 	private String mModel;
 	private String mWebService;
-	private boolean mNeedInit;
 
-	public Device(int id, String model, String webService, boolean needInit) {
+	public Device(int id, String model, String webService) {
 		this.mId = id;
 		this.mModel = model;
 		this.mWebService = webService;
-		this.mNeedInit = needInit;
 	}
 
 	public int getId() {
@@ -26,10 +24,6 @@ public class Device {
 
 	public String getWebService() {
 		return mWebService;
-	}
-
-	public boolean needInit() {
-		return mNeedInit;
 	}
 
 	@Override
