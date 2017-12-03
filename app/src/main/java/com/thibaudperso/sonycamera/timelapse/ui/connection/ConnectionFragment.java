@@ -36,9 +36,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 import com.thibaudperso.sonycamera.R;
 import com.thibaudperso.sonycamera.sdk.model.Device;
 import com.thibaudperso.sonycamera.timelapse.TimelapseApplication;
@@ -197,15 +194,7 @@ public class ConnectionFragment extends Fragment {
         });
 
         initConnectionInfo();
-
-
-        MobileAds.initialize(getContext(), getString(R.string.ads_pub_id));
-        AdView adView = (AdView) viewResult.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(getString(R.string.ads_test_device))
-                .build();
-        adView.loadAd(adRequest);
-
+        
         return viewResult;
     }
 

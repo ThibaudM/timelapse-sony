@@ -27,5 +27,4 @@ dependencies {
     compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'com.android.support:appcompat-v7:27.0.1'
     compile 'com.android.support:design:27.0.1'
-    compile 'com.google.android.gms:play-services-ads:11.6.2'
 }
