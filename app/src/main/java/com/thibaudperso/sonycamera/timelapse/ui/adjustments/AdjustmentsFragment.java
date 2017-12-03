@@ -208,6 +208,7 @@ public class AdjustmentsFragment extends Fragment {
                                 .getDefaultSharedPreferences(getContext()).edit();
                         editor.putBoolean(PREF_AUTOMATIC_CONTINUE, false);
                         editor.apply();
+                        mApplication.getCameraAPI().closeConnection();
                         mApplication.getWifiHandler().disconnect();
                         getActivity().finish();
                     }

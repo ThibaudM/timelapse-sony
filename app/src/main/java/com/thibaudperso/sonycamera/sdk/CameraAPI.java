@@ -34,12 +34,10 @@ public class CameraAPI {
 
     public void setDevice(Device device) {
         mCameraWS.setWSUrl(device.getWebService());
-        initialize();
-
         for (DeviceChangedListener listener : mDeviceChangedListeners) listener.onNewDevice(device);
     }
 
-    private void initialize() {
+    public void initializeWS() {
         if (mIsDeviceInitialized) {
             return;
         }

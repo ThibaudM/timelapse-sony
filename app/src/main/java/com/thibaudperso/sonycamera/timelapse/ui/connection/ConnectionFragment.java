@@ -119,7 +119,7 @@ public class ConnectionFragment extends Fragment {
         /*
          * Handle Camera spinner
          */
-        mCameraSpinner = (Spinner) viewResult.findViewById(R.id.connection_camera_spinner);
+        mCameraSpinner = viewResult.findViewById(R.id.connection_camera_spinner);
 
         mAdapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, mDeviceManager.getDevices());
@@ -593,6 +593,7 @@ public class ConnectionFragment extends Fragment {
     }
 
     private void nextStep() {
+        ((TimelapseApplication) getActivity().getApplication()).getCameraAPI().initializeWS();
         startActivityForResult(new Intent(getContext(), AdjustmentsActivity.class),
                 ADJUSTMENTS_ACTIVITY_RESULT);
     }

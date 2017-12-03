@@ -27,6 +27,7 @@ public class ConnectionActivity extends SingleFragmentActivity {
 
     @Override
     public void onBackPressed() {
+        mApplication.getCameraAPI().closeConnection();
         mApplication.getWifiHandler().disconnect();
         mStateMachineConnection.reset();
         finish();

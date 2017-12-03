@@ -52,7 +52,6 @@ public class DeviceManager {
         for (Device device : mDevicesList) {
             if (device.getId() == currentCameraId) {
                 mSelectedDevice = device;
-                mApplication.getCameraAPI().setDevice(device);
                 return;
             }
         }

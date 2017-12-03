@@ -22,6 +22,7 @@ public class AdjustmentsActivity extends SingleFragmentActivity {
 
     @Override
     public void onBackPressed() {
+        mApplication.getCameraAPI().closeConnection();
         mApplication.getWifiHandler().disconnect();
         mStateMachineConnection.reset();
         setResult(RESULT_CANCELED, new Intent().putExtra(EXTRA_EXIT, true));
