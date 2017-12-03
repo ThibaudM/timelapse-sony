@@ -6,9 +6,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.nfc.NfcAdapter;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -26,6 +26,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -34,9 +35,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 import com.thibaudperso.sonycamera.R;
 import com.thibaudperso.sonycamera.sdk.model.Device;
 import com.thibaudperso.sonycamera.timelapse.TimelapseApplication;
@@ -69,7 +67,9 @@ public class ConnectionFragment extends Fragment {
 
     private NfcAdapter mNfcAdapter;
 
-    private AlertDialog mAlertDialogChooseNetworkConnection;
+    private AlertDialog mAlertDialogChooseNetworkConnection,
+            mAlertDialogAskForPassword,
+            mAlertDialogChooseNetworkCreation;
 
     private Spinner mCameraSpinner;
     private ArrayAdapter<Device> mAdapter;
@@ -96,9 +96,7 @@ public class ConnectionFragment extends Fragment {
         mDeviceManager = mApplication.getDeviceManager();
         mStateMachineConnection = mApplication.getStateMachineConnection();
 
-        if (android.os.Build.VERSION.SDK_INT >= 10) {
-            mNfcAdapter = NfcAdapter.getDefaultAdapter(getContext());
-        }
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(getContext());
     }
 
     @Override
@@ -107,14 +105,14 @@ public class ConnectionFragment extends Fragment {
 
         View viewResult = inflater.inflate(R.layout.fragment_connection, container, false);
 
-        mConnectionDeviceListUpdateButton = (ImageView) viewResult.findViewById(R.id.connection_camera_list_update);
-        mConnectionDeviceListUpdateProgress = (ProgressBar) viewResult.findViewById(R.id.connection_camera_list_update_progress);
-        mConnectionInfoWifiEnabled = (ImageView) viewResult.findViewById(R.id.connection_info_wifi_enabled_icon);
-        mConnectionInfoNetworkState = (ImageView) viewResult.findViewById(R.id.connection_info_network_state);
-        mConnectionInfoAPIState = (ImageView) viewResult.findViewById(R.id.connection_info_api_state);
-        mConnectionInfoWifiEnabledProgress = (ProgressBar) viewResult.findViewById(R.id.connection_info_wifi_enabled_progress);
-        mConnectionInfoNetworkStateProgress = (ProgressBar) viewResult.findViewById(R.id.connection_info_network_state_progress);
-        mConnectionInfoAPIStateProgress = (ProgressBar) viewResult.findViewById(R.id.connection_info_api_state_progress);
+        mConnectionDeviceListUpdateButton = viewResult.findViewById(R.id.connection_camera_list_update);
+        mConnectionDeviceListUpdateProgress = viewResult.findViewById(R.id.connection_camera_list_update_progress);
+        mConnectionInfoWifiEnabled = viewResult.findViewById(R.id.connection_info_wifi_enabled_icon);
+        mConnectionInfoNetworkState = viewResult.findViewById(R.id.connection_info_network_state);
+        mConnectionInfoAPIState = viewResult.findViewById(R.id.connection_info_api_state);
+        mConnectionInfoWifiEnabledProgress = viewResult.findViewById(R.id.connection_info_wifi_enabled_progress);
+        mConnectionInfoNetworkStateProgress = viewResult.findViewById(R.id.connection_info_network_state_progress);
+        mConnectionInfoAPIStateProgress = viewResult.findViewById(R.id.connection_info_api_state_progress);
         ((TextView) viewResult.findViewById(R.id.connection_info_message)).setText(
                 Html.fromHtml(getString(R.string.connection_information_message)));
 
@@ -122,7 +120,7 @@ public class ConnectionFragment extends Fragment {
         /*
          * Handle Camera spinner
          */
-        mCameraSpinner = (Spinner) viewResult.findViewById(R.id.connection_camera_spinner);
+        mCameraSpinner = viewResult.findViewById(R.id.connection_camera_spinner);
 
         mAdapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, mDeviceManager.getDevices());
@@ -182,7 +180,8 @@ public class ConnectionFragment extends Fragment {
             }
         });
 
-        mConnectionAutomaticCheckbox = ((CheckBox) viewResult.findViewById(R.id.connection_automatic_checkbox));
+        mConnectionAutomaticCheckbox = viewResult.findViewById(R.id.connection_automatic_checkbox);
+
         mConnectionAutomaticCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -192,7 +191,7 @@ public class ConnectionFragment extends Fragment {
                 editor.apply();
             }
         });
-        mConnectionContinueButton = (FloatingActionButton) viewResult.findViewById(R.id.connection_settings_button);
+        mConnectionContinueButton = viewResult.findViewById(R.id.connection_settings_button);
         mConnectionContinueButton.setVisibility(View.GONE);
         mConnectionContinueButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -202,14 +201,6 @@ public class ConnectionFragment extends Fragment {
         });
 
         initConnectionInfo();
-
-
-        MobileAds.initialize(getContext(), getString(R.string.ads_pub_id));
-        AdView adView = (AdView) viewResult.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(getString(R.string.ads_test_device))
-                .build();
-        adView.loadAd(adRequest);
 
         return viewResult;
     }
@@ -236,7 +227,7 @@ public class ConnectionFragment extends Fragment {
 
         mStateMachineConnection.addListener(mStateMachineListener);
 
-        if (mNfcAdapter != null && Build.VERSION.SDK_INT > 10) {
+        if (mNfcAdapter != null) {
             mNfcAdapter.enableForegroundDispatch(getActivity(),
                     NFCHandler.getPendingIntent(getActivity()),
                     NFCHandler.getIntentFilterArray(), NFCHandler.getTechListArray());
@@ -248,7 +239,7 @@ public class ConnectionFragment extends Fragment {
         super.onPause();
         mStateMachineConnection.removeListener(mStateMachineListener);
 
-        if (mNfcAdapter != null && Build.VERSION.SDK_INT > 10) {
+        if (mNfcAdapter != null) {
             mNfcAdapter.disableForegroundDispatch(getActivity());
         }
     }
@@ -264,6 +255,14 @@ public class ConnectionFragment extends Fragment {
 
         if (mAlertDialogChooseNetworkConnection != null) {
             mAlertDialogChooseNetworkConnection.cancel();
+        }
+
+        if (mAlertDialogAskForPassword != null) {
+            mAlertDialogAskForPassword.cancel();
+        }
+
+        if (mAlertDialogChooseNetworkCreation != null) {
+            mAlertDialogChooseNetworkCreation.cancel();
         }
     }
 
@@ -344,9 +343,18 @@ public class ConnectionFragment extends Fragment {
                 askForScanPermission();
                 break;
 
-            case MULTIPLE_SONY_SCAN_DETECTED:
+            case MULTIPLE_SONY_CONF_DETECTED:
                 selectNetworkForConnection(mStateMachineConnection.getWifiConfigurations());
                 break;
+
+            case ASK_PASSWORD_FOR_WIFI:
+                askForNetworkPasswordThenConnect(mStateMachineConnection.getScanResults().get(0));
+                break;
+
+            case MULTIPLE_SONY_SCAN_DETECTED:
+                selectNetworkForCreation(mStateMachineConnection.getScanResults());
+                break;
+
 
         }
     }
@@ -425,7 +433,7 @@ public class ConnectionFragment extends Fragment {
             public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
                 View view = super.getView(position, convertView, parent);
-                TextView textView = (TextView) view.findViewById(android.R.id.text1);
+                TextView textView = view.findViewById(android.R.id.text1);
                 WifiConfiguration network = getItem(position);
                 if (network != null) {
                     textView.setText(network.SSID);
@@ -459,6 +467,71 @@ public class ConnectionFragment extends Fragment {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 wifiError();
+                            }
+                        }).show();
+
+    }
+
+    private void askForNetworkPasswordThenConnect(final ScanResult scanResult) {
+
+        final EditText input = new EditText(getActivity());
+
+        mAlertDialogAskForPassword = new AlertDialog.Builder(getActivity())
+                .setTitle(String.format(getString(R.string.connection_enter_password), scanResult.SSID))
+                .setView(input)
+                .setPositiveButton(R.string.connection_enter_password_ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                String value = input.getText().toString();
+                                mStateMachineConnection.createNetwork(scanResult.SSID, value);
+                            }
+                        })
+                .setNegativeButton(R.string.connection_enter_password_cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                // Do nothing.
+                            }
+                        }).show();
+
+    }
+
+    private void selectNetworkForCreation(final List<ScanResult> scanResults) {
+
+        final ListView listView = new ListView(getActivity());
+
+        ListAdapter adapter = new ArrayAdapter<ScanResult>(getActivity(),
+                android.R.layout.simple_list_item_1, scanResults) {
+
+            @NonNull
+            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+
+                View view = super.getView(position, convertView, parent);
+                TextView textView = view.findViewById(android.R.id.text1);
+                textView.setText((getItem(position)).SSID);
+                return textView;
+            }
+        };
+
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, final View view,
+                                    int position, long id) {
+
+                ScanResult scanResult = (ScanResult) parent.getItemAtPosition(position);
+                askForNetworkPasswordThenConnect(scanResult);
+            }
+        });
+
+        mAlertDialogChooseNetworkCreation = new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.connection_choose_network)
+                .setView(listView)
+                .setNegativeButton(R.string.connection_choose_network_cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                // Do nothing.
                             }
                         }).show();
 
@@ -530,6 +603,7 @@ public class ConnectionFragment extends Fragment {
     }
 
     private void nextStep() {
+        ((TimelapseApplication) getActivity().getApplication()).getCameraAPI().initializeWS();
         startActivityForResult(new Intent(getContext(), AdjustmentsActivity.class),
                 ADJUSTMENTS_ACTIVITY_RESULT);
     }

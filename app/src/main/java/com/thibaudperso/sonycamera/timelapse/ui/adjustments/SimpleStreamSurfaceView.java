@@ -37,7 +37,6 @@ public class SimpleStreamSurfaceView extends SurfaceView implements
 
     private boolean mWhileFetching;
     private final BlockingQueue<byte[]> mJpegQueue = new ArrayBlockingQueue<>(2);
-    private final boolean mInMutableAvailable = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
     private Thread mDrawerThread;
     private int mPreviousWidth = 0;
     private int mPreviousHeight = 0;
@@ -59,7 +58,7 @@ public class SimpleStreamSurfaceView extends SurfaceView implements
     }
 
     public SimpleStreamSurfaceView(Context context, AttributeSet attrs,
-                                     int defStyle) {
+                                   int defStyle) {
         super(context, attrs, defStyle);
         getHolder().addCallback(this);
         mFramePaint = new Paint();
@@ -86,7 +85,7 @@ public class SimpleStreamSurfaceView extends SurfaceView implements
      * Start retrieving and drawing liveview frame data by new threads.
      *
      * @return true if the starting is completed successfully, false otherwise.
-     * @exception IllegalStateException when Remote API object is not set.
+     * @throws IllegalStateException when Remote API object is not set.
      */
     public boolean start(final String liveviewUrl) {
 
@@ -153,7 +152,6 @@ public class SimpleStreamSurfaceView extends SurfaceView implements
         mSlicerThread.start();
 
 
-
         // A thread for drawing liveview frame fetched by above thread.
         mDrawerThread = new Thread() {
             @Override
@@ -163,9 +161,8 @@ public class SimpleStreamSurfaceView extends SurfaceView implements
 
                 BitmapFactory.Options factoryOptions = new BitmapFactory.Options();
                 factoryOptions.inSampleSize = 1;
-                if (mInMutableAvailable) {
-                    initInBitmap(factoryOptions);
-                }
+                initInBitmap(factoryOptions);
+
 
                 while (mWhileFetching) {
                     try {
@@ -174,9 +171,7 @@ public class SimpleStreamSurfaceView extends SurfaceView implements
                                 jpegData, 0,
                                 jpegData.length, factoryOptions);
                     } catch (IllegalArgumentException e) {
-                        if (mInMutableAvailable) {
-                            clearInBitmap(factoryOptions);
-                        }
+                        clearInBitmap(factoryOptions);
                         continue;
                     } catch (InterruptedException e) {
                         Log.i(TAG, "Drawer thread is Interrupted.");
@@ -184,9 +179,7 @@ public class SimpleStreamSurfaceView extends SurfaceView implements
                         break;
                     }
 
-                    if (mInMutableAvailable) {
-                        setInBitmap(factoryOptions, frameBitmap);
-                    }
+                    setInBitmap(factoryOptions, frameBitmap);
                     drawFrame(frameBitmap);
                 }
 

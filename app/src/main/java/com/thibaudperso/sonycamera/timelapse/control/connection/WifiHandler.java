@@ -39,7 +39,7 @@ public class WifiHandler {
     void connectToNetworkId(int netId) {
         Logger.e(getClass().getSimpleName() + ": - connectToNetworkId: " + netId);
 
-        if(mWifiManager == null) {
+        if (mWifiManager == null) {
             return;
         }
 
@@ -68,14 +68,14 @@ public class WifiHandler {
 
     static String parseSSID(String ssid) {
 
-        if (ssid != null && ssid.length() >= 2 && ssid.charAt(0) == '"' && ssid.charAt(ssid.length() - 1) == '"') {
+        if (ssid != null
+                && ssid.length() >= 2 && ssid.charAt(0) == '"'
+                && ssid.charAt(ssid.length() - 1) == '"') {
             return ssid.substring(1, ssid.length() - 1);
         }
 
         return ssid;
     }
-
-
 
 
     void startScan() {
@@ -108,13 +108,13 @@ public class WifiHandler {
 
     public void setListener(Listener listener) {
 
-        if(listener != null && mListener == null) {
+        if (listener != null && mListener == null) {
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
             intentFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
             intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
             mContext.registerReceiver(mBroadcastReceiver, intentFilter);
-        } else if(listener == null && mListener != null) {
+        } else if (listener == null && mListener != null) {
             mContext.unregisterReceiver(mBroadcastReceiver);
         }
 
@@ -130,7 +130,8 @@ public class WifiHandler {
 
         void wifiDisconnected(NetworkInfo networkInfo);
 
-        void onWifiScanFinished(List<WifiConfiguration> configurations);
+        void onWifiScanFinished(List<ScanResult> sonyCameraScanResults,
+                                List<WifiConfiguration> configurations);
     }
 
 
@@ -147,7 +148,7 @@ public class WifiHandler {
             if (mListener == null) return;
             if (isInitialStickyBroadcast()) return;
 
-            if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
+            if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(intent.getAction())) {
 
                 NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
                 if (networkInfo.isConnected() && mIsFirstConnection) {
@@ -160,7 +161,7 @@ public class WifiHandler {
                     mIsFirstConnection = true;
                 }
 
-            } else if (intent.getAction().equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) {
+            } else if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(intent.getAction())) {
 
                 int state = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,
                         WifiManager.WIFI_STATE_UNKNOWN);
@@ -170,18 +171,22 @@ public class WifiHandler {
                     mListener.wifiDisabled();
                 }
 
-            } else if (intent.getAction().equals(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION) &&
-                    ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION)
-                     == PackageManager.PERMISSION_GRANTED) {
+            } else if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(intent.getAction())
+                    && ContextCompat.checkSelfPermission(mContext,
+                    Manifest.permission.ACCESS_COARSE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
 
+                final List<ScanResult> sonyCameraScanResults = new ArrayList<>();
                 final List<WifiConfiguration> knownSonyCameraConfigurations = new ArrayList<>();
+
                 for (ScanResult sr : mWifiManager.getScanResults()) {
                     if (!isSonyCameraSSID(sr.SSID)) continue;
+                    sonyCameraScanResults.add(sr);
                     WifiConfiguration wc = getWifiConfigurationFromSSID(sr.SSID);
                     if (wc == null) continue;
                     knownSonyCameraConfigurations.add(wc);
                 }
-                mListener.onWifiScanFinished(knownSonyCameraConfigurations);
+                mListener.onWifiScanFinished(sonyCameraScanResults, knownSonyCameraConfigurations);
             }
         }
     };
@@ -191,15 +196,15 @@ public class WifiHandler {
 
         List<WifiConfiguration> list = mWifiManager.getConfiguredNetworks();
 
-        if(list != null) {
+        if (list != null) {
 
-            for( WifiConfiguration i : list ) {
+            for (WifiConfiguration i : list) {
 
                 // In the case of network is already registered
-                if(i.SSID != null && i.SSID.equals("\"" + networkSSID + "\"")) {
+                if (i.SSID != null && i.SSID.equals("\"" + networkSSID + "\"")) {
 
                     // In case password changed since last time
-                    i.preSharedKey = "\""+ networkPassword +"\"";
+                    i.preSharedKey = "\"" + networkPassword + "\"";
                     mWifiManager.saveConfiguration();
 
                     netId = i.networkId;
@@ -209,7 +214,7 @@ public class WifiHandler {
         }
 
         // In the case of network is not registered create it and join it
-        if(netId == -1) {
+        if (netId == -1) {
             netId = createWPAWifi(networkSSID, networkPassword);
         }
 
@@ -220,7 +225,7 @@ public class WifiHandler {
 
         WifiConfiguration wc = new WifiConfiguration();
         wc.SSID = "\"" + networkSSID + "\"";
-        wc.preSharedKey = "\""+ networkPassword +"\"";
+        wc.preSharedKey = "\"" + networkPassword + "\"";
 
         wc.hiddenSSID = true;
         wc.status = WifiConfiguration.Status.ENABLED;

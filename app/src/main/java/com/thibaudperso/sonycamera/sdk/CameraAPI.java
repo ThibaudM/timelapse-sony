@@ -34,12 +34,10 @@ public class CameraAPI {
 
     public void setDevice(Device device) {
         mCameraWS.setWSUrl(device.getWebService());
-        initialize();
-
         for (DeviceChangedListener listener : mDeviceChangedListeners) listener.onNewDevice(device);
     }
 
-    private void initialize() {
+    public void initializeWS() {
         if (mIsDeviceInitialized) {
             return;
         }
@@ -184,14 +182,14 @@ public class CameraAPI {
     }
 
     public void stopLiveView() {
-
         mCameraWS.sendRequest("stopLiveview", new JSONArray(), null);
     }
 
 
     public void actZoom(final ZoomDirection zoomDir) {
 
-        JSONArray params = new JSONArray().put(zoomDir == ZoomDirection.IN ? "in" : "out").put("1shot");
+        JSONArray params = new JSONArray().
+                put(zoomDir == ZoomDirection.IN ? "in" : "out").put("1shot");
         mCameraWS.sendRequest("actZoom", params, null);
     }
 

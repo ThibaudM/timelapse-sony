@@ -55,7 +55,7 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.fragment_container);
+        FrameLayout frameLayout = findViewById(R.id.fragment_container);
         if(frameLayout != null && frameLayout.getChildCount() > 0) {
             mSnackBarConnectionLost = Snackbar.make(frameLayout.getChildAt(0),
                     getString(R.string.connection_with_camera_lost), Snackbar.LENGTH_INDEFINITE);

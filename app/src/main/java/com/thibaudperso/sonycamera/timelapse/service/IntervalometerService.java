@@ -82,8 +82,9 @@ public class IntervalometerService extends Service {
 
         mTimelapseData = ((TimelapseApplication) getApplication()).getTimelapseData();
         mApiRequestsList = mTimelapseData.getApiRequestsList();
-        mStateMachineConnection = ((TimelapseApplication) getApplication()).getStateMachineConnection();
-        
+        mStateMachineConnection = ((TimelapseApplication) getApplication()).
+                getStateMachineConnection();
+
     }
 
     @Override
@@ -257,7 +258,7 @@ public class IntervalometerService extends Service {
 
     private void taskFinished() {
 
-        if(mStateMachineConnection != null) {
+        if (mStateMachineConnection != null) {
             mStateMachineConnection.stop();
         }
 

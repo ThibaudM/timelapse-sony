@@ -107,26 +107,26 @@ public class ProcessingFragment extends Fragment {
 
         mRootView = inflater.inflate(R.layout.fragment_processing, container, false);
 
-        mStartTimeTextView = ((TextView) mRootView.findViewById(start_time));
-        mFramesCountTextView = ((TextView) mRootView.findViewById(settings_frames_count));
-        mChronometerTextView = ((TextView) mRootView.findViewById(R.id.chronometer));
+        mStartTimeTextView = mRootView.findViewById(start_time);
+        mFramesCountTextView = mRootView.findViewById(settings_frames_count);
+        mChronometerTextView = mRootView.findViewById(R.id.chronometer);
         mOverallProgressLayout = mRootView.findViewById(R.id.progress_layout);
-        mOverallProgressBar = (ProgressBar) mRootView.findViewById(R.id.progress_bar);
-        mOverallProgressValue = (TextView) mRootView.findViewById(R.id.progress);
+        mOverallProgressBar = mRootView.findViewById(R.id.progress_bar);
+        mOverallProgressValue = mRootView.findViewById(R.id.progress);
         mNextPictureLayout = mRootView.findViewById(R.id.next_picture_layout);
-        mNextPictureProgressBar = (ProgressBar) mRootView.findViewById(R.id.next_picture_progress_bar);
-        mNextPictureProgressValue = (TextView) mRootView.findViewById(R.id.next_picture_progress);
-        mNextPictureCaptureProgressBar = (ProgressBar) mRootView.findViewById(R.id
+        mNextPictureProgressBar = mRootView.findViewById(R.id.next_picture_progress_bar);
+        mNextPictureProgressValue = mRootView.findViewById(R.id.next_picture_progress);
+        mNextPictureCaptureProgressBar = mRootView.findViewById(R.id
                 .next_picture_progress_bar_capture);
-        mImageReviewView = (ImageView) mRootView.findViewById(R.id.image_review);
+        mImageReviewView = mRootView.findViewById(R.id.image_review);
         mFinishLayout = mRootView.findViewById(R.id.finish_layout);
 
         mErrorLayout = mRootView.findViewById(R.id.processingError);
-        mErrorExpandImageView = (ImageView) mRootView.findViewById(R.id.processing_error_expand_details);
+        mErrorExpandImageView = mRootView.findViewById(R.id.processing_error_expand_details);
         mErrorDetailsLayout = mRootView.findViewById(R.id.processing_error_details);
-        mErrorWsUnreachable = (TextView) mRootView.findViewById(R.id.processing_error_ws_unreachable);
-        mErrorLongShot = (TextView) mRootView.findViewById(R.id.processing_error_long_shot);
-        mErrorUnknown = (TextView) mRootView.findViewById(R.id.processing_error_unknown);
+        mErrorWsUnreachable = mRootView.findViewById(R.id.processing_error_ws_unreachable);
+        mErrorLongShot = mRootView.findViewById(R.id.processing_error_long_shot);
+        mErrorUnknown = mRootView.findViewById(R.id.processing_error_unknown);
 
         mStopView = mRootView.findViewById(R.id.processing_stop);
         mRestartView = mRootView.findViewById(R.id.processing_restart);

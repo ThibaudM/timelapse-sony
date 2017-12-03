@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
@@ -54,7 +55,7 @@ public class AdjustmentsFragment extends Fragment {
     private boolean mIsFragmentResumed = false;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
 
@@ -113,6 +114,7 @@ public class AdjustmentsFragment extends Fragment {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                v.performClick();
 
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     if (System.currentTimeMillis() - downTime > 500) {
@@ -132,6 +134,7 @@ public class AdjustmentsFragment extends Fragment {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                v.performClick();
 
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     if (System.currentTimeMillis() - downTime > 500) {
@@ -145,7 +148,7 @@ public class AdjustmentsFragment extends Fragment {
             }
         });
 
-        CompoundButton useFlashButton = (CompoundButton) rootView.findViewById(R.id.adjustments_use_flash);
+        CompoundButton useFlashButton = rootView.findViewById(R.id.adjustments_use_flash);
         useFlashButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
             @Override
@@ -205,6 +208,7 @@ public class AdjustmentsFragment extends Fragment {
                                 .getDefaultSharedPreferences(getContext()).edit();
                         editor.putBoolean(PREF_AUTOMATIC_CONTINUE, false);
                         editor.apply();
+                        mApplication.getCameraAPI().closeConnection();
                         mApplication.getWifiHandler().disconnect();
                         getActivity().finish();
                     }
