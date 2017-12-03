@@ -20,6 +20,10 @@ Vous pouvez aussi les pairrer par NFC (si c\'est possible)]]></string>
 
     <string name="connection_camera_model">Modèle de l\'appareil</string>
 
+    <string name="connection_enter_password">Entrez un mot de passe pour le réseau %1$s</string>
+    <string name="connection_enter_password_ok">Rejoindre</string>
+    <string name="connection_enter_password_cancel">Annuler</string>
+
     <string name="alert_disconnect_camera_title">Disconnect camera</string>
     <string name="alert_disconnect_camera_message">Do you want to disconnect the camera from the smartphone ?</string>
     <string name="alert_disconnect_camera_yes">Disconnect</string>

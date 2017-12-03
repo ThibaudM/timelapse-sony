@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.nfc.NfcAdapter;
 import android.os.Build;
@@ -26,6 +27,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -68,7 +70,9 @@ public class ConnectionFragment extends Fragment {
 
     private NfcAdapter mNfcAdapter;
 
-    private AlertDialog mAlertDialogChooseNetworkConnection;
+    private AlertDialog mAlertDialogChooseNetworkConnection,
+            mAlertDialogAskForPassword,
+            mAlertDialogChooseNetworkCreation;
 
     private Spinner mCameraSpinner;
     private ArrayAdapter<Device> mAdapter;
@@ -256,6 +260,14 @@ public class ConnectionFragment extends Fragment {
         if (mAlertDialogChooseNetworkConnection != null) {
             mAlertDialogChooseNetworkConnection.cancel();
         }
+
+        if (mAlertDialogAskForPassword != null) {
+            mAlertDialogAskForPassword.cancel();
+        }
+
+        if (mAlertDialogChooseNetworkCreation != null) {
+            mAlertDialogChooseNetworkCreation.cancel();
+        }
     }
 
     private StateMachineConnection.Listener
@@ -335,9 +347,18 @@ public class ConnectionFragment extends Fragment {
                 askForScanPermission();
                 break;
 
-            case MULTIPLE_SONY_SCAN_DETECTED:
+            case MULTIPLE_SONY_CONF_DETECTED:
                 selectNetworkForConnection(mStateMachineConnection.getWifiConfigurations());
                 break;
+
+            case ASK_PASSWORD_FOR_WIFI:
+                askForNetworkPasswordThenConnect(mStateMachineConnection.getScanResults().get(0));
+                break;
+
+            case MULTIPLE_SONY_SCAN_DETECTED:
+                selectNetworkForCreation(mStateMachineConnection.getScanResults());
+                break;
+
 
         }
     }
@@ -450,6 +471,71 @@ public class ConnectionFragment extends Fragment {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 wifiError();
+                            }
+                        }).show();
+
+    }
+
+    private void askForNetworkPasswordThenConnect(final ScanResult scanResult) {
+
+        final EditText input = new EditText(getActivity());
+
+        mAlertDialogAskForPassword = new AlertDialog.Builder(getActivity())
+                .setTitle(String.format(getString(R.string.connection_enter_password), scanResult.SSID))
+                .setView(input)
+                .setPositiveButton(R.string.connection_enter_password_ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                String value = input.getText().toString();
+                                mStateMachineConnection.createNetwork(scanResult.SSID, value);
+                            }
+                        })
+                .setNegativeButton(R.string.connection_enter_password_cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                // Do nothing.
+                            }
+                        }).show();
+
+    }
+
+    private void selectNetworkForCreation(final List<ScanResult> scanResults) {
+
+        final ListView listView = new ListView(getActivity());
+
+        ListAdapter adapter = new ArrayAdapter<ScanResult>(getActivity(),
+                android.R.layout.simple_list_item_1, scanResults) {
+
+            @NonNull
+            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+
+                View view = super.getView(position, convertView, parent);
+                TextView textView = (TextView) view.findViewById(android.R.id.text1);
+                textView.setText((getItem(position)).SSID);
+                return textView;
+            }
+        };
+
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, final View view,
+                                    int position, long id) {
+
+                ScanResult scanResult = (ScanResult) parent.getItemAtPosition(position);
+                askForNetworkPasswordThenConnect(scanResult);
+            }
+        });
+
+        mAlertDialogChooseNetworkCreation = new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.connection_choose_network)
+                .setView(listView)
+                .setNegativeButton(R.string.connection_choose_network_cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                // Do nothing.
                             }
                         }).show();
 

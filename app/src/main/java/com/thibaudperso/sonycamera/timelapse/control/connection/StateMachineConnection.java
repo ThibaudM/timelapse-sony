@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
+import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -46,7 +47,8 @@ public class StateMachineConnection {
 
     private class StateRegistry {
         WifiInfo wifiInfo;
-        List<WifiConfiguration> scanResults;
+        List<ScanResult> mScansResults;
+        List<WifiConfiguration> mKnownWifiConfigurations;
         int forceConnectionToNetworkId = -1;
         int apiAttempts = 0;
     }
@@ -223,7 +225,8 @@ public class StateMachineConnection {
                             sm.mApplication.getSystemService(Context.CONNECTIVITY_SERVICE);
                     for (Network net : connectivityManager.getAllNetworks()) {
                         NetworkInfo netInfo = connectivityManager.getNetworkInfo(net);
-                        if (netInfo.getType() == ConnectivityManager.TYPE_WIFI
+                        if (netInfo != null
+                                && netInfo.getType() == ConnectivityManager.TYPE_WIFI
                                 && netInfo.getExtraInfo() != null
                                 && netInfo.getExtraInfo().equals(sm.mStateRegistry.wifiInfo.getSSID())) {
                             connectivityManager.bindProcessToNetwork(net);
@@ -336,20 +339,68 @@ public class StateMachineConnection {
         WIFI_SCAN_FINISHED {
             @Override
             public void process(StateMachineConnection sm) {
-                List<WifiConfiguration> scans = sm.mStateRegistry.scanResults;
-                if (scans.size() == 1) {
-                    sm.mStateRegistry.forceConnectionToNetworkId = scans.get(0).networkId;
-                    sm.setCurrentState(TRY_TO_CONNECT_TO_SSID);
-                } else if (scans.size() > 1) {
-                    sm.setCurrentState(MULTIPLE_SONY_SCAN_DETECTED);
-                } else {
+                List<ScanResult> scansResults = sm.mStateRegistry.mScansResults;
+                List<WifiConfiguration> knownWifiConfigurations =
+                        sm.mStateRegistry.mKnownWifiConfigurations;
+
+                /*
+                 * No Sony Camera network found in scan
+                 */
+                if (scansResults.size() == 0) {
                     sm.setCurrentState(WIFI_SCAN);
+                }
+
+                /*
+                 * No Sony Camera network registered on this phone but we found only one in scan
+                 */
+                else if (knownWifiConfigurations.size() == 0 && scansResults.size() == 1) {
+                    sm.setCurrentState(ASK_PASSWORD_FOR_WIFI);
+                }
+
+                /*
+                 * No Sony Camera network registered on this phone but we found more than one in scan
+                 */
+                else if (knownWifiConfigurations.size() == 0) {
+                    sm.setCurrentState(MULTIPLE_SONY_SCAN_DETECTED);
+                }
+
+                /*
+                 * There is only one Sony Camera known network connected
+                 */
+                else if (knownWifiConfigurations.size() == 1) {
+                    sm.mStateRegistry.forceConnectionToNetworkId = knownWifiConfigurations.get(0).networkId;
+                    sm.mWifiHandler.connectToNetworkId(knownWifiConfigurations.get(0).networkId);
+                    sm.setCurrentState(TRY_TO_CONNECT_TO_SSID);
+                }
+
+                /*
+                 * There is more than one Sony Camera known network connected
+                 */
+                else {
+                    sm.setCurrentState(MULTIPLE_SONY_CONF_DETECTED);
                 }
             }
 
             @Override
             public State[] previousPossibleStates() {
                 return new State[]{WIFI_SCAN};
+            }
+
+            @Override
+            public void stopAsyncTasks() {
+            }
+        },
+
+
+        MULTIPLE_SONY_CONF_DETECTED {
+            @Override
+            public void process(StateMachineConnection sm) {
+
+            }
+
+            @Override
+            public State[] previousPossibleStates() {
+                return new State[]{WIFI_SCAN_FINISHED};
             }
 
             @Override
@@ -374,6 +425,24 @@ public class StateMachineConnection {
             }
         },
 
+
+        ASK_PASSWORD_FOR_WIFI {
+            @Override
+            public void process(StateMachineConnection sm) {
+
+            }
+
+            @Override
+            public State[] previousPossibleStates() {
+                return new State[]{WIFI_SCAN_FINISHED};
+            }
+
+            @Override
+            public void stopAsyncTasks() {
+            }
+        },
+
+
         TRY_TO_CONNECT_TO_SSID {
             @Override
             public void process(StateMachineConnection sm) {
@@ -382,7 +451,8 @@ public class StateMachineConnection {
 
             @Override
             public State[] previousPossibleStates() {
-                return new State[]{MULTIPLE_SONY_SCAN_DETECTED, WIFI_SCAN_FINISHED};
+                return new State[]{MULTIPLE_SONY_CONF_DETECTED, WIFI_SCAN_FINISHED,
+                        ASK_PASSWORD_FOR_WIFI, MULTIPLE_SONY_SCAN_DETECTED};
             }
 
             @Override
@@ -461,11 +531,13 @@ public class StateMachineConnection {
         }
 
         @Override
-        public void onWifiScanFinished(List<WifiConfiguration> configurations) {
+        public void onWifiScanFinished(List<ScanResult> sonyCameraScanResults,
+                                       List<WifiConfiguration> configurations) {
 
             if (mCurrentState != WIFI_SCAN) return;
 
-            mStateRegistry.scanResults = configurations;
+            mStateRegistry.mKnownWifiConfigurations = configurations;
+            mStateRegistry.mScansResults = sonyCameraScanResults;
             setCurrentState(State.WIFI_SCAN_FINISHED);
         }
     };
@@ -510,13 +582,22 @@ public class StateMachineConnection {
 
     public void tryToConnectToNetworkId(int networkId) {
         mStateRegistry.forceConnectionToNetworkId = networkId;
+        mWifiHandler.connectToNetworkId(networkId);
+        setCurrentState(TRY_TO_CONNECT_TO_SSID);
+    }
+
+    public void createNetwork(String networkSSID, String networkPassword) {
+        mWifiHandler.createIfNeededThenConnectToWifi(networkSSID, networkPassword);
         setCurrentState(TRY_TO_CONNECT_TO_SSID);
     }
 
     public List<WifiConfiguration> getWifiConfigurations() {
-        return mStateRegistry.scanResults;
+        return mStateRegistry.mKnownWifiConfigurations;
     }
 
+    public List<ScanResult> getScanResults() {
+        return mStateRegistry.mScansResults;
+    }
 
     private List<Listener> mListeners = new ArrayList<>();
 

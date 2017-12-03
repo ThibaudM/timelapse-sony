@@ -40,6 +40,10 @@ You also can pair it by NFC (if it\'s possible)]]></string>
 
     <string name="connection_camera_model">Camera model</string>
 
+    <string name="connection_enter_password">Enter password for %1$s network</string>
+    <string name="connection_enter_password_ok">Join</string>
+    <string name="connection_enter_password_cancel">Cancel</string>
+
     <string name="connection_continue_automatic">Automatic connection (skip this step next time)</string>
     <string name="connection_continue_button">Continue</string>
 

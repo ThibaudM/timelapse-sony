@@ -126,7 +126,8 @@ public class WifiHandler {
 
         void wifiDisconnected(NetworkInfo networkInfo);
 
-        void onWifiScanFinished(List<WifiConfiguration> configurations);
+        void onWifiScanFinished(List<ScanResult> sonyCameraScanResults,
+                                List<WifiConfiguration> configurations);
     }
 
 
@@ -167,16 +168,19 @@ public class WifiHandler {
 
             } else if (intent.getAction().equals(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION) &&
                     ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION)
-                     == PackageManager.PERMISSION_GRANTED) {
+                            == PackageManager.PERMISSION_GRANTED) {
 
+                final List<ScanResult> sonyCameraScanResults = new ArrayList<>();
                 final List<WifiConfiguration> knownSonyCameraConfigurations = new ArrayList<>();
+
                 for (ScanResult sr : mWifiManager.getScanResults()) {
                     if (!isSonyCameraSSID(sr.SSID)) continue;
+                    sonyCameraScanResults.add(sr);
                     WifiConfiguration wc = getWifiConfigurationFromSSID(sr.SSID);
                     if (wc == null) continue;
                     knownSonyCameraConfigurations.add(wc);
                 }
-                mListener.onWifiScanFinished(knownSonyCameraConfigurations);
+                mListener.onWifiScanFinished(sonyCameraScanResults, knownSonyCameraConfigurations);
             }
         }
     };
