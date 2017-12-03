@@ -13,6 +13,8 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.support.v4.content.ContextCompat;
 
+import com.thibaudperso.sonycamera.timelapse.control.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +37,7 @@ public class WifiHandler {
     }
 
     void connectToNetworkId(int netId) {
+        Logger.e(getClass().getSimpleName() + ": - connectToNetworkId: " + netId);
 
         if(mWifiManager == null) {
             return;
@@ -53,6 +56,7 @@ public class WifiHandler {
         }
         if (!netIdFound) return;
 
+        Logger.e(getClass().getSimpleName() + ": - mWifiManager.enableNetwork(" + netId + ", true)");
         mWifiManager.enableNetwork(netId, true);
     }
 
@@ -138,6 +142,7 @@ public class WifiHandler {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            Logger.e(getClass().getSimpleName() + ": mBroadcastReceiver - " + Logger.intentToString(intent));
 
             if (mListener == null) return;
             if (isInitialStickyBroadcast()) return;

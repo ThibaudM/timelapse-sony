@@ -31,6 +31,10 @@ public class Device {
 		return mModel;
 	}
 
+	public String toLongString() {
+		return "model: " + mModel + ", id: " + mId + ", webService: " + mWebService;
+	}
+
 	public static Comparator<Device> COMPARE_BY_DEVICEMODEL = new Comparator<Device>() {
 		public int compare(Device one, Device other) {
 			return one.mModel.compareTo(other.mModel);

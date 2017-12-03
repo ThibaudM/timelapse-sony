@@ -18,6 +18,7 @@ import com.thibaudperso.sonycamera.BuildConfig;
 import com.thibaudperso.sonycamera.sdk.CameraAPI;
 import com.thibaudperso.sonycamera.sdk.model.Device;
 import com.thibaudperso.sonycamera.timelapse.TimelapseApplication;
+import com.thibaudperso.sonycamera.timelapse.control.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,7 +71,7 @@ public class StateMachineConnection {
         mCameraAPI.addDeviceChangedListener(mDeviceChangedListener);
 
         WifiManager wifiManager = (WifiManager) mApplication.getSystemService(Context.WIFI_SERVICE);
-        if(Build.VERSION.SDK_INT > 12) {
+        if (Build.VERSION.SDK_INT > 12) {
             mWifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "WifiLock2");
             mWifiLock.acquire();
         }
@@ -485,8 +486,12 @@ public class StateMachineConnection {
 
     private void setCurrentState(State newState) {
 
-        if (BuildConfig.DEBUG && !Arrays.asList(newState.previousPossibleStates()).contains(mCurrentState)) {
-            throw new RuntimeException("Current State: " + mCurrentState + ", new State: " + newState);
+        if (!Arrays.asList(newState.previousPossibleStates()).contains(mCurrentState)) {
+            Logger.e(getClass().getSimpleName() + ": - Current State: " + mCurrentState + ", new State: " + newState);
+
+            if (BuildConfig.DEBUG) {
+                throw new RuntimeException("Current State: " + mCurrentState + ", new State: " + newState);
+            }
         }
 
         Log.d(LOG_TAG, "State: " + mCurrentState + " ---> " + newState);
