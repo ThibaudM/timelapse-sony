@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.nfc.NfcAdapter;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -96,9 +95,7 @@ public class ConnectionFragment extends Fragment {
         mDeviceManager = mApplication.getDeviceManager();
         mStateMachineConnection = mApplication.getStateMachineConnection();
 
-        if (android.os.Build.VERSION.SDK_INT >= 10) {
-            mNfcAdapter = NfcAdapter.getDefaultAdapter(getContext());
-        }
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(getContext());
     }
 
     @Override
@@ -107,14 +104,14 @@ public class ConnectionFragment extends Fragment {
 
         View viewResult = inflater.inflate(R.layout.fragment_connection, container, false);
 
-        mConnectionDeviceListUpdateButton = (ImageView) viewResult.findViewById(R.id.connection_camera_list_update);
-        mConnectionDeviceListUpdateProgress = (ProgressBar) viewResult.findViewById(R.id.connection_camera_list_update_progress);
-        mConnectionInfoWifiEnabled = (ImageView) viewResult.findViewById(R.id.connection_info_wifi_enabled_icon);
-        mConnectionInfoNetworkState = (ImageView) viewResult.findViewById(R.id.connection_info_network_state);
-        mConnectionInfoAPIState = (ImageView) viewResult.findViewById(R.id.connection_info_api_state);
-        mConnectionInfoWifiEnabledProgress = (ProgressBar) viewResult.findViewById(R.id.connection_info_wifi_enabled_progress);
-        mConnectionInfoNetworkStateProgress = (ProgressBar) viewResult.findViewById(R.id.connection_info_network_state_progress);
-        mConnectionInfoAPIStateProgress = (ProgressBar) viewResult.findViewById(R.id.connection_info_api_state_progress);
+        mConnectionDeviceListUpdateButton = viewResult.findViewById(R.id.connection_camera_list_update);
+        mConnectionDeviceListUpdateProgress = viewResult.findViewById(R.id.connection_camera_list_update_progress);
+        mConnectionInfoWifiEnabled = viewResult.findViewById(R.id.connection_info_wifi_enabled_icon);
+        mConnectionInfoNetworkState = viewResult.findViewById(R.id.connection_info_network_state);
+        mConnectionInfoAPIState = viewResult.findViewById(R.id.connection_info_api_state);
+        mConnectionInfoWifiEnabledProgress = viewResult.findViewById(R.id.connection_info_wifi_enabled_progress);
+        mConnectionInfoNetworkStateProgress = viewResult.findViewById(R.id.connection_info_network_state_progress);
+        mConnectionInfoAPIStateProgress = viewResult.findViewById(R.id.connection_info_api_state_progress);
         ((TextView) viewResult.findViewById(R.id.connection_info_message)).setText(
                 Html.fromHtml(getString(R.string.connection_information_message)));
 
@@ -174,7 +171,7 @@ public class ConnectionFragment extends Fragment {
         });
 
 
-        mConnectionAutomaticCheckbox = ((CheckBox) viewResult.findViewById(R.id.connection_automatic_checkbox));
+        mConnectionAutomaticCheckbox = viewResult.findViewById(R.id.connection_automatic_checkbox);
         mConnectionAutomaticCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -184,7 +181,7 @@ public class ConnectionFragment extends Fragment {
                 editor.apply();
             }
         });
-        mConnectionContinueButton = (FloatingActionButton) viewResult.findViewById(R.id.connection_settings_button);
+        mConnectionContinueButton = viewResult.findViewById(R.id.connection_settings_button);
         mConnectionContinueButton.setVisibility(View.GONE);
         mConnectionContinueButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -194,7 +191,7 @@ public class ConnectionFragment extends Fragment {
         });
 
         initConnectionInfo();
-        
+
         return viewResult;
     }
 
@@ -220,7 +217,7 @@ public class ConnectionFragment extends Fragment {
 
         mStateMachineConnection.addListener(mStateMachineListener);
 
-        if (mNfcAdapter != null && Build.VERSION.SDK_INT > 10) {
+        if (mNfcAdapter != null) {
             mNfcAdapter.enableForegroundDispatch(getActivity(),
                     NFCHandler.getPendingIntent(getActivity()),
                     NFCHandler.getIntentFilterArray(), NFCHandler.getTechListArray());
@@ -232,7 +229,7 @@ public class ConnectionFragment extends Fragment {
         super.onPause();
         mStateMachineConnection.removeListener(mStateMachineListener);
 
-        if (mNfcAdapter != null && Build.VERSION.SDK_INT > 10) {
+        if (mNfcAdapter != null) {
             mNfcAdapter.disableForegroundDispatch(getActivity());
         }
     }
@@ -426,7 +423,7 @@ public class ConnectionFragment extends Fragment {
             public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
                 View view = super.getView(position, convertView, parent);
-                TextView textView = (TextView) view.findViewById(android.R.id.text1);
+                TextView textView = view.findViewById(android.R.id.text1);
                 WifiConfiguration network = getItem(position);
                 if (network != null) {
                     textView.setText(network.SSID);
@@ -500,7 +497,7 @@ public class ConnectionFragment extends Fragment {
             public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
                 View view = super.getView(position, convertView, parent);
-                TextView textView = (TextView) view.findViewById(android.R.id.text1);
+                TextView textView = view.findViewById(android.R.id.text1);
                 textView.setText((getItem(position)).SSID);
                 return textView;
             }

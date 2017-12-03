@@ -184,14 +184,14 @@ public class CameraAPI {
     }
 
     public void stopLiveView() {
-
         mCameraWS.sendRequest("stopLiveview", new JSONArray(), null);
     }
 
 
     public void actZoom(final ZoomDirection zoomDir) {
 
-        JSONArray params = new JSONArray().put(zoomDir == ZoomDirection.IN ? "in" : "out").put("1shot");
+        JSONArray params = new JSONArray().
+                put(zoomDir == ZoomDirection.IN ? "in" : "out").put("1shot");
         mCameraWS.sendRequest("actZoom", params, null);
     }
 

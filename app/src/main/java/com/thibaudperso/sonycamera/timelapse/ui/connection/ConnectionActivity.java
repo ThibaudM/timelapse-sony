@@ -8,7 +8,6 @@ import com.thibaudperso.sonycamera.timelapse.ui.SingleFragmentActivity;
 
 public class ConnectionActivity extends SingleFragmentActivity {
 
-    private ConnectionFragment mFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -18,7 +17,7 @@ public class ConnectionActivity extends SingleFragmentActivity {
 
     @Override
     protected Fragment createFragment() {
-        return mFragment = new ConnectionFragment();
+        return new ConnectionFragment();
     }
 
     @Override

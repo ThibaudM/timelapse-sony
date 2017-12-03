@@ -10,7 +10,6 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -72,10 +71,8 @@ public class StateMachineConnection {
         mCameraAPI.addDeviceChangedListener(mDeviceChangedListener);
 
         WifiManager wifiManager = (WifiManager) mApplication.getSystemService(Context.WIFI_SERVICE);
-        if(Build.VERSION.SDK_INT > 12) {
-            mWifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "WifiLock2");
-            mWifiLock.acquire();
-        }
+        mWifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "WifiLock2");
+        mWifiLock.acquire();
     }
 
     public void stop() {
@@ -228,7 +225,8 @@ public class StateMachineConnection {
                         if (netInfo != null
                                 && netInfo.getType() == ConnectivityManager.TYPE_WIFI
                                 && netInfo.getExtraInfo() != null
-                                && netInfo.getExtraInfo().equals(sm.mStateRegistry.wifiInfo.getSSID())) {
+                                && netInfo.getExtraInfo()
+                                .equals(sm.mStateRegistry.wifiInfo.getSSID())) {
                             connectivityManager.bindProcessToNetwork(net);
                             break;
                         }
@@ -368,7 +366,8 @@ public class StateMachineConnection {
                  * There is only one Sony Camera known network connected
                  */
                 else if (knownWifiConfigurations.size() == 1) {
-                    sm.mStateRegistry.forceConnectionToNetworkId = knownWifiConfigurations.get(0).networkId;
+                    sm.mStateRegistry.forceConnectionToNetworkId =
+                            knownWifiConfigurations.get(0).networkId;
                     sm.mWifiHandler.connectToNetworkId(knownWifiConfigurations.get(0).networkId);
                     sm.setCurrentState(TRY_TO_CONNECT_TO_SSID);
                 }
@@ -557,8 +556,10 @@ public class StateMachineConnection {
 
     private void setCurrentState(State newState) {
 
-        if (BuildConfig.DEBUG && !Arrays.asList(newState.previousPossibleStates()).contains(mCurrentState)) {
-            throw new RuntimeException("Current State: " + mCurrentState + ", new State: " + newState);
+        if (BuildConfig.DEBUG &&
+                !Arrays.asList(newState.previousPossibleStates()).contains(mCurrentState)) {
+            throw new RuntimeException("Current State: " + mCurrentState + ", " +
+                    "new State: " + newState);
         }
 
         Log.d(LOG_TAG, "State: " + mCurrentState + " ---> " + newState);
