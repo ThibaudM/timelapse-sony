@@ -35,9 +35,17 @@ public class CameraAPI {
         if (mIsDeviceInitialized) {
             return;
         }
-        initWebService(null);
-        setShootMode("still");
-        mIsDeviceInitialized = true;
+
+        initWebService(new InitWebServiceListener() {
+            @Override
+            public void onResult(CameraWS.ResponseCode responseCode) {
+                if (responseCode != CameraWS.ResponseCode.OK) {
+                    return;
+                }
+                setShootMode("still");
+                mIsDeviceInitialized = true;
+            }
+        });
     }
 
     /**
@@ -145,7 +153,7 @@ public class CameraAPI {
     }
 
     public void closeConnection() {
-        mCameraWS.sendRequest("stopRecMode", new JSONArray(), null, 200);
+        mCameraWS.sendRequest("stopRecMode", new JSONArray(), null, 0);
     }
 
 

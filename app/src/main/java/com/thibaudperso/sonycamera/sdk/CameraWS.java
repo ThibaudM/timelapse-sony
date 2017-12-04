@@ -19,6 +19,7 @@ import org.json.JSONObject;
  */
 public class CameraWS {
 
+    private final static int DEFAULT_WS_TIMEOUT = 5000;
 
     /**
      * ResponseCode from the camera WS
@@ -67,7 +68,7 @@ public class CameraWS {
     }
 
     void sendRequest(String method, JSONArray params, Listener listener) {
-        sendRequest(method, params, listener, 0);
+        sendRequest(method, params, listener, DEFAULT_WS_TIMEOUT);
     }
 
     void sendRequest(final String method, final JSONArray params, final Listener listener,
