@@ -37,7 +37,7 @@ public class WifiHandler {
     }
 
     void connectToNetworkId(int netId) {
-        Logger.e(getClass().getSimpleName() + ": - connectToNetworkId: " + netId);
+        Logger.d("[" + getClass().getSimpleName() + "] connectToNetworkId: " + netId);
 
         if (mWifiManager == null) {
             return;
@@ -56,7 +56,7 @@ public class WifiHandler {
         }
         if (!netIdFound) return;
 
-        Logger.e(getClass().getSimpleName() + ": - mWifiManager.enableNetwork(" + netId + ", true)");
+        Logger.d("[" + getClass().getSimpleName() + "] mWifiManager.enableNetwork(" + netId + ", true)");
         mWifiManager.enableNetwork(netId, true);
     }
 
@@ -137,13 +137,16 @@ public class WifiHandler {
 
     // Workaround for multiple broadcast of wifi events:
     // http://stackoverflow.com/questions/8412714/broadcastreceiver-receives-multiple-identical-messages-for-one-event
+    // We added bssid to the condition, because sometimes two wifi are connected in a row
+    //  without disconnection
     private boolean mIsFirstConnection = true;
     private boolean mIsFirstDisconnection = true;
+    private String mCurrentBSSID = "";
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Logger.e(getClass().getSimpleName() + ": mBroadcastReceiver - " + Logger.intentToString(intent));
+            Logger.d("[BroadcastReceiver] " + Logger.intentToString(intent));
 
             if (mListener == null) return;
             if (isInitialStickyBroadcast()) return;
@@ -151,12 +154,22 @@ public class WifiHandler {
             if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(intent.getAction())) {
 
                 NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-                if (networkInfo.isConnected() && mIsFirstConnection) {
+
+                if (networkInfo.isConnected()
+                        && !mCurrentBSSID.equals(mWifiManager.getConnectionInfo().getSSID())
+                        && mIsFirstConnection) {
+
+                    mCurrentBSSID = mWifiManager.getConnectionInfo().getSSID();
+
                     mListener.wifiConnected(networkInfo);
+                    Logger.d("[BroadcastReceiver] Parse: Wifi connected (" + mCurrentBSSID + ")");
+
                     mIsFirstConnection = false;
                     mIsFirstDisconnection = true;
                 } else if (!networkInfo.isConnected() && mIsFirstDisconnection) {
                     mListener.wifiDisconnected(networkInfo);
+                    Logger.d("[BroadcastReceiver] Parse: Wifi disconnected (" + mCurrentBSSID + ")");
+
                     mIsFirstDisconnection = false;
                     mIsFirstConnection = true;
                 }

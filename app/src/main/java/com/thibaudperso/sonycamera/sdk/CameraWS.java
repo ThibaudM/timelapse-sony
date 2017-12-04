@@ -20,12 +20,14 @@ import org.json.JSONObject;
  */
 public class CameraWS {
 
+    private final static int DEFAULT_WS_TIMEOUT = 5000;
 
     /**
      * ResponseCode from the camera WS
      * Negative responses have been added for our purpose
      */
     public enum ResponseCode {
+        DEVICE_IS_NOT_SET(-4), // means device is not set and url does not exist
         RESPONSE_NOT_WELL_FORMATED(-3), // means web service is unreachable
         WS_UNREACHABLE(-2), // means web service is unreachable
         NONE(-1), // means no code available
@@ -67,27 +69,32 @@ public class CameraWS {
     }
 
     void sendRequest(String method, JSONArray params, Listener listener) {
-        sendRequest(method, params, listener, 0);
+        sendRequest(method, params, listener, DEFAULT_WS_TIMEOUT);
     }
 
     void sendRequest(final String method, final JSONArray params, final Listener listener,
                      final int timeout) {
 
         if (mWSUrl == null) {
-            throw new NullPointerException();
+            if (listener != null) {
+                listener.cameraResponse(ResponseCode.DEVICE_IS_NOT_SET, null);
+            }
+            return;
         }
+
+        final int requestId = mRequestId++;
 
         final JSONObject inputJsonObject = new JSONObject();
         try {
             inputJsonObject.put("version", "1.0");
-            inputJsonObject.put("id", mRequestId++);
+            inputJsonObject.put("id", requestId);
             inputJsonObject.put("method", method);
             inputJsonObject.put("params", params);
         } catch (JSONException e) {
             throw new RequestNotWellFormatedException(e);
         }
 
-        Logger.d(getClass().getSimpleName() + ": sendRequest: url: " + mWSUrl + ", json: " + inputJsonObject.toString());
+        Logger.d("[" + getClass().getSimpleName() + "] Request sent to WS: " + inputJsonObject.toString());
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST,
                 mWSUrl, inputJsonObject, new Response.Listener<JSONObject>() {
@@ -95,7 +102,7 @@ public class CameraWS {
             @Override
             public void onResponse(final JSONObject response) {
 
-                Logger.d(getClass().getSimpleName() + ": result: " + response.toString());
+                Logger.d("[" + CameraWS.this.getClass().getSimpleName() + "] Result message: " + response.toString());
 
                 if (listener == null) return;
 
@@ -103,7 +110,7 @@ public class CameraWS {
 
                     if (response.has("result")) {
                         listener.cameraResponse(ResponseCode.OK, response.getJSONArray("result"));
-                        Logger.d(getClass().getSimpleName() + ": result-parsed: OK");
+                        Logger.d("[" + CameraWS.this.getClass().getSimpleName() + "] Result correctly parsed");
 
                     } else if (response.has("error")) {
                         //if no "results" element is present, there has probably an error occured
@@ -112,17 +119,21 @@ public class CameraWS {
                         ResponseCode errorCode = ResponseCode.find(arr.getInt(0));
                         String errorMessage = arr.getString(1);
                         listener.cameraResponse(errorCode, errorMessage);
-                        Logger.d(getClass().getSimpleName() + ": result-parsed: Failed1: " + errorMessage);
+                        Logger.d("[" + CameraWS.this.getClass().getSimpleName() + "] " +
+                                "Result contains error message: " + errorMessage + " (" + errorCode + ")");
                     } else {
                         listener.cameraResponse(ResponseCode.RESPONSE_NOT_WELL_FORMATED,
                                 response);
-                        Logger.d(getClass().getSimpleName() + ": result-parsed: Failed2: Not well formated");
+                        Logger.d("[" + CameraWS.this.getClass().getSimpleName() + "] " +
+                                "Result cannot be parsed: " + response.toString());
                     }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                     listener.cameraResponse(ResponseCode.RESPONSE_NOT_WELL_FORMATED, response);
-                    Logger.d(getClass().getSimpleName() + ": result-parsed: Failed3: " + e.toString());
+                    Logger.d("[" + CameraWS.this.getClass().getSimpleName() + "] " +
+                            "Result is not JSON formatted: " + response.toString() +
+                            ", error: " + e.getMessage());
 
                 }
             }
@@ -133,7 +144,9 @@ public class CameraWS {
                 if (listener == null) return;
                 error.printStackTrace();
                 listener.cameraResponse(ResponseCode.WS_UNREACHABLE, null);
-                Logger.d(getClass().getSimpleName() + ": result-parsed: Failed4: Web service unreachable");
+                Logger.d("[" + CameraWS.this.getClass().getSimpleName() + "] " +
+                        "Web service unreachable (id=" + (requestId) + ")" +
+                        ", error: " + error);
             }
         }
 

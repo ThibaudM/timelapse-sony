@@ -20,6 +20,8 @@ import com.thibaudperso.sonycamera.sdk.CameraAPI;
 import com.thibaudperso.sonycamera.sdk.model.Device;
 import com.thibaudperso.sonycamera.timelapse.TimelapseApplication;
 import com.thibaudperso.sonycamera.timelapse.control.Logger;
+import com.thibaudperso.sonycamera.timelapse.control.DeviceManager;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +42,7 @@ public class StateMachineConnection {
     private TimelapseApplication mApplication;
     private WifiHandler mWifiHandler;
     private CameraAPI mCameraAPI;
+    private DeviceManager mDeviceManager;
 
     private State mCurrentState;
     private StateRegistry mStateRegistry;
@@ -59,6 +62,7 @@ public class StateMachineConnection {
         mApplication = application;
         mWifiHandler = application.getWifiHandler();
         mCameraAPI = application.getCameraAPI();
+        mDeviceManager = application.getDeviceManager();
         mStateRegistry = new StateRegistry();
         mCurrentState = INIT;
     }
@@ -70,7 +74,7 @@ public class StateMachineConnection {
         mCurrentState.process(this);
 
         mWifiHandler.setListener(mWifiListener);
-        mCameraAPI.addDeviceChangedListener(mDeviceChangedListener);
+        mDeviceManager.addDeviceChangedListener(mDeviceChangedListener);
 
         WifiManager wifiManager = (WifiManager) mApplication.getSystemService(Context.WIFI_SERVICE);
 
@@ -84,7 +88,7 @@ public class StateMachineConnection {
         mCurrentState.stopAsyncTasks();
 
         mWifiHandler.setListener(null);
-        mCameraAPI.removeDeviceChangedListener(mDeviceChangedListener);
+        mDeviceManager.removeDeviceChangedListener(mDeviceChangedListener);
 
         if (mWifiLock != null && mWifiLock.isHeld())
             mWifiLock.release();
@@ -545,8 +549,8 @@ public class StateMachineConnection {
     };
 
 
-    private final CameraAPI.DeviceChangedListener
-            mDeviceChangedListener = new CameraAPI.DeviceChangedListener() {
+    private final DeviceManager.DeviceChangedListener
+            mDeviceChangedListener = new DeviceManager.DeviceChangedListener() {
         @Override
         public void onNewDevice(Device device) {
             if (mCurrentState == BAD_API_ACCESS || mCurrentState == GOOD_API_ACCESS ||
