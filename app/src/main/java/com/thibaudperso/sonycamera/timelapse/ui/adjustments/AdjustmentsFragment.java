@@ -68,7 +68,7 @@ public class AdjustmentsFragment extends Fragment {
         ((TextView) rootView.findViewById(R.id.adjustments_message)).setText(Html.fromHtml
                 (getString(R.string.adjustments_message)));
 
-        mLiveviewSurfaceView = (SimpleStreamSurfaceView) rootView.findViewById(R.id.adjustments_liveview);
+        mLiveviewSurfaceView = rootView.findViewById(R.id.adjustments_liveview);
 
 
         View zoomInButton = rootView.findViewById(R.id.adjustments_zoom_in);
@@ -325,10 +325,13 @@ public class AdjustmentsFragment extends Fragment {
     }
 
     private void stopLiveView() {
-        if (mLiveviewSurfaceView.isStarted()) {
-            mLiveviewSurfaceView.stop();
-            mCameraAPI.stopLiveView();
+
+        if (!mLiveviewSurfaceView.isStarted() || mCameraAPI == null) {
+            return;
         }
+
+        mLiveviewSurfaceView.stop();
+        mCameraAPI.stopLiveView();
     }
 
 }
