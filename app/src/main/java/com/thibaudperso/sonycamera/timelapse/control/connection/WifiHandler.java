@@ -133,8 +133,11 @@ public class WifiHandler {
 
     // Workaround for multiple broadcast of wifi events:
     // http://stackoverflow.com/questions/8412714/broadcastreceiver-receives-multiple-identical-messages-for-one-event
+    // We added bssid to the condition, because sometimes two wifi are connected in a row
+    //  without disconnection
     private boolean mIsFirstConnection = true;
     private boolean mIsFirstDisconnection = true;
+    private String mCurrentBSSID = "";
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
 
         @Override
@@ -146,7 +149,13 @@ public class WifiHandler {
             if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(intent.getAction())) {
 
                 NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-                if (networkInfo.isConnected() && mIsFirstConnection) {
+
+                if (networkInfo.isConnected()
+                        && !mCurrentBSSID.equals(mWifiManager.getConnectionInfo().getSSID())
+                        && mIsFirstConnection) {
+
+                    mCurrentBSSID = mWifiManager.getConnectionInfo().getSSID();
+
                     mListener.wifiConnected(networkInfo);
                     mIsFirstConnection = false;
                     mIsFirstDisconnection = true;
