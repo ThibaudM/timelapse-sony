@@ -7,9 +7,6 @@ import com.thibaudperso.sonycamera.sdk.model.PictureResponse;
 
 import org.json.JSONArray;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author Thibaud Michel
  */
@@ -21,20 +18,17 @@ public class CameraAPI {
 
     private CameraWS mCameraWS;
 
-    private List<DeviceChangedListener> mDeviceChangedListeners;
 
     private boolean mIsDeviceInitialized = false;
 
     public CameraAPI(Context context) {
 
         mCameraWS = new CameraWS(context);
-        mDeviceChangedListeners = new ArrayList<>();
 
     }
 
     public void setDevice(Device device) {
         mCameraWS.setWSUrl(device.getWebService());
-        for (DeviceChangedListener listener : mDeviceChangedListeners) listener.onNewDevice(device);
     }
 
     public void initializeWS() {
@@ -210,17 +204,7 @@ public class CameraAPI {
     }
 
 
-    public void addDeviceChangedListener(DeviceChangedListener listener) {
-        mDeviceChangedListeners.add(listener);
-    }
 
-    public void removeDeviceChangedListener(DeviceChangedListener listener) {
-        mDeviceChangedListeners.remove(listener);
-    }
-
-    public interface DeviceChangedListener {
-        void onNewDevice(Device device);
-    }
 
     public interface InitWebServiceListener {
         void onResult(CameraWS.ResponseCode responseCode);

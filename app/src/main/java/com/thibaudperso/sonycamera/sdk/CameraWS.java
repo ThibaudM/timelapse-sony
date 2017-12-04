@@ -25,6 +25,7 @@ public class CameraWS {
      * Negative responses have been added for our purpose
      */
     public enum ResponseCode {
+        DEVICE_IS_NOT_SET(-4), // means device is not set and url does not exist
         RESPONSE_NOT_WELL_FORMATED(-3), // means web service is unreachable
         WS_UNREACHABLE(-2), // means web service is unreachable
         NONE(-1), // means no code available
@@ -73,7 +74,10 @@ public class CameraWS {
                      final int timeout) {
 
         if (mWSUrl == null) {
-            throw new NullPointerException();
+            if (listener != null) {
+                listener.cameraResponse(ResponseCode.DEVICE_IS_NOT_SET, null);
+            }
+            return;
         }
 
         final JSONObject inputJsonObject = new JSONObject();

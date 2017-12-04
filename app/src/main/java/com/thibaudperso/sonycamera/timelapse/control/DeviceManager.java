@@ -36,10 +36,12 @@ public class DeviceManager {
 
     private List<Device> mDevicesList;
     private Device mSelectedDevice;
+    private List<DeviceChangedListener> mDeviceChangedListeners;
 
     public DeviceManager(TimelapseApplication application) {
         mApplication = application;
         mDevicesList = new ArrayList<>();
+        mDeviceChangedListeners = new ArrayList<>();
 
         final SharedPreferences preferences =
                 PreferenceManager.getDefaultSharedPreferences(application);
@@ -51,7 +53,7 @@ public class DeviceManager {
 
         for (Device device : mDevicesList) {
             if (device.getId() == currentCameraId) {
-                mSelectedDevice = device;
+                setSelectedDevice(device);
                 return;
             }
         }
@@ -59,8 +61,36 @@ public class DeviceManager {
         if (mDevicesList.size() == 0) {
             throw new RuntimeException("No camera in the list");
         }
-        mSelectedDevice = mDevicesList.get(0);
-        mApplication.getCameraAPI().setDevice(mDevicesList.get(0));
+        setSelectedDevice(mDevicesList.get(0));
+    }
+
+
+
+    public List<Device> getDevices() {
+        return mDevicesList;
+    }
+
+    public Device getSelectedDevice() {
+        return mSelectedDevice;
+    }
+
+    public void setSelectedDevice(Device selectedDevice) {
+        // Be sure it's not a copy
+        for (Device device : mDevicesList) {
+            if (device.equals(selectedDevice)) {
+
+                final SharedPreferences preferences =
+                        PreferenceManager.getDefaultSharedPreferences(mApplication);
+                preferences.edit().putInt(CAMERA_ID_PREFERENCE, device.getId()).apply();
+
+                mSelectedDevice = device;
+
+                for (DeviceChangedListener listener : mDeviceChangedListeners) listener.onNewDevice(device);
+                mApplication.getCameraAPI().setDevice(device);
+
+                return;
+            }
+        }
     }
 
     private void sendXmlFileToInternalStorageIfNotExists() {
@@ -132,32 +162,6 @@ public class DeviceManager {
         }).start();
     }
 
-
-    public List<Device> getDevices() {
-        return mDevicesList;
-    }
-
-    public Device getSelectedDevice() {
-        return mSelectedDevice;
-    }
-
-    public void setSelectedDevice(Device selectedDevice) {
-        // Be sure it's not a copy
-        for (Device device : mDevicesList) {
-            if (device.equals(selectedDevice)) {
-
-                final SharedPreferences preferences =
-                        PreferenceManager.getDefaultSharedPreferences(mApplication);
-                preferences.edit().putInt(CAMERA_ID_PREFERENCE, device.getId()).apply();
-
-                mSelectedDevice = device;
-
-                mApplication.getCameraAPI().setDevice(device);
-
-                return;
-            }
-        }
-    }
 
 	
 	/*
@@ -289,9 +293,21 @@ public class DeviceManager {
         }
     }
 
+    public void addDeviceChangedListener(DeviceChangedListener listener) {
+        mDeviceChangedListeners.add(listener);
+    }
+
+    public void removeDeviceChangedListener(DeviceChangedListener listener) {
+        mDeviceChangedListeners.remove(listener);
+    }
+
+
 
     public interface Listener {
         void onDevicesListChanged(List<Device> devices);
     }
 
+    public interface DeviceChangedListener {
+        void onNewDevice(Device device);
+    }
 }
