@@ -39,7 +39,6 @@ import com.thibaudperso.sonycamera.R;
 import com.thibaudperso.sonycamera.sdk.model.Device;
 import com.thibaudperso.sonycamera.timelapse.TimelapseApplication;
 import com.thibaudperso.sonycamera.timelapse.control.DeviceManager;
-import com.thibaudperso.sonycamera.timelapse.control.Logger;
 import com.thibaudperso.sonycamera.timelapse.control.connection.NFCHandler;
 import com.thibaudperso.sonycamera.timelapse.control.connection.StateMachineConnection;
 import com.thibaudperso.sonycamera.timelapse.ui.adjustments.AdjustmentsActivity;
@@ -171,14 +170,6 @@ public class ConnectionFragment extends Fragment {
             }
         });
 
-
-        viewResult.findViewById(R.id.connection_troubleshooting).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Logger.printDebug(getContext());
-                Logger.sendEmail(getContext());
-            }
-        });
 
         mConnectionAutomaticCheckbox = viewResult.findViewById(R.id.connection_automatic_checkbox);
 

@@ -22,7 +22,7 @@ public class Logger {
 
     private static String logs = "";
 
-    public static void v(String message) {
+    public static void d(String message) {
         m("DEBUG - " + message);
     }
 
@@ -35,6 +35,7 @@ public class Logger {
         logs += DATE_FORMAT.format(Calendar.getInstance().getTime()) + " (" +
                 android.os.Process.myPid() + ") - " + message + "\n";
 
+        Log.v("DEBUG", message);
     }
 
     private static String getLogsString(Context context) {
@@ -44,9 +45,6 @@ public class Logger {
 
     }
 
-    public static void printDebug(Context context) {
-        Log.v("DEBUG", getLogsString(context));
-    }
 
     public static void sendEmail(Context context) {
         Intent i = new Intent(Intent.ACTION_SEND);
