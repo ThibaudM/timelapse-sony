@@ -15,6 +15,10 @@
 
     <string name="connection_camera_model">Kameramodell</string>
 
+    <string name="connection_enter_password">Passwort für Netzwerk %1$s angeben</string>
+    <string name="connection_enter_password_ok">Verbinden</string>
+    <string name="connection_enter_password_cancel">Abbrechen</string>
+
     <string name="alert_disconnect_camera_message">Do you want to disconnect the camera from the smartphone ?</string> <!-- TODO -->
 
     <!-- Camera Settings Step Strings -->

@@ -3,6 +3,7 @@ package com.thibaudperso.sonycamera.timelapse;
 import android.app.Application;
 
 import com.thibaudperso.sonycamera.sdk.CameraAPI;
+import com.thibaudperso.sonycamera.sdk.model.Device;
 import com.thibaudperso.sonycamera.timelapse.control.DeviceManager;
 import com.thibaudperso.sonycamera.timelapse.control.connection.StateMachineConnection;
 import com.thibaudperso.sonycamera.timelapse.control.connection.WifiHandler;
@@ -25,6 +26,16 @@ public class TimelapseApplication extends Application {
 		mDeviceManager = new DeviceManager(this);
 		mTimelapseData = new TimelapseData();
 		mStateMachineConnection = new StateMachineConnection(this);
+
+		synchronized (this) {
+			mCameraAPI.setDevice(mDeviceManager.getSelectedDevice());
+			mDeviceManager.addDeviceChangedListener(new DeviceManager.DeviceChangedListener() {
+				@Override
+				public void onNewDevice(Device device) {
+					mCameraAPI.setDevice(device);
+				}
+			});
+		}
 	}
 
 

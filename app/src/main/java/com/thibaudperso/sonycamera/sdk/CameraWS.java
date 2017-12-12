@@ -19,12 +19,14 @@ import org.json.JSONObject;
  */
 public class CameraWS {
 
+    private final static int DEFAULT_WS_TIMEOUT = 5000;
 
     /**
      * ResponseCode from the camera WS
      * Negative responses have been added for our purpose
      */
     public enum ResponseCode {
+        DEVICE_IS_NOT_SET(-4), // means device is not set and url does not exist
         RESPONSE_NOT_WELL_FORMATED(-3), // means web service is unreachable
         WS_UNREACHABLE(-2), // means web service is unreachable
         NONE(-1), // means no code available
@@ -66,14 +68,17 @@ public class CameraWS {
     }
 
     void sendRequest(String method, JSONArray params, Listener listener) {
-        sendRequest(method, params, listener, 0);
+        sendRequest(method, params, listener, DEFAULT_WS_TIMEOUT);
     }
 
     void sendRequest(final String method, final JSONArray params, final Listener listener,
                      final int timeout) {
 
         if (mWSUrl == null) {
-            throw new NullPointerException();
+            if (listener != null) {
+                listener.cameraResponse(ResponseCode.DEVICE_IS_NOT_SET, null);
+            }
+            return;
         }
 
         final JSONObject inputJsonObject = new JSONObject();

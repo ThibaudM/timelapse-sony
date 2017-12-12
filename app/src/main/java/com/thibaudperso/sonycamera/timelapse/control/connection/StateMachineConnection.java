@@ -6,10 +6,10 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
+import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -18,6 +18,7 @@ import com.thibaudperso.sonycamera.BuildConfig;
 import com.thibaudperso.sonycamera.sdk.CameraAPI;
 import com.thibaudperso.sonycamera.sdk.model.Device;
 import com.thibaudperso.sonycamera.timelapse.TimelapseApplication;
+import com.thibaudperso.sonycamera.timelapse.control.DeviceManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +39,7 @@ public class StateMachineConnection {
     private TimelapseApplication mApplication;
     private WifiHandler mWifiHandler;
     private CameraAPI mCameraAPI;
+    private DeviceManager mDeviceManager;
 
     private State mCurrentState;
     private StateRegistry mStateRegistry;
@@ -46,7 +48,8 @@ public class StateMachineConnection {
 
     private class StateRegistry {
         WifiInfo wifiInfo;
-        List<WifiConfiguration> scanResults;
+        List<ScanResult> mScansResults;
+        List<WifiConfiguration> mKnownWifiConfigurations;
         int forceConnectionToNetworkId = -1;
         int apiAttempts = 0;
     }
@@ -56,6 +59,7 @@ public class StateMachineConnection {
         mApplication = application;
         mWifiHandler = application.getWifiHandler();
         mCameraAPI = application.getCameraAPI();
+        mDeviceManager = application.getDeviceManager();
         mStateRegistry = new StateRegistry();
         mCurrentState = INIT;
     }
@@ -67,13 +71,11 @@ public class StateMachineConnection {
         mCurrentState.process(this);
 
         mWifiHandler.setListener(mWifiListener);
-        mCameraAPI.addDeviceChangedListener(mDeviceChangedListener);
+        mDeviceManager.addDeviceChangedListener(mDeviceChangedListener);
 
         WifiManager wifiManager = (WifiManager) mApplication.getSystemService(Context.WIFI_SERVICE);
-        if(Build.VERSION.SDK_INT > 12) {
-            mWifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "WifiLock2");
-            mWifiLock.acquire();
-        }
+        mWifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "WifiLock2");
+        mWifiLock.acquire();
     }
 
     public void stop() {
@@ -82,7 +84,7 @@ public class StateMachineConnection {
         mCurrentState.stopAsyncTasks();
 
         mWifiHandler.setListener(null);
-        mCameraAPI.removeDeviceChangedListener(mDeviceChangedListener);
+        mDeviceManager.removeDeviceChangedListener(mDeviceChangedListener);
 
         if (mWifiLock != null && mWifiLock.isHeld())
             mWifiLock.release();
@@ -223,9 +225,11 @@ public class StateMachineConnection {
                             sm.mApplication.getSystemService(Context.CONNECTIVITY_SERVICE);
                     for (Network net : connectivityManager.getAllNetworks()) {
                         NetworkInfo netInfo = connectivityManager.getNetworkInfo(net);
-                        if (netInfo.getType() == ConnectivityManager.TYPE_WIFI
+                        if (netInfo != null
+                                && netInfo.getType() == ConnectivityManager.TYPE_WIFI
                                 && netInfo.getExtraInfo() != null
-                                && netInfo.getExtraInfo().equals(sm.mStateRegistry.wifiInfo.getSSID())) {
+                                && netInfo.getExtraInfo()
+                                .equals(sm.mStateRegistry.wifiInfo.getSSID())) {
                             connectivityManager.bindProcessToNetwork(net);
                             break;
                         }
@@ -336,20 +340,69 @@ public class StateMachineConnection {
         WIFI_SCAN_FINISHED {
             @Override
             public void process(StateMachineConnection sm) {
-                List<WifiConfiguration> scans = sm.mStateRegistry.scanResults;
-                if (scans.size() == 1) {
-                    sm.mStateRegistry.forceConnectionToNetworkId = scans.get(0).networkId;
-                    sm.setCurrentState(TRY_TO_CONNECT_TO_SSID);
-                } else if (scans.size() > 1) {
-                    sm.setCurrentState(MULTIPLE_SONY_SCAN_DETECTED);
-                } else {
+                List<ScanResult> scansResults = sm.mStateRegistry.mScansResults;
+                List<WifiConfiguration> knownWifiConfigurations =
+                        sm.mStateRegistry.mKnownWifiConfigurations;
+
+                /*
+                 * No Sony Camera network found in scan
+                 */
+                if (scansResults.size() == 0) {
                     sm.setCurrentState(WIFI_SCAN);
+                }
+
+                /*
+                 * No Sony Camera network registered on this phone but we found only one in scan
+                 */
+                else if (knownWifiConfigurations.size() == 0 && scansResults.size() == 1) {
+                    sm.setCurrentState(ASK_PASSWORD_FOR_WIFI);
+                }
+
+                /*
+                 * No Sony Camera network registered on this phone but we found more than one in scan
+                 */
+                else if (knownWifiConfigurations.size() == 0) {
+                    sm.setCurrentState(MULTIPLE_SONY_SCAN_DETECTED);
+                }
+
+                /*
+                 * There is only one Sony Camera known network connected
+                 */
+                else if (knownWifiConfigurations.size() == 1) {
+                    sm.mStateRegistry.forceConnectionToNetworkId =
+                            knownWifiConfigurations.get(0).networkId;
+                    sm.mWifiHandler.connectToNetworkId(knownWifiConfigurations.get(0).networkId);
+                    sm.setCurrentState(TRY_TO_CONNECT_TO_SSID);
+                }
+
+                /*
+                 * There is more than one Sony Camera known network connected
+                 */
+                else {
+                    sm.setCurrentState(MULTIPLE_SONY_CONF_DETECTED);
                 }
             }
 
             @Override
             public State[] previousPossibleStates() {
                 return new State[]{WIFI_SCAN};
+            }
+
+            @Override
+            public void stopAsyncTasks() {
+            }
+        },
+
+
+        MULTIPLE_SONY_CONF_DETECTED {
+            @Override
+            public void process(StateMachineConnection sm) {
+
+            }
+
+            @Override
+            public State[] previousPossibleStates() {
+                return new State[]{WIFI_SCAN_FINISHED};
             }
 
             @Override
@@ -374,6 +427,24 @@ public class StateMachineConnection {
             }
         },
 
+
+        ASK_PASSWORD_FOR_WIFI {
+            @Override
+            public void process(StateMachineConnection sm) {
+
+            }
+
+            @Override
+            public State[] previousPossibleStates() {
+                return new State[]{WIFI_SCAN_FINISHED};
+            }
+
+            @Override
+            public void stopAsyncTasks() {
+            }
+        },
+
+
         TRY_TO_CONNECT_TO_SSID {
             @Override
             public void process(StateMachineConnection sm) {
@@ -382,7 +453,8 @@ public class StateMachineConnection {
 
             @Override
             public State[] previousPossibleStates() {
-                return new State[]{MULTIPLE_SONY_SCAN_DETECTED, WIFI_SCAN_FINISHED};
+                return new State[]{MULTIPLE_SONY_CONF_DETECTED, WIFI_SCAN_FINISHED,
+                        ASK_PASSWORD_FOR_WIFI, MULTIPLE_SONY_SCAN_DETECTED};
             }
 
             @Override
@@ -461,18 +533,20 @@ public class StateMachineConnection {
         }
 
         @Override
-        public void onWifiScanFinished(List<WifiConfiguration> configurations) {
+        public void onWifiScanFinished(List<ScanResult> sonyCameraScanResults,
+                                       List<WifiConfiguration> configurations) {
 
             if (mCurrentState != WIFI_SCAN) return;
 
-            mStateRegistry.scanResults = configurations;
+            mStateRegistry.mKnownWifiConfigurations = configurations;
+            mStateRegistry.mScansResults = sonyCameraScanResults;
             setCurrentState(State.WIFI_SCAN_FINISHED);
         }
     };
 
 
-    private final CameraAPI.DeviceChangedListener
-            mDeviceChangedListener = new CameraAPI.DeviceChangedListener() {
+    private final DeviceManager.DeviceChangedListener
+            mDeviceChangedListener = new DeviceManager.DeviceChangedListener() {
         @Override
         public void onNewDevice(Device device) {
             if (mCurrentState == BAD_API_ACCESS || mCurrentState == GOOD_API_ACCESS ||
@@ -485,8 +559,10 @@ public class StateMachineConnection {
 
     private void setCurrentState(State newState) {
 
-        if (BuildConfig.DEBUG && !Arrays.asList(newState.previousPossibleStates()).contains(mCurrentState)) {
-            throw new RuntimeException("Current State: " + mCurrentState + ", new State: " + newState);
+        if (BuildConfig.DEBUG &&
+                !Arrays.asList(newState.previousPossibleStates()).contains(mCurrentState)) {
+            throw new RuntimeException("Current State: " + mCurrentState + ", " +
+                    "new State: " + newState);
         }
 
         Log.d(LOG_TAG, "State: " + mCurrentState + " ---> " + newState);
@@ -510,13 +586,22 @@ public class StateMachineConnection {
 
     public void tryToConnectToNetworkId(int networkId) {
         mStateRegistry.forceConnectionToNetworkId = networkId;
+        mWifiHandler.connectToNetworkId(networkId);
+        setCurrentState(TRY_TO_CONNECT_TO_SSID);
+    }
+
+    public void createNetwork(String networkSSID, String networkPassword) {
+        mWifiHandler.createIfNeededThenConnectToWifi(networkSSID, networkPassword);
         setCurrentState(TRY_TO_CONNECT_TO_SSID);
     }
 
     public List<WifiConfiguration> getWifiConfigurations() {
-        return mStateRegistry.scanResults;
+        return mStateRegistry.mKnownWifiConfigurations;
     }
 
+    public List<ScanResult> getScanResults() {
+        return mStateRegistry.mScansResults;
+    }
 
     private List<Listener> mListeners = new ArrayList<>();
 

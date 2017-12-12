@@ -47,7 +47,7 @@ class SimpleLiveviewSlicer {
      *            of startLiveview API.
      * @throws IOException generic errors or exception.
      */
-    public void open(String liveviewUrl) throws IOException {
+    void open(String liveviewUrl) throws IOException {
         if (mInputStream != null || mHttpConn != null) {
             throw new IllegalStateException("Slicer is already open.");
         }

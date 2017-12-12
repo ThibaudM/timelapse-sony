@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           package="com.thibaudperso.sonycamera"
-          android:versionCode="19"
-          android:versionName="3.0.2">
+          android:versionCode="20"
+          android:versionName="3.0.3">
 
     <uses-sdk tools:overrideLibrary="   com.google.android.gms.ads,
                                         com.google.android.gms.ads.impl,

@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="ads_pub_id" translatable="false">ca-app-pub-7758949504707902/2622379879</string>
-    <string name="ads_test_device" translatable="false">4184BE86F6FC9F61AC26292E6485AE81</string>
     <string name="camera_xml_url" translatable="false">https://raw.githubusercontent.com/ThibaudM/timelapse-sony/master/app/src/main/res/raw/devices.xml</string>
 </resources>

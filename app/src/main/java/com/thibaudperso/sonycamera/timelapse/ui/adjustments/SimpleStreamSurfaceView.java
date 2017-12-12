@@ -14,6 +14,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -37,11 +39,13 @@ public class SimpleStreamSurfaceView extends SurfaceView implements
 
     private boolean mWhileFetching;
     private final BlockingQueue<byte[]> mJpegQueue = new ArrayBlockingQueue<>(2);
-    private final boolean mInMutableAvailable = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
     private Thread mDrawerThread;
+    private Handler mSlicerHandler;
     private int mPreviousWidth = 0;
     private int mPreviousHeight = 0;
     private final Paint mFramePaint;
+
+    private SimpleLiveviewSlicer mSlicer;
 
 
     public SimpleStreamSurfaceView(Context context) {
@@ -59,7 +63,7 @@ public class SimpleStreamSurfaceView extends SurfaceView implements
     }
 
     public SimpleStreamSurfaceView(Context context, AttributeSet attrs,
-                                     int defStyle) {
+                                   int defStyle) {
         super(context, attrs, defStyle);
         getHolder().addCallback(this);
         mFramePaint = new Paint();
@@ -67,8 +71,7 @@ public class SimpleStreamSurfaceView extends SurfaceView implements
     }
 
     @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width,
-                               int height) {
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         // do nothing.
     }
 
@@ -86,7 +89,7 @@ public class SimpleStreamSurfaceView extends SurfaceView implements
      * Start retrieving and drawing liveview frame data by new threads.
      *
      * @return true if the starting is completed successfully, false otherwise.
-     * @exception IllegalStateException when Remote API object is not set.
+     * @throws IllegalStateException when Remote API object is not set.
      */
     public boolean start(final String liveviewUrl) {
 
@@ -98,41 +101,40 @@ public class SimpleStreamSurfaceView extends SurfaceView implements
         mWhileFetching = true;
 
         // A thread for retrieving liveview data from server.
-        Thread mSlicerThread = new Thread(new Runnable() {
+        Thread slicerThread = new Thread(new Runnable() {
             @Override
             public void run() {
 
 
-                SimpleLiveviewSlicer slicer = null;
+                mSlicer = null;
 
                 try {
 
                     // Create Slicer to open the stream and parse it.
-                    slicer = new SimpleLiveviewSlicer();
-                    slicer.open(liveviewUrl);
-
+                    mSlicer = new SimpleLiveviewSlicer();
+                    mSlicer.open(liveviewUrl);
+                    Looper.prepare();
+                    mSlicerHandler = new Handler();
 
                     while (mWhileFetching) {
-                        final Payload payload = slicer.nextPayload();
+                        final Payload payload = mSlicer.nextPayload();
                         if (payload == null) { // never occurs
                             Log.e(LOG_TAG, "Liveview Payload is null.");
                             continue;
                         }
-
                         if (mJpegQueue.size() == 2) {
                             mJpegQueue.remove();
                         }
                         mJpegQueue.add(payload.jpegData);
                     }
 
-
                 } catch (IOException e) {
                     Log.w(LOG_TAG, "IOException while fetching: " + e.getMessage());
                 } finally {
                     // Finalize
                     try {
-                        if (slicer != null) {
-                            slicer.close();
+                        if (mSlicer != null) {
+                            mSlicer.close();
                         }
 
                     } catch (IOException e) {
@@ -150,22 +152,19 @@ public class SimpleStreamSurfaceView extends SurfaceView implements
             }
         });
 
-        mSlicerThread.start();
-
+        slicerThread.start();
 
 
         // A thread for drawing liveview frame fetched by above thread.
         mDrawerThread = new Thread() {
             @Override
             public void run() {
-                Log.d(TAG, "Starting drawing liveview frame.");
                 Bitmap frameBitmap = null;
 
                 BitmapFactory.Options factoryOptions = new BitmapFactory.Options();
                 factoryOptions.inSampleSize = 1;
-                if (mInMutableAvailable) {
-                    initInBitmap(factoryOptions);
-                }
+                initInBitmap(factoryOptions);
+
 
                 while (mWhileFetching) {
                     try {
@@ -174,9 +173,7 @@ public class SimpleStreamSurfaceView extends SurfaceView implements
                                 jpegData, 0,
                                 jpegData.length, factoryOptions);
                     } catch (IllegalArgumentException e) {
-                        if (mInMutableAvailable) {
-                            clearInBitmap(factoryOptions);
-                        }
+                        clearInBitmap(factoryOptions);
                         continue;
                     } catch (InterruptedException e) {
                         Log.i(TAG, "Drawer thread is Interrupted.");
@@ -184,9 +181,7 @@ public class SimpleStreamSurfaceView extends SurfaceView implements
                         break;
                     }
 
-                    if (mInMutableAvailable) {
-                        setInBitmap(factoryOptions, frameBitmap);
-                    }
+                    setInBitmap(factoryOptions, frameBitmap);
                     drawFrame(frameBitmap);
                 }
 
@@ -205,6 +200,21 @@ public class SimpleStreamSurfaceView extends SurfaceView implements
      */
     public void stop() {
         mWhileFetching = false;
+
+        if (mSlicer != null && mSlicerHandler != null) {
+            mSlicerHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        mSlicer.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            mSlicerHandler = null;
+        }
+
     }
 
     /**
