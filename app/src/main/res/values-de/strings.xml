@@ -2,14 +2,39 @@
 <resources>
 
     <string name="app_name">TimeLapse</string>
-    
+
+
+    <!-- Overall Strings -->
+
+
+    <string name="connection_with_camera_lost">Die Verbindung zur Kamera scheint unterbrochen zu sein. Die Automatische Fehlerbehebung ist im Gange.</string>
+    <string name="connection_ws_unreachable">Es konnten keine Anweisungen von der Kamera empfangen bzw. an sie gesendet werden.</string>
+
     <!-- Connection Step Strings -->
 
     <string name="connection_information_message"><![CDATA[Stelle deine Kamera in den
-        <b>Steuerung mit Smartphone</b> Modus
-        oder verknüpfe sie mit NFC (falls möglich)]]></string>
+        <b>Steuerung mit Smartphone</b> Modus, starte die <b>Smart Remote Control App</b>
+        oder verknüpfe die Kamera per NFC (falls möglich)]]></string>
+
+    <string name="connection_camera_list_update">Aktualisiere die Kameraliste über das Internet</string>
+    <string name="connection_camera_list_updated">Die Kameraliste ist aktuell</string>
+
+    <string name="connection_permission_message">Deine Kamera scheint nicht mit dem Smartphone verbunden
+        zu sein. Mit dem Akzeptieren der folgenden Berechtigung können wir den Verbindungsaufbau
+        automatisch übe die App durchführen. Die Berechtigung wird nur für das Auflisten und Verbinden
+        der WLAN-Netzwerke in Reichweite verwendet.</string>
+    <string name="connection_permission_ok">OK</string>
+    <string name="connection_permission_cancel">Ignorieren</string>
+    <string name="connection_permission_cancel_message">Automatischer Verbindungsaufbau nicht möglich.
+        Bitte verbinde die Kamera manuell.</string>
 
     <string name="connection_info">Verbindungsinformation</string>
+    <string name="connection_info_wifi_enabled">WLAN aktiviert</string>
+    <string name="connection_info_wifi_enabled_state">WLAN-Status</string>
+    <string name="connection_info_network">WLAN-Verbindung</string>
+    <string name="connection_info_network_state">WLAN-Verbindungsstatus</string>
+    <string name="connection_info_api">Sony API Verbindung</string>
+    <string name="connection_info_api_state">Sony API Verbindungsstatus</string>
     <string name="connection_choose_network">Netzwerk wählen</string>
     <string name="connection_choose_network_cancel">Abbrechen</string>
 
@@ -19,23 +44,31 @@
     <string name="connection_enter_password_ok">Verbinden</string>
     <string name="connection_enter_password_cancel">Abbrechen</string>
 
-    <string name="alert_disconnect_camera_message">Do you want to disconnect the camera from the smartphone ?</string> <!-- TODO -->
+    <string name="connection_continue_automatic">Automatischer Verbindungsaufbau (diesen Schritt beim nächsten Mal überspringen)</string>
+    <string name="connection_continue_button">Fortfahren</string>
 
-    <!-- Camera Settings Step Strings -->
-    
+    <string name="alert_disconnect_camera_title">Kamera trennen</string>
+    <string name="alert_disconnect_camera_message">Willst du das Smartphone von der Kamera trennen?</string>
+    <string name="alert_disconnect_camera_yes">Trennen</string>
+    <string name="alert_disconnect_camera_no">Nicht trennen</string>
+
+
+
+    <!-- Adjustments Step Strings -->
+
     <string name="adjustments_message"><![CDATA[Du kannst ein Testfoto aufnehmen und
         anzeigen lassen. Der Zoom ist nur für wenige Gerät verfügbar.<br /><br />
         Weiter Einstellungen gibt es zu einem späteren Zeitpunkt.]]></string>
     <string name="adjustments_zoom_title">Zoom</string>
     <string name="adjustments_flash_title">Blitz</string>
-    
-    
-    <!-- Timelapse Settings Step Strings -->
-    
+
+
+    <!-- Settings Step Strings -->
+
     <string name="settings_message"><![CDATA[Dies ist der letzte Schritt vor der Aufnahme.<br /><br />
-        Bei der <u>RX100 mk2</u> and vielen anderen Geräten 
+        Bei der <u>RX100 mk2</u> and vielen anderen Geräten
         können <u>Intervalle unter 5 Sekunden</u> zu Problemen führen.]]></string>
-        
+
     <string name="settings_initial_delay">Startverzögerung (s)</string>
 
     <string name="settings_interval_time">Intervall zwischen den Aufnahmen (s)</string>
@@ -43,9 +76,13 @@
     <string name="settings_frames_count">Anzahl Aufnahmen</string>
     <string name="settings_frames_count_unlimited">Unbegrenzt</string>
 
+    <string name="settings_initial_delay_positive_integer_error">Die Startverzögerung muss eine positive Zahl sein</string>
+    <string name="settings_interval_time_positive_integer_error">Das Intervall muss eine positive Zahl sein</string>
+    <string name="settings_frames_count_positive_integer_error">Die Anzahl der Bilder muss eine positive Zahl sein</string>
 
-    <!-- Capture Step Strings -->
-    
+
+    <!-- Processing Step Strings -->
+
     <string name="processing_begin_time">Start</string>
 
     <string name="processing_progress">Fortschritt</string>
@@ -58,8 +95,33 @@
 
     <string name="processing_last_image_preview">Zuletzt aufgenommenes Bild</string>
 
-    <!-- Finish Step Strings -->
-    
-    <string name="processing_finish_message">Timelapse beendet!</string>
+    <string name="processing_error"><![CDATA[Während der Aufnahme ist ein Fehler aufgetreten.<br />
+        Für Details, klicke hier.]]></string>
+    <string name="processing_error_ws_unreachable">• %1$d Aufnahmen wurden übersprungen weil keine Befehle an die Kamera gesendet werden konnten. Dies kann passieren wenn du dich mit dem Smartphone zu weit von der Kamera entfernst oder der Kameraakku sich entleert hat.</string>
+    <string name="processing_error_long_shot">• %1$d Aufnahmen wurden übersprungen weil die vorangehende Aufnahme noch nicht abgeschlossen war. Dies kann bei Langzeitaufnahmen passieren.</string>
+    <string name="processing_error_unknown">• %1$d Aufnahmen wurden aufgrund eines unbekannten Fehlers übersprungen. Dies kann passieren wenn das Intervall zwischend den Aufnahmen zu kurz ist. Möglicherweise hilft für ältere Modelle ein Firmwareupdate der Kamera.</string>
+
+
+    <string name="processing_stop">Timelapse stoppen.</string>
+    <string name="processing_stop_confirmation_message">Willst du den Timelapse beenden?</string>
+    <string name="processing_stop_confirmation_message_ok">Beenden</string>
+    <string name="processing_stop_confirmation_message_cancel">Fortfahren</string>
+
+
+    <string name="processing_finish_title">Timelapse beendet!</string>
+    <string name="processing_finish_message">Die Bilder wurden auf der Kamera oder falls nicht möglich, am selben Ort wie alle über Remote aufgenommenen Bilder.</string>
+
+    <string name="notification_progress_title">Timelapse läuft…</string>
+    <string name="notification_progress_message">Tippe für weitere Informationen</string>
+    <string name="notification_progress_subtext">%1$d Aufnahmen erfolgt</string>
+    <string name="notification_progress_action_stop">Stop</string>
+
+    <string name="notification_warning_title">Der Timelapse hat Fehler</string>
+    <string name="notification_warning_message">Tippe für weitere Informationen</string>
+    <string name="notification_warning_subtext">%1$d Aufnahmen wurden übersprungen</string>
+    <string name="notification_warning_action_dont_show_again">Nicht mehr anzeigen</string>
+
+    <string name="notification_finished_title">Der Timelapse wurde abgeschlossen</string>
+    <string name="notification_finished_with_errors_title">Der Timelapse wurde mit Fehlern abgeschlossen</string>
 
 </resources>
