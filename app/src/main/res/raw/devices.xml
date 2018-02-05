@@ -153,6 +153,6 @@
     <camera>
         <id>31</id>
         <model>RX10 mk4</model>
-        <webservice>http://192.168.122.1:8080/sony/camera</webservice>
+        <webservice>http://192.168.122.1:10000/sony/camera</webservice>
     </camera>
 </cameras>
