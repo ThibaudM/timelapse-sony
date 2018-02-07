@@ -123,5 +123,7 @@ You also can pair it by NFC (if it\'s possible)]]></string>
 
     <string name="notification_finished_title">Your timelapse is finished</string>
     <string name="notification_finished_with_errors_title">Your timelapse finished with errors</string>
+    <string name="channel_name">Sony Timelapse</string>
+    <string name="channel_description">Timelapse is running</string>
 
 </resources>

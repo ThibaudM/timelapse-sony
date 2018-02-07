@@ -1,5 +1,7 @@
 package com.thibaudperso.sonycamera.timelapse.service;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -7,8 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.thibaudperso.sonycamera.R;
@@ -29,8 +31,10 @@ import static com.thibaudperso.sonycamera.sdk.CameraWS.ResponseCode.OK;
 public class IntervalometerService extends Service {
 
 
+    public static final String CHANNEL_ID = "my_channel_01";
     public static final int NOTIFICATION_ID = 3913;
     public static final int NOTIFICATION_WARNING_ID = 3914;
+    public static final int NOTIFICATION_END_ID = 3915;
 
     public static final String ACTION_START = "start";
     public static final String ACTION_STOP = "stop";
@@ -61,8 +65,8 @@ public class IntervalometerService extends Service {
     private StateMachineConnection mStateMachineConnection;
 
     private NotificationManager mNotificationManager;
-    private NotificationCompat.Builder mNotificationBuilder;
-    private NotificationCompat.Builder mNotificationBuilderWarning;
+    private Notification.Builder mNotificationBuilder;
+    private Notification.Builder mNotificationBuilderWarning;
     private boolean mShowWarningNotifications;
 
 
@@ -84,6 +88,17 @@ public class IntervalometerService extends Service {
         mApiRequestsList = mTimelapseData.getApiRequestsList();
         mStateMachineConnection = ((TimelapseApplication) getApplication()).
                 getStateMachineConnection();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_MIN;
+            NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+            mChannel.setDescription(description);
+            mChannel.enableLights(false);
+            mChannel.enableVibration(false);
+            mNotificationManager.createNotificationChannel(mChannel);
+        }
 
     }
 
@@ -135,7 +150,8 @@ public class IntervalometerService extends Service {
                 Bitmap icon = BitmapFactory.decodeResource(getResources(),
                         R.drawable.ic_timer);
 
-                mNotificationBuilder = new NotificationCompat.Builder(this)
+
+                mNotificationBuilder = new Notification.Builder(this)
                         .setContentTitle(getString(R.string.notification_progress_title))
                         .setContentText(getString(R.string.notification_progress_message))
                         .setSmallIcon(R.drawable.ic_notification)
@@ -144,6 +160,9 @@ public class IntervalometerService extends Service {
                         .setOngoing(true)
                         .addAction(R.drawable.ic_media_stop,
                                 getString(R.string.notification_progress_action_stop), pStopIntent);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    mNotificationBuilder.setChannelId(CHANNEL_ID);
+                }
                 startForeground(NOTIFICATION_ID, mNotificationBuilder.build());
 
 
@@ -157,7 +176,7 @@ public class IntervalometerService extends Service {
                 PendingIntent pRemoveWarningIntent = PendingIntent.getService(this, 0,
                         removeWarningIntent, 0);
 
-                mNotificationBuilderWarning = new NotificationCompat.Builder(this)
+                mNotificationBuilderWarning = new Notification.Builder(this)
                         .setContentTitle(getString(R.string.notification_warning_title))
                         .setContentText(getString(R.string.notification_warning_message))
                         .setSmallIcon(R.drawable.ic_notification_warning)
@@ -167,6 +186,9 @@ public class IntervalometerService extends Service {
                                 getString(R.string.notification_warning_action_dont_show_again),
                                 pRemoveWarningIntent);
 
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    mNotificationBuilderWarning.setChannelId(CHANNEL_ID);
+                }
 
                 break;
 
@@ -231,12 +253,12 @@ public class IntervalometerService extends Service {
             intent.putExtra(EXTRA_PICTURE, response);
             mBroadcastManager.sendBroadcast(intent);
 
+            if (!mIsRunning) return;
+
             String subText = String.format(getString(R.string.notification_progress_subtext),
                     mApiRequestsList.getResponsesReceived());
             mNotificationBuilder.setSubText(subText);
             mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
-
-            if (!mIsRunning) return;
 
             if (response.status != OK && mShowWarningNotifications) {
 
@@ -272,19 +294,37 @@ public class IntervalometerService extends Service {
         stopForeground(true);
         stopSelf();
 
+
+        Notification.Builder endNotificationBuilder = new Notification.Builder(this)
+                .setContentText(getString(R.string.notification_progress_message));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            endNotificationBuilder.setChannelId(CHANNEL_ID);
+        }
+
         if (mApiRequestsList.getNumberOfSkippedFrames() == 0) {
-            mNotificationBuilder.setContentTitle(getString(R.string.notification_finished_title));
+            endNotificationBuilder.setContentTitle(getString(R.string.notification_finished_title));
         } else {
-            mNotificationBuilder.setContentTitle(getString(
+            endNotificationBuilder.setContentTitle(getString(
                     R.string.notification_finished_with_errors_title));
             mNotificationManager.cancel(NOTIFICATION_WARNING_ID);
         }
+        mNotificationManager.cancel(NOTIFICATION_ID);
 
-        mNotificationBuilder.setSmallIcon(R.drawable.ic_notification_finished);
-        mNotificationBuilder.setLargeIcon(null);
-        mNotificationBuilder.setOngoing(false);
-        mNotificationBuilder.mActions.clear();
-        mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
+        String subText = String.format(getString(R.string.notification_progress_subtext),
+                mApiRequestsList.getResponsesReceived());
+        endNotificationBuilder.setSubText(subText);
+
+
+        Intent notificationIntent = new Intent(this, ProcessingActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                notificationIntent, 0);
+        endNotificationBuilder.setContentIntent(pendingIntent);
+
+
+        endNotificationBuilder.setSmallIcon(R.drawable.ic_notification_finished);
+        endNotificationBuilder.setOngoing(false);
+        mNotificationManager.notify(NOTIFICATION_END_ID, endNotificationBuilder.build());
 
     }
 
