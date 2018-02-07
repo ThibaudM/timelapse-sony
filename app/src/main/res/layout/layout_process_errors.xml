@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:id="@+id/processingError"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
@@ -23,7 +24,7 @@
             android:layout_centerVertical="true"
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
-            android:src="@drawable/ic_error_red_24dp"/>
+            app:srcCompat="@drawable/ic_error_red_24dp"/>
 
         <ImageView
             android:id="@+id/processing_error_expand_details"
@@ -34,7 +35,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
-            android:src="@drawable/ic_arrow_drop_down_black_24dp"/>
+            app:srcCompat="@drawable/ic_arrow_drop_down_black_24dp"/>
 
         <TextView
             android:id="@+id/processing_error_message"

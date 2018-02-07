@@ -108,7 +108,7 @@
                         android:layout_height="40dp"
                         android:layout_centerInParent="true"
                         android:background="?attr/selectableItemBackground"
-                        android:src="@drawable/ic_camera_black_24dp"/>
+                        app:srcCompat="@drawable/ic_camera_black_24dp"/>
 
                 </RelativeLayout>
 
@@ -129,7 +129,7 @@
                         android:layout_marginStart="5dp"
                         android:background="?attr/selectableItemBackground"
                         android:contentDescription="@string/camera_settings_zoom_out"
-                        android:src="@drawable/ic_zoom_out_accent_40dp"
+                        app:srcCompat="@drawable/ic_zoom_out_accent_40dp"
                         android:textColor="#FFF"
                         android:textStyle="bold"/>
 
@@ -142,7 +142,7 @@
                         android:background="?attr/selectableItemBackground"
                         android:contentDescription="@string/camera_settings_zoom_in"
                         android:longClickable="true"
-                        android:src="@drawable/ic_zoom_in_accent_40dp"
+                        app:srcCompat="@drawable/ic_zoom_in_accent_40dp"
                         android:textColor="#FFF"
                         android:textStyle="bold"/>
                 </LinearLayout>
@@ -157,7 +157,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:src="@drawable/ic_arrow_forward_white_24dp"
+        app:srcCompat="@drawable/ic_arrow_forward_white_24dp"
         app:fabSize="normal"/>
 
     <android.support.design.widget.FloatingActionButton
@@ -166,7 +166,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|start"
         android:layout_margin="16dp"
-        android:src="@drawable/ic_disconnect_wifi_white_24dp"
+        app:srcCompat="@drawable/ic_disconnect_wifi_white_24dp"
         app:fabSize="normal"/>
 
 </android.support.design.widget.CoordinatorLayout>

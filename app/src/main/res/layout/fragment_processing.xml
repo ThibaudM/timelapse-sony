@@ -34,7 +34,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_marginBottom="2dp"
                     android:contentDescription="@string/processing_begin_time"
-                    android:src="@drawable/ic_time_black_24dp"/>
+                    app:srcCompat="@drawable/ic_time_black_24dp"/>
 
                 <TextView
                     android:id="@+id/start_time_title"
@@ -73,7 +73,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_marginBottom="2dp"
                     android:contentDescription="@string/processing_chronometer_title"
-                    android:src="@drawable/ic_timer_black_24dp"/>
+                    app:srcCompat="@drawable/ic_timer_black_24dp"/>
 
                 <TextView
                     android:id="@+id/chronometer_title"
@@ -111,7 +111,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_marginBottom="2dp"
                     android:contentDescription="@string/processing_frames_count"
-                    android:src="@drawable/ic_frames_count_black_24dp"/>
+                    app:srcCompat="@drawable/ic_frames_count_black_24dp"/>
 
                 <TextView
                     android:id="@+id/frames_count_title"
@@ -277,7 +277,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="10dp"
                     android:layout_marginRight="10dp"
-                    android:src="@drawable/ic_check_green_24dp"/>
+                    app:srcCompat="@drawable/ic_check_green_24dp"/>
 
                 <TextView
                     android:id="@+id/finish_title"
@@ -325,7 +325,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:src="@drawable/ic_stop_white_24dp"
+        app:srcCompat="@drawable/ic_stop_white_24dp"
         app:fabSize="normal"/>
 
     <android.support.design.widget.FloatingActionButton
@@ -334,7 +334,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:src="@drawable/ic_replay_white_24dp"
+        app:srcCompat="@drawable/ic_replay_white_24dp"
         android:visibility="gone"
         app:fabSize="normal"/>
 

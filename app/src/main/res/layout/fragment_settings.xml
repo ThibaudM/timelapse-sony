@@ -41,7 +41,7 @@
                 android:layout_height="16dp"
                 android:layout_centerVertical="true"
                 android:contentDescription="@string/settings_initial_delay"
-                android:src="@drawable/ic_timer_black_24dp"/>
+                app:srcCompat="@drawable/ic_timer_black_24dp"/>
 
             <TextView
                 android:id="@+id/settings_initial_delay_text"
@@ -76,7 +76,7 @@
                 android:layout_height="16dp"
                 android:layout_centerVertical="true"
                 android:contentDescription="@string/settings_interval_time"
-                android:src="@drawable/ic_timelapse_black_24dp"/>
+                app:srcCompat="@drawable/ic_timelapse_black_24dp"/>
 
             <TextView
                 android:id="@+id/settings_interval_time_text"
@@ -114,7 +114,7 @@
                 android:layout_alignBottom="@+id/settings_frames_count_text"
                 android:layout_centerVertical="true"
                 android:contentDescription="@string/settings_frames_count"
-                android:src="@drawable/ic_frames_count_black_24dp"/>
+                app:srcCompat="@drawable/ic_frames_count_black_24dp"/>
 
             <TextView
                 android:id="@+id/settings_frames_count_text"
@@ -157,7 +157,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:src="@drawable/ic_play_arrow_white_24dp"
+        app:srcCompat="@drawable/ic_play_arrow_white_24dp"
         app:fabSize="normal"/>
 
     <android.support.design.widget.FloatingActionButton
@@ -166,7 +166,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|start"
         android:layout_margin="16dp"
-        android:src="@drawable/ic_arrow_back_white_24dp"
+        app:srcCompat="@drawable/ic_arrow_back_white_24dp"
         app:fabSize="normal"/>
 
 

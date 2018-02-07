@@ -41,7 +41,7 @@
                     android:layout_centerVertical="true"
                     android:contentDescription="@string/connection_camera_model"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_photo_camera_black_24dp"/>
+                    app:srcCompat="@drawable/ic_photo_camera_black_24dp"/>
 
 
                 <TextView
@@ -67,7 +67,7 @@
                     android:layout_toRightOf="@id/connection_camera_text"
                     android:background="?attr/selectableItemBackground"
                     android:contentDescription="@string/connection_camera_list_update"
-                    android:src="@drawable/ic_refresh_black_24dp"
+                    app:srcCompat="@drawable/ic_refresh_black_24dp"
                     android:textSize="12sp"/>
 
                 <ProgressBar
@@ -108,7 +108,7 @@
                     android:layout_centerVertical="true"
                     android:contentDescription="@string/connection_info"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_feedback_black_24dp"/>
+                    app:srcCompat="@drawable/ic_feedback_black_24dp"/>
 
                 <TextView
                     android:id="@+id/connection_info_text"
@@ -290,7 +290,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:contentDescription="@string/connection_continue_button"
-        android:src="@drawable/ic_arrow_forward_white_24dp"
+        app:srcCompat="@drawable/ic_arrow_forward_white_24dp"
         app:fabSize="normal"/>
 
 
