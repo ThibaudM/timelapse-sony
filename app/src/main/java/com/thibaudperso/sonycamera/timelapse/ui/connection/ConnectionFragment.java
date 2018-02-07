@@ -157,8 +157,10 @@ public class ConnectionFragment extends Fragment {
                         mAdapter.notifyDataSetChanged();
                         updateList();
 
-                        Toast.makeText(getContext(), R.string.connection_camera_list_updated,
-                                Toast.LENGTH_SHORT).show();
+                        if(getContext() != null) {
+                            Toast.makeText(getContext(), R.string.connection_camera_list_updated,
+                                    Toast.LENGTH_SHORT).show();
+                        }
 
                         if (mConnectionDeviceListUpdateButton != null &&
                                 mConnectionDeviceListUpdateProgress != null) {

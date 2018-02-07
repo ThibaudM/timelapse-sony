@@ -168,7 +168,9 @@ public class AdjustmentsFragment extends Fragment {
                         if (response.status == CameraWS.ResponseCode.OK) {
                             onResultPicture(response.url);
                         } else {
-                            Toast.makeText(getContext(), R.string.connection_ws_unreachable, Toast.LENGTH_LONG).show();
+                            if (getContext() != null) {
+                                Toast.makeText(getContext(), R.string.connection_ws_unreachable, Toast.LENGTH_LONG).show();
+                            }
                         }
                     }
 
@@ -199,6 +201,9 @@ public class AdjustmentsFragment extends Fragment {
     }
 
     private void askToDisconnectCamera() {
+
+        if(getContext() == null) return;
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setTitle(R.string.alert_disconnect_camera_title)
                 .setMessage(R.string.alert_disconnect_camera_message)
@@ -236,6 +241,7 @@ public class AdjustmentsFragment extends Fragment {
                 new Response.Listener<File>() {
                     @Override
                     public void onResponse(File file) {
+                        if(getContext() == null) return;
                         Uri uri = getUriForFile(getContext(),
                                 "com.thibaudperso.sonycamera.fileprovider",
                                 mTemporaryPreviewPicture);
@@ -244,6 +250,7 @@ public class AdjustmentsFragment extends Fragment {
                         intent.setDataAndType(uri, "image/jpeg");
                         intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         startActivityForResult(intent, PREVIEW_PICTURE_ACTIVITY_RESULT);
+                        if(getActivity() == null) return;
                         getActivity().overridePendingTransition(0, 0);
                     }
                 },
@@ -251,7 +258,9 @@ public class AdjustmentsFragment extends Fragment {
                     public void onErrorResponse(VolleyError error) {
                     }
                 });
-        Volley.newRequestQueue(getContext()).add(request);
+        if(getContext() != null) {
+            Volley.newRequestQueue(getContext()).add(request);
+        }
     }
 
 

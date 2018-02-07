@@ -20,10 +20,14 @@ class SimpleLiveviewSlicer {
      * know the data structure.
      */
     static class Payload {
-        /** jpeg data container */
+        /**
+         * jpeg data container
+         */
         final byte[] jpegData;
 
-        /** padding data container */
+        /**
+         * padding data container
+         */
         final byte[] paddingData;
 
         /**
@@ -44,7 +48,7 @@ class SimpleLiveviewSlicer {
      * Opens Liveview HTTP GET connection and prepares for reading Packet data.
      *
      * @param liveviewUrl Liveview data url that is obtained by DD.xml or result
-     *            of startLiveview API.
+     *                    of startLiveview API.
      * @throws IOException generic errors or exception.
      */
     void open(String liveviewUrl) throws IOException {
@@ -72,10 +76,14 @@ class SimpleLiveviewSlicer {
      * @throws IOException generic errors or exception.
      */
     void close() throws IOException {
-        if (mInputStream != null) {
-            mInputStream.close();
-            mInputStream = null;
+        try {
+            if (mInputStream != null) {
+                mInputStream.close();
+                mInputStream = null;
+            }
+        } catch (Exception ignored) {
         }
+
         if (mHttpConn != null) {
             mHttpConn.disconnect();
             mHttpConn = null;
