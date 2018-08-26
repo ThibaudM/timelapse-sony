@@ -1,22 +1,67 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
+    ext {
+        // Plugin versions
+        androidGradleVersion = "3.2.1"
+        gradleVersionsVersion = "0.20.0"
+        kotlinVersion = "1.3.0-rc-190"
+        // Project configuration
+        projectMinSdkVersion = 21
+        projectCompileSdkVersion = 28
+        projectTargetSdkVersion = 28
+        projectBuildToolsVersion = "28.0.3"
+        // Dependency versions - Test
+        assertjVersion = "3.11.1"
+        espressoVersion = "3.0.2"
+        junitVersion = "4.12"
+        mockitoVersion = "2.23.0"
+        robolectricVersion = "3.8"
+        // Dependency versions - Runtime
+        appCompatVersion = "1.0.0"
+        constraintLayoutVersion = "1.1.3"
+        coreKtxVersion = "1.0.0"
+        daggerVersion = "2.16" // update blocked by Jetifier bug https://issuetracker.google.com/issues/115738511
+        glideVersion = "4.8.0"
+        kotlinLoggingVersion = "1.6.10"
+        moshiVersion = "1.7.0"
+        okhttpVersion = "3.11.0"
+        okioVersion = "2.1.0"
+        retrofitVersion = "2.4.0"
+        rxandroidVersion = "2.1.0"
+        rxjavaVersion = "2.2.2"
+        rxkotlinVersion = "2.3.0"
+        slf4jAndroidLoggerVersion = "1.0.5"
+        ssdpclientVersion = "2.2.0"
+    }
     repositories {
-        jcenter()
         google()
+        mavenCentral()
+        jcenter()
+        maven { url "https://dl.bintray.com/kotlin/kotlin-eap" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
-        classpath 'com.google.gms:google-services:3.0.0'
+        classpath "com.android.tools.build:gradle:$androidGradleVersion"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "com.github.ben-manes:gradle-versions-plugin:$gradleVersionsVersion"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
 }
 
+apply plugin: 'com.github.ben-manes.versions'
+
 allprojects {
     repositories {
-        jcenter()
         google()
+        mavenCentral()
+        jcenter()
+        maven { url "https://dl.bintray.com/kotlin/kotlin-eap" }
     }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.10.2'
+    distributionType = "all"
 }
