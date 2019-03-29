@@ -24,7 +24,7 @@ Frequently Asked Questions
 
 #### Does this app work with my camera?
 Does your camera have a Wifi connection? If not, this app is not compatible.
-Check the [following list](https://github.com/ThibaudM/timelapse-sony#cameras-list) to know if your device is compatible. If your device is not on the list and has a Wifi connection, please follow the steps of this tutorial: [Adding a new camera device](https://github.com/ThibaudM/timelapse-sony#adding-a-new-camera-device) part.
+Check the [following list](https://github.com/ThibaudM/timelapse-sony#camera-list) to know if your device is compatible. If your device is not on the list and has a Wifi connection, please follow the steps of this tutorial: [Adding a new camera device](https://github.com/ThibaudM/timelapse-sony#adding-a-new-camera-device) part.
 
 #### My camera is automatically set to auto-mode when I use your app. Can I set settings manually?
 Sony choose to set the camera settings to auto when you use their WebService. Fortunately on some devices we can set this settings using this same connection. But for the moment, I haven't implemented this feature. List of supported cameras should be: A7R, A7, NEX-5, NEX-6, A5000, A6000, DSC-HX400, DSC-HX60.
