@@ -18,7 +18,8 @@ Vous pouvez aussi les pairrer par NFC (si c\'est possible)]]></string>
     <string name="connection_choose_network">Choisissez un réseau</string>
     <string name="connection_choose_network_cancel">Annuler</string>
 
-    <string name="connection_camera_model">Modèle de l\'appareil</string>
+    <string name="device_info">Informations sur l\'appareil</string>
+    <string name="device_info_model">Modèle de l\'appareil</string>
 
     <string name="connection_enter_password">Entrez un mot de passe pour le réseau %1$s</string>
     <string name="connection_enter_password_ok">Rejoindre</string>
@@ -35,8 +36,7 @@ Vous pouvez aussi les pairrer par NFC (si c\'est possible)]]></string>
 
     <!-- Camera Settings Step Strings -->
 
-    <string
-        name="adjustments_message"><![CDATA[Dans cette première partie,
+    <string name="adjustments_message"><![CDATA[Dans cette première partie,
         vous pouvez prendre une photo pour ajuster le champ de vision de la caméra. Le zoom et le
         flash ne sont disponible que sur certains appareils.]]></string>
     <string name="adjustments_zoom_title">Zoom</string>
@@ -45,8 +45,7 @@ Vous pouvez aussi les pairrer par NFC (si c\'est possible)]]></string>
 
     <!-- Timelapse Settings Step Strings -->
 
-    <string
-        name="settings_message"><![CDATA[C\'est la dernière étape avant la capture. Certains
+    <string name="settings_message"><![CDATA[C\'est la dernière étape avant la capture. Certains
         appareils comme le RX100 mk2 ont du mal à gérer des intervalles de temps
         <b>inférieures à 5 secondes.</b> Si cela arrive pendant le timelapse, vous en
         serez informé.]]></string>
@@ -108,4 +107,8 @@ Vous pouvez aussi les pairrer par NFC (si c\'est possible)]]></string>
     <string name="settings_frames_count_positive_integer_error">Le nombre de photos doit être un nombre positif</string>
     <string name="settings_initial_delay_positive_integer_error">Le délai initial doit être un nombre positif</string>
     <string name="settings_interval_time_positive_integer_error">L\'intervalle entre deux captures doit être un nombre positif</string>
+
+    <string name="channel_name">Sony Timelapse</string>
+    <string name="channel_description">Timelapse est en cours d\'exécution</string>
+
 </resources>

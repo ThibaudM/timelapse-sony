@@ -38,7 +38,8 @@ You also can pair it by NFC (if it\'s possible)]]></string>
     <string name="connection_choose_network">Choose network</string>
     <string name="connection_choose_network_cancel">Cancel</string>
 
-    <string name="connection_camera_model">Camera model</string>
+    <string name="device_info">Device information</string>
+    <string name="device_info_model">Camera model</string>
 
     <string name="connection_enter_password">Enter password for %1$s network</string>
     <string name="connection_enter_password_ok">Join</string>
@@ -52,10 +53,8 @@ You also can pair it by NFC (if it\'s possible)]]></string>
     <string name="alert_disconnect_camera_yes">Disconnect</string>
     <string name="alert_disconnect_camera_no">Stay connected</string>
 
-
-
     <!-- Adjustments Step Strings -->
-    
+
     <string name="adjustments_message"><![CDATA[You can take a picture to adjust
         your field of view. Zoom is available only on few devices.<br /><br />
         More settings will be available in the future for supported devices]]></string>
@@ -64,7 +63,7 @@ You also can pair it by NFC (if it\'s possible)]]></string>
 
 
     <!-- Settings Step Strings -->
-    
+
     <string name="settings_message"><![CDATA[This is the last step before capture. <br /><br />
         On <u>RX100 mk2</u> and maybe on other devices be careful with <u>interval less than
         5sec</u>.]]></string>
@@ -125,5 +124,6 @@ You also can pair it by NFC (if it\'s possible)]]></string>
     <string name="notification_finished_with_errors_title">Your timelapse finished with errors</string>
     <string name="channel_name">Sony Timelapse</string>
     <string name="channel_description">Timelapse is running</string>
+
 
 </resources>

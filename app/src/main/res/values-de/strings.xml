@@ -33,12 +33,13 @@
     <string name="connection_info_wifi_enabled_state">WLAN-Status</string>
     <string name="connection_info_network">WLAN-Verbindung</string>
     <string name="connection_info_network_state">WLAN-Verbindungsstatus</string>
-    <string name="connection_info_api">Sony API Verbindung</string>
-    <string name="connection_info_api_state">Sony API Verbindungsstatus</string>
+    <string name="connection_info_api">Sony API-Verbindung</string>
+    <string name="connection_info_api_state">Sony API-Verbindungsstatus</string>
     <string name="connection_choose_network">Netzwerk wählen</string>
     <string name="connection_choose_network_cancel">Abbrechen</string>
 
-    <string name="connection_camera_model">Kameramodell</string>
+    <string name="device_info">Geräteinformation</string>
+    <string name="device_info_model">Kameramodell</string>
 
     <string name="connection_enter_password">Passwort für Netzwerk %1$s angeben</string>
     <string name="connection_enter_password_ok">Verbinden</string>
@@ -58,7 +59,7 @@
 
     <string name="adjustments_message"><![CDATA[Du kannst ein Testfoto aufnehmen und
         anzeigen lassen. Der Zoom ist nur für wenige Gerät verfügbar.<br /><br />
-        Weiter Einstellungen gibt es zu einem späteren Zeitpunkt.]]></string>
+        Weitere Einstellungen gibt es zu einem späteren Zeitpunkt.]]></string>
     <string name="adjustments_zoom_title">Zoom</string>
     <string name="adjustments_flash_title">Blitz</string>
 
@@ -123,5 +124,8 @@
 
     <string name="notification_finished_title">Der Timelapse wurde abgeschlossen</string>
     <string name="notification_finished_with_errors_title">Der Timelapse wurde mit Fehlern abgeschlossen</string>
+    <string name="channel_name">Sony Timelapse</string>
+    <string name="channel_description">Timelapse läuft</string>
+
 
 </resources>

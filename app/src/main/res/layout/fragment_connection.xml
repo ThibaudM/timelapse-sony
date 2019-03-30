@@ -1,297 +1,284 @@
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                 android:layout_width="match_parent"
-                                                 android:layout_height="match_parent">
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin">
+        android:paddingBottom="@dimen/activity_vertical_margin">
+
+        <TextView
+            android:id="@+id/connection_info_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/connection_information_message"
+            android:textAppearance="@style/TextSmall"
+            android:textColor="#000" />
+
+        <ImageView
+            android:id="@+id/connection_info_image"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="20dp"
+            android:contentDescription="@string/connection_info"
+            android:scaleType="fitCenter"
+            app:layout_constraintTop_toBottomOf="@id/connection_info_message"
+            app:srcCompat="@drawable/ic_feedback_black_24dp" />
+
+        <TextView
+            android:id="@+id/connection_info_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="16dp"
+            android:layout_toEndOf="@id/connection_info_image"
+            android:layout_toRightOf="@id/connection_info_image"
+            android:text="@string/connection_info"
+            android:textAppearance="@style/TextMedium"
+            app:layout_constraintLeft_toRightOf="@id/connection_info_image"
+            app:layout_constraintTop_toBottomOf="@id/connection_info_message" />
+
+        <!-- Connection info -->
 
         <LinearLayout
+            android:id="@+id/connection_info_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="#10000000"
+            android:gravity="center_vertical"
             android:orientation="vertical"
-            >
-
-            <TextView
-                android:id="@+id/connection_info_message"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/connection_information_message"
-                android:textAppearance="@style/TextSmall"
-                android:textColor="#000"/>
-
-
-            <!-- Camera selection -->
+            android:padding="8dp"
+            app:layout_constraintTop_toBottomOf="@id/connection_info_text">
 
             <RelativeLayout
-                android:id="@+id/connection_camera_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp">
+                android:layout_height="wrap_content">
 
                 <ImageView
-                    android:id="@+id/connection_camera_image"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:id="@+id/connection_info_wifi_enabled_icon"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:contentDescription="@string/connection_camera_model"
-                    android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/ic_photo_camera_black_24dp"/>
-
-
-                <TextView
-                    android:id="@+id/connection_camera_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/connection_camera_image"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginStart="5dp"
-                    android:layout_toEndOf="@id/connection_camera_image"
-                    android:layout_toRightOf="@id/connection_camera_image"
-                    android:text="@string/connection_camera_model"
-                    android:textAppearance="@style/TextMedium"/>
-
-                <ImageView
-                    android:id="@+id/connection_camera_list_update"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_toEndOf="@id/connection_camera_text"
-                    android:layout_toRightOf="@id/connection_camera_text"
-                    android:background="?attr/selectableItemBackground"
-                    android:contentDescription="@string/connection_camera_list_update"
-                    app:srcCompat="@drawable/ic_refresh_black_24dp"
-                    android:textSize="12sp"/>
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginRight="2dp"
+                    android:contentDescription="@string/connection_info_wifi_enabled_state"
+                    android:src="@drawable/error" />
 
                 <ProgressBar
-                    android:id="@+id/connection_camera_list_update_progress"
+                    android:id="@+id/connection_info_wifi_enabled_progress"
                     style="?android:attr/progressBarStyle"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_toEndOf="@id/connection_camera_text"
-                    android:layout_toRightOf="@id/connection_camera_text"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginRight="2dp"
                     android:indeterminate="true"
                     android:indeterminateTint="@color/accent"
                     android:indeterminateTintMode="src_in"
-                    android:visibility="gone"/>
-
-            </RelativeLayout>
-
-
-            <Spinner
-                android:id="@+id/connection_camera_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-
-            <!-- Connection info -->
-
-            <RelativeLayout
-                android:id="@+id/connection_info_title_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp">
-
-                <ImageView
-                    android:id="@+id/connection_info_image"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_centerVertical="true"
-                    android:contentDescription="@string/connection_info"
-                    android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/ic_feedback_black_24dp"/>
+                    android:visibility="gone"
+                    tools:targetApi="lollipop" />
 
                 <TextView
-                    android:id="@+id/connection_info_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginStart="5dp"
-                    android:layout_toEndOf="@id/connection_info_image"
-                    android:layout_toRightOf="@id/connection_info_image"
-                    android:text="@string/connection_info"
-                    android:textAppearance="@style/TextMedium"/>
+                    android:layout_toStartOf="@id/connection_info_wifi_enabled_icon"
+                    android:layout_toLeftOf="@id/connection_info_wifi_enabled_icon"
+                    android:text="@string/connection_info_wifi_enabled"
+                    android:textAppearance="@style/TextSmall" />
 
             </RelativeLayout>
 
-
-            <LinearLayout
-                android:id="@+id/connection_info_layout"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="#10000000"
-                android:gravity="center_vertical"
-                android:orientation="vertical"
-                android:padding="10dp">
+                android:layout_marginTop="4dp">
 
+                <ImageView
+                    android:id="@+id/connection_info_network_state"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginRight="2dp"
+                    android:contentDescription="@string/connection_info_network_state"
+                    android:src="@drawable/error"
+                    tools:visibility="gone" />
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp">
+                <ProgressBar
+                    android:id="@+id/connection_info_network_state_progress"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginRight="2dp"
+                    android:indeterminate="true"
+                    android:indeterminateTint="@color/accent"
+                    android:indeterminateTintMode="src_in"
+                    android:padding="0dp"
+                    android:visibility="gone"
+                    tools:targetApi="lollipop"
+                    tools:visibility="visible" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@id/connection_info_network_state"
+                    android:layout_toLeftOf="@id/connection_info_network_state"
+                    android:text="@string/connection_info_network"
+                    android:textAppearance="@style/TextSmall" />
+            </RelativeLayout>
 
-                    <ImageView
-                        android:id="@+id/connection_info_wifi_enabled_icon"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="2dp"
-                        android:layout_marginRight="2dp"
-                        android:contentDescription="@string/connection_info_wifi_enabled_state"
-                        android:src="@drawable/error"/>
-
-                    <ProgressBar
-                        android:id="@+id/connection_info_wifi_enabled_progress"
-                        style="?android:attr/progressBarStyle"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:indeterminate="true"
-                        android:indeterminateTint="@color/accent"
-                        android:indeterminateTintMode="src_in"
-                        android:visibility="gone"/>
-
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:layout_toLeftOf="@id/connection_info_wifi_enabled_icon"
-                        android:layout_toStartOf="@id/connection_info_wifi_enabled_icon"
-                        android:text="@string/connection_info_wifi_enabled"
-                        android:textAppearance="@style/TextSmall"/>
-
-                </RelativeLayout>
-
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp"
-                    android:layout_marginTop="5dp">
-
-
-                    <ImageView
-                        android:id="@+id/connection_info_network_state"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="2dp"
-                        android:layout_marginRight="2dp"
-                        android:contentDescription="@string/connection_info_network_state"
-                        android:src="@drawable/error"/>
-
-                    <ProgressBar
-                        android:id="@+id/connection_info_network_state_progress"
-                        style="?android:attr/progressBarStyle"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:indeterminate="true"
-                        android:indeterminateTint="@color/accent"
-                        android:indeterminateTintMode="src_in"
-                        android:visibility="gone"/>
-
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toLeftOf="@id/connection_info_network_state"
-                        android:layout_toStartOf="@id/connection_info_network_state"
-                        android:text="@string/connection_info_network"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:textAppearance="@style/TextSmall"/>
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp"
-                    android:layout_marginTop="5dp">
-
-                    <ImageView
-                        android:id="@+id/connection_info_api_state"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="2dp"
-                        android:layout_marginRight="2dp"
-                        android:contentDescription="@string/connection_info_api_state"
-                        android:src="@drawable/error"/>
-
-                    <ProgressBar
-                        android:id="@+id/connection_info_api_state_progress"
-                        style="?android:attr/progressBarStyle"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:indeterminate="true"
-                        android:indeterminateTint="@color/accent"
-                        android:indeterminateTintMode="src_in"
-                        android:visibility="gone"/>
-
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toLeftOf="@id/connection_info_api_state"
-                        android:layout_toStartOf="@id/connection_info_api_state"
-                        android:text="@string/connection_info_api"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:textAppearance="@style/TextSmall"/>
-
-                </RelativeLayout>
-
-            </LinearLayout>
-
-
-            <CheckBox
-                android:id="@+id/connection_automatic_checkbox"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="@string/connection_continue_automatic"/>
+                android:layout_marginTop="4dp">
+
+                <ImageView
+                    android:id="@+id/connection_info_api_state"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginRight="2dp"
+                    android:contentDescription="@string/connection_info_api_state"
+                    android:src="@drawable/error" />
+
+                <ProgressBar
+                    android:id="@+id/connection_info_api_state_progress"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginRight="2dp"
+                    android:indeterminate="true"
+                    android:indeterminateTint="@color/accent"
+                    android:indeterminateTintMode="src_in"
+                    android:visibility="gone"
+                    tools:targetApi="lollipop" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@id/connection_info_api_state"
+                    android:layout_toLeftOf="@id/connection_info_api_state"
+                    android:text="@string/connection_info_api"
+                    android:textAppearance="@style/TextSmall" />
+
+            </RelativeLayout>
 
         </LinearLayout>
 
+        <ImageView
+            android:id="@+id/device_info_image"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="20dp"
+            android:contentDescription="@string/connection_info"
+            android:scaleType="fitCenter"
+            app:layout_constraintTop_toBottomOf="@id/connection_info_layout"
+            app:srcCompat="@drawable/ic_feedback_black_24dp" />
 
-    </RelativeLayout>
+        <TextView
+            android:id="@+id/device_info_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="16dp"
+            android:layout_toEndOf="@id/connection_info_image"
+            android:layout_toRightOf="@id/connection_info_image"
+            android:text="@string/device_info"
+            android:textAppearance="@style/TextMedium"
+            app:layout_constraintLeft_toRightOf="@id/device_info_image"
+            app:layout_constraintTop_toBottomOf="@id/connection_info_layout" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/connection_settings_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:contentDescription="@string/connection_continue_button"
-        app:srcCompat="@drawable/ic_arrow_forward_white_24dp"
-        app:fabSize="normal"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container_device_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="#10000000"
+            android:orientation="vertical"
+            android:padding="8dp"
+            app:layout_constraintTop_toBottomOf="@id/device_info_text">
 
+            <TextView
+                android:id="@+id/txt_device_info_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:text="@string/device_info_model"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/txt_device_info_name"
+                app:layout_constraintWidth_min="wrap" />
 
-</android.support.design.widget.CoordinatorLayout>
+            <TextView
+                android:id="@+id/txt_device_info_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="end"
+                android:singleLine="true"
+                android:textIsSelectable="true"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintLeft_toRightOf="@id/txt_device_info_label"
+                app:layout_constraintRight_toRightOf="parent"
+                tools:text="ILCE-7M3 4244j42j35i jo42j42o42jo4242o4 2j42" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <CheckBox
+            android:id="@+id/connection_automatic_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/connection_continue_automatic"
+            app:layout_constraintTop_toBottomOf="@id/container_device_info" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/connection_settings_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:contentDescription="@string/connection_continue_button"
+            app:fabSize="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:srcCompat="@drawable/ic_arrow_forward_white_24dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
