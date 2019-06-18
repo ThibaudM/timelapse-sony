@@ -49,42 +49,54 @@ Camera list
 ------------
 
 #### Working Devices
-* A7 (α7)
 * DSC-HX400V
 * DSC-HX50
 * DSC-HX50V
 * DSC-HX60
+* DSC-HX60V
 * DSC-HX90
 * DSC-HX90V
-* ILCE-QX1
 * DSC-QX10 (Read [this](https://us.en.kb.sony.com/app/answers/detail/a_id/43716/c/65,66/p/40096,90706,90707/) to know where pictures are saved)
 * DSC-QX30
 * DSC-QX100
+* DSC-RX0
 * DSC-RX10
+* DSC-RX10M2
+* DSC-RX10M4
 * DSC-RX100M2 (known issue with short delays)
 * DSC-RX100M3
+* DSC-RX100M4
+* DSC-RX100M6
 * DSC-WX80
+* DSC-WX220
+* DSC-WX300
 * DSC-WX350
 * DSC-WX500
 * FDR-AX100
+* FDR-AX100E
+* FDR-AX33
 * FDR-X1000V
 * HDR-AZ1
 * HDR-AS20
-* ILCE-5100 (α5100)
-* ILCE-6000 (α6000)
-* ILCE-6300 (α6300)
+* HDR-AS200V
+* HDR-AS50
+* HDR-PJ530
+* ILCA-77M2 (Alpha 77 II)
+* ILCE-5000 (Alpha 5000)
+* ILCE-5100 (Alpha 5100)
+* ILCE-6000 (Alpha 6000)
+* ILCE-6300 (Alpha 6300)
+* ILCE-6500 (Alpha 6500)
+* ILCE-7 (Alpha 7)
+* ILCE-7M3 (Alpha 7 III)
+* ILCE-QX1
 * NEX-5R
+* NEX-5T
 * NEX-6
 
 
 #### Not tested devices
-* ILCE-5000 (α5000)
-* ILCA-77M2 (α77 II)
-* DSC-WX220
 * DSC-WX220B
-* DSC-HX60V
-* DSC-QX1
-* FDR-AX100E
 * HDR-AS100V
 * PXW-SF5
 

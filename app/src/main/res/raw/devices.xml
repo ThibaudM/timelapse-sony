@@ -2,7 +2,7 @@
 <cameras>
     <camera>
         <id>1</id>
-        <model>RX100 mk2</model>
+        <model>RX100 II</model>
         <webservice>http://10.0.0.1:10000/camera</webservice>
     </camera>
     <camera>
@@ -12,7 +12,7 @@
     </camera>
     <camera>
         <id>3</id>
-        <model>QX-10 / QX-100</model>
+        <model>QX-10</model>
         <webservice>http://10.0.0.1:10000/sony/camera</webservice>
     </camera>
     <camera>
@@ -62,7 +62,7 @@
     </camera>
     <camera>
         <id>13</id>
-        <model>RX100 mk3</model>
+        <model>RX100 III</model>
         <webservice>http://192.168.122.1:8080/sony/camera</webservice>
     </camera>
     <camera>
@@ -112,7 +112,7 @@
     </camera>
     <camera>
         <id>23</id>
-        <model>RX10 mk2</model>
+        <model>RX10 II</model>
         <webservice>http://192.168.122.1:8080/sony/camera</webservice>
     </camera>
     <camera>
@@ -142,22 +142,82 @@
     </camera>
     <camera>
         <id>29</id>
-        <model>ILCA-77M2</model>
+        <model>Alpha 77 II</model>
         <webservice>http://192.168.122.1:10000/sony/camera</webservice>
     </camera>
     <camera>
         <id>30</id>
-        <model>RX100 mk4</model>
+        <model>RX100 IV</model>
         <webservice>http://192.168.122.1:8080/sony/camera</webservice>
     </camera>
     <camera>
         <id>31</id>
-        <model>RX10 mk4</model>
+        <model>RX10 IV</model>
         <webservice>http://192.168.122.1:10000/sony/camera</webservice>
     </camera>
     <camera>
         <id>32</id>
-        <model>ILCE-7M3</model>
+        <model>Alpha 7 III</model>
         <webservice>http://192.168.122.1:10000/sony/camera</webservice>
+    </camera>
+    <camera>
+        <id>33</id>
+        <model>RX0</model>
+        <webservice>http://192.168.122.1:10000/sony/camera</webservice>
+    </camera>
+    <camera>
+        <id>34</id>
+        <model>HDR-AS200V</model>
+        <webservice>http://192.168.122.1:8080/sony/camera</webservice>
+    </camera>
+    <camera>
+        <id>35</id>
+        <model>NEX-5T</model>
+        <webservice>http://192.168.122.1:8080/sony/camera</webservice>
+    </camera>
+    <camera>
+        <id>36</id>
+        <model>RX100 VI</model>
+        <webservice>http://192.168.122.1:10000/sony/camera</webservice>
+    </camera>
+    <camera>
+        <id>37</id>
+        <model>HDR-AS50</model>
+        <webservice>http://192.168.122.1:10000/sony/camera</webservice>
+    </camera>
+    <camera>
+        <id>38</id>
+        <model>Alpha 6500</model>
+        <webservice>http://192.168.122.1:8080/sony/camera</webservice>
+    </camera>
+    <camera>
+        <id>39</id>
+        <model>DSC-WX220</model>
+        <webservice>http://10.0.0.1:10000/sony/camera</webservice>
+    </camera>
+    <camera>
+        <id>40</id>
+        <model>DSC-WX300</model>
+        <webservice>http://10.0.0.1:10000/sony/camera</webservice>
+    </camera>
+    <camera>
+        <id>41</id>
+        <model>QX-100</model>
+        <webservice>http://10.0.0.1:10000/sony/camera</webservice>
+    </camera>
+    <camera>
+        <id>42</id>
+        <model>Alpha 5000</model>
+        <webservice>http://192.168.122.1:8080/sony/camera</webservice>
+    </camera>
+    <camera>
+        <id>43</id>
+        <model>DSC-HX60V</model>
+        <webservice>http://192.168.122.1:8080/sony/camera</webservice>
+    </camera>
+    <camera>
+        <id>44</id>
+        <model>FDR-AX100E</model>
+        <webservice>http://10.0.0.1:10000/sony/camera</webservice>
     </camera>
 </cameras>
