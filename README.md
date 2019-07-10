@@ -4,9 +4,9 @@ Timelapse - Sony Camera
 Want to [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=LFFFQZD9UNKRC&lc=FR&item_name=Thibaud%20Michel&item_number=1&currency_code=EUR&bn=PP-DonationsBF%3abtn_donate_LG%2egif%3aNonHosted)?  
 
 Project type: **Android**  
-Current version: **3.0.1**  
+Current version: **3.0.5**  
 Google Play store link: https://play.google.com/store/apps/details?id=com.thibaudperso.sonycamera  
-
+F-Droid link: https://f-droid.org/packages/com.thibaudperso.sonycamera/
 
 This project is a proof of concept to show that it's possible to create your own application for the [rx100 mk2](http://www.sony.co.uk/product/dsc-r-series/dsc-rx100m2)  
 For more information read [this thread](https://camera.developer.sony.com/common/forum/en/viewtopic.php?f=21&t=121&start=10#p361)
