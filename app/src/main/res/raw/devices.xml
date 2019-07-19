@@ -58,7 +58,7 @@
     <camera>
         <id>12</id>
         <model>DSC-WX80</model>
-        <webservice>http://10.0.0.1:10000/camera</webservice>
+        <webservice>http://10.0.0.1:10000/sony/camera</webservice>
     </camera>
     <camera>
         <id>13</id>
