@@ -6,9 +6,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -19,6 +16,10 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -37,7 +38,7 @@ import com.thibaudperso.sonycamera.timelapse.ui.settings.SettingsActivity;
 
 import java.io.File;
 
-import static android.support.v4.content.FileProvider.getUriForFile;
+import static androidx.core.content.FileProvider.getUriForFile;
 import static com.thibaudperso.sonycamera.timelapse.Constants.PREF_AUTOMATIC_CONTINUE;
 
 public class AdjustmentsFragment extends Fragment {

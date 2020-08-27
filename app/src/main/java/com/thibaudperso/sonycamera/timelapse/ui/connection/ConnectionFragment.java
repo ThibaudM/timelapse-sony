@@ -11,10 +11,11 @@ import android.net.wifi.WifiConfiguration;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +36,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.thibaudperso.sonycamera.R;
 import com.thibaudperso.sonycamera.sdk.model.Device;
 import com.thibaudperso.sonycamera.timelapse.TimelapseApplication;

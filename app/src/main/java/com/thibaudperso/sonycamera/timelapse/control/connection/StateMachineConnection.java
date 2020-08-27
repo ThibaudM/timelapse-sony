@@ -11,8 +11,9 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
+
+import androidx.core.content.ContextCompat;
 
 import com.thibaudperso.sonycamera.BuildConfig;
 import com.thibaudperso.sonycamera.sdk.CameraAPI;
