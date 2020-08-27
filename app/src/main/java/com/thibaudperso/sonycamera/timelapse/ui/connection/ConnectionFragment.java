@@ -184,7 +184,7 @@ public class ConnectionFragment extends Fragment {
             }
         });
         mConnectionContinueButton = viewResult.findViewById(R.id.connection_settings_button);
-        mConnectionContinueButton.setVisibility(View.GONE);
+        mConnectionContinueButton.hide();
         mConnectionContinueButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -534,7 +534,7 @@ public class ConnectionFragment extends Fragment {
         wifiEnabledError();
         wifiError();
         apiError();
-        mConnectionContinueButton.setVisibility(View.GONE);
+        mConnectionContinueButton.hide();
     }
 
 
@@ -590,7 +590,7 @@ public class ConnectionFragment extends Fragment {
         if (mConnectionAutomaticCheckbox.isChecked()) {
             nextStep();
         } else {
-            mConnectionContinueButton.setVisibility(View.VISIBLE);
+            mConnectionContinueButton.show();
         }
     }
 
