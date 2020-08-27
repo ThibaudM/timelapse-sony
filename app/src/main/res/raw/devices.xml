@@ -220,4 +220,9 @@
         <model>FDR-AX100E</model>
         <webservice>http://10.0.0.1:10000/sony/camera</webservice>
     </camera>
+    <camera>
+        <id>45</id>
+        <model>RX100 VA</model>
+        <webservice>http://192.168.122.1:10000/sony/camera</webservice>
+    </camera>
 </cameras>

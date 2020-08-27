@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain>10.0.0.1</domain>
+        <domain>192.168.122.1</domain>
+    </domain-config>
+</network-security-config>
