@@ -1,14 +1,13 @@
 package com.thibaudperso.sonycamera.timelapse.ui.adjustments;
 
+import static androidx.core.content.FileProvider.getUriForFile;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -37,8 +36,11 @@ import com.thibaudperso.sonycamera.timelapse.ui.settings.SettingsActivity;
 
 import java.io.File;
 
-import static android.support.v4.content.FileProvider.getUriForFile;
 import static com.thibaudperso.sonycamera.timelapse.Constants.PREF_AUTOMATIC_CONTINUE;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
 
 public class AdjustmentsFragment extends Fragment {
 
@@ -74,38 +76,18 @@ public class AdjustmentsFragment extends Fragment {
         View zoomInButton = rootView.findViewById(R.id.adjustments_zoom_in);
         View zoomOutButton = rootView.findViewById(R.id.adjustments_zoom_out);
 
-        zoomInButton.setOnClickListener(new View.OnClickListener() {
+        zoomInButton.setOnClickListener(v -> mCameraAPI.actZoom(ZoomDirection.IN));
 
-            @Override
-            public void onClick(View v) {
-                mCameraAPI.actZoom(ZoomDirection.IN);
-            }
+        zoomOutButton.setOnClickListener(v -> mCameraAPI.actZoom(ZoomDirection.OUT));
+
+        zoomInButton.setOnLongClickListener(arg0 -> {
+            mCameraAPI.actZoom(ZoomDirection.IN, ZoomAction.START);
+            return true;
         });
 
-        zoomOutButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                mCameraAPI.actZoom(ZoomDirection.OUT);
-            }
-        });
-
-        zoomInButton.setOnLongClickListener(new View.OnLongClickListener() {
-
-            @Override
-            public boolean onLongClick(View arg0) {
-                mCameraAPI.actZoom(ZoomDirection.IN, ZoomAction.START);
-                return true;
-            }
-        });
-
-        zoomOutButton.setOnLongClickListener(new View.OnLongClickListener() {
-
-            @Override
-            public boolean onLongClick(View arg0) {
-                mCameraAPI.actZoom(ZoomDirection.OUT, ZoomAction.START);
-                return true;
-            }
+        zoomOutButton.setOnLongClickListener(arg0 -> {
+            mCameraAPI.actZoom(ZoomDirection.OUT, ZoomAction.START);
+            return true;
         });
 
         zoomInButton.setOnTouchListener(new View.OnTouchListener() {
@@ -149,51 +131,26 @@ public class AdjustmentsFragment extends Fragment {
         });
 
         CompoundButton useFlashButton = rootView.findViewById(R.id.adjustments_use_flash);
-        useFlashButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+        useFlashButton.setOnCheckedChangeListener((buttonView, isChecked) -> mCameraAPI.setFlash(isChecked));
 
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mCameraAPI.setFlash(isChecked);
+        rootView.findViewById(R.id.adjustments_take_picture_button).setOnClickListener(v -> mCameraAPI.takePicture(response -> {
+            if (response.status == CameraWS.ResponseCode.OK) {
+                onResultPicture(response.url);
+            } else {
+                if (getContext() != null) {
+                    Toast.makeText(getContext(), R.string.connection_ws_unreachable, Toast.LENGTH_LONG).show();
+                }
             }
-        });
-
-        rootView.findViewById(R.id.adjustments_take_picture_button).setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                mCameraAPI.takePicture(new CameraAPI.TakePictureListener() {
-
-                    @Override
-                    public void onResult(PictureResponse response) {
-                        if (response.status == CameraWS.ResponseCode.OK) {
-                            onResultPicture(response.url);
-                        } else {
-                            if (getContext() != null) {
-                                Toast.makeText(getContext(), R.string.connection_ws_unreachable, Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    }
-
-                });
-            }
-        });
+        }));
 
 
         rootView.findViewById(R.id.adjustments_previous).setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        askToDisconnectCamera();
-                    }
-                });
+                v -> askToDisconnectCamera());
 
-        rootView.findViewById(R.id.adjustments_next).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), SettingsActivity.class);
-                startActivity(intent);
-                getActivity().overridePendingTransition(R.anim.enter, R.anim.exit);
-            }
+        rootView.findViewById(R.id.adjustments_next).setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), SettingsActivity.class);
+            startActivity(intent);
+            getActivity().overridePendingTransition(R.anim.enter, R.anim.exit);
         });
 
 
@@ -207,16 +164,14 @@ public class AdjustmentsFragment extends Fragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setTitle(R.string.alert_disconnect_camera_title)
                 .setMessage(R.string.alert_disconnect_camera_message)
-                .setPositiveButton(R.string.alert_disconnect_camera_yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        final SharedPreferences.Editor editor = PreferenceManager
-                                .getDefaultSharedPreferences(getContext()).edit();
-                        editor.putBoolean(PREF_AUTOMATIC_CONTINUE, false);
-                        editor.apply();
-                        mApplication.getCameraAPI().closeConnection();
-                        mApplication.getWifiHandler().disconnect();
-                        getActivity().finish();
-                    }
+                .setPositiveButton(R.string.alert_disconnect_camera_yes, (dialog, id) -> {
+                    final SharedPreferences.Editor editor = PreferenceManager
+                            .getDefaultSharedPreferences(getContext()).edit();
+                    editor.putBoolean(PREF_AUTOMATIC_CONTINUE, false);
+                    editor.apply();
+                    mApplication.getCameraAPI().closeConnection();
+                    mApplication.getWifiHandler().disconnect();
+                    getActivity().finish();
                 })
                 .setNegativeButton(R.string.alert_disconnect_camera_no, null);
 
@@ -238,26 +193,20 @@ public class AdjustmentsFragment extends Fragment {
         mTemporaryPreviewPicture = new File(imgPath, PREVIEW_PICTURE_NAME);
 
         Request request = new FileRequest<>(url, mTemporaryPreviewPicture,
-                new Response.Listener<File>() {
-                    @Override
-                    public void onResponse(File file) {
-                        if(getContext() == null) return;
-                        Uri uri = getUriForFile(getContext(),
-                                "com.thibaudperso.sonycamera.fileprovider",
-                                mTemporaryPreviewPicture);
-                        Intent intent = new Intent();
-                        intent.setAction(android.content.Intent.ACTION_VIEW);
-                        intent.setDataAndType(uri, "image/jpeg");
-                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        startActivityForResult(intent, PREVIEW_PICTURE_ACTIVITY_RESULT);
-                        if(getActivity() == null) return;
-                        getActivity().overridePendingTransition(0, 0);
-                    }
+                (Response.Listener<File>) file -> {
+                    if(getContext() == null) return;
+                    Uri uri = getUriForFile(getContext(),
+                            "com.thibaudperso.sonycamera.fileprovider",
+                            mTemporaryPreviewPicture);
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_VIEW);
+                    intent.setDataAndType(uri, "image/jpeg");
+                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    startActivityForResult(intent, PREVIEW_PICTURE_ACTIVITY_RESULT);
+                    if(getActivity() == null) return;
+                    getActivity().overridePendingTransition(0, 0);
                 },
-                new Response.ErrorListener() {
-                    public void onErrorResponse(VolleyError error) {
-                    }
-                });
+                error -> { });
         if(getContext() != null) {
             Volley.newRequestQueue(getContext()).add(request);
         }
@@ -301,20 +250,16 @@ public class AdjustmentsFragment extends Fragment {
     }
 
     private StateMachineConnection.Listener
-            mConnectionListener = new StateMachineConnection.Listener() {
-        @Override
-        public void onNewState(StateMachineConnection.State previousState,
-                               StateMachineConnection.State newState) {
+            mConnectionListener = (previousState, newState) -> {
 
-            if (!mIsFragmentResumed) return;
+                if (!mIsFragmentResumed) return;
 
-            if (newState == StateMachineConnection.State.GOOD_API_ACCESS) {
-                startLiveView();
-            } else {
-                stopLiveView();
-            }
-        }
-    };
+                if (newState == StateMachineConnection.State.GOOD_API_ACCESS) {
+                    startLiveView();
+                } else {
+                    stopLiveView();
+                }
+            };
 
 
     private void startLiveView() {
@@ -323,12 +268,9 @@ public class AdjustmentsFragment extends Fragment {
             return;
         }
 
-        mCameraAPI.startLiveView(new CameraAPI.StartLiveviewListener() {
-            @Override
-            public void onResult(CameraWS.ResponseCode responseCode, String liveviewUrl) {
-                if (responseCode == CameraWS.ResponseCode.OK) {
-                    mLiveviewSurfaceView.start(liveviewUrl);
-                }
+        mCameraAPI.startLiveView((responseCode, liveviewUrl) -> {
+            if (responseCode == CameraWS.ResponseCode.OK) {
+                mLiveviewSurfaceView.start(liveviewUrl);
             }
         });
     }

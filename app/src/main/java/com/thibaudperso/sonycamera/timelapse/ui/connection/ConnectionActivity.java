@@ -1,7 +1,8 @@
 package com.thibaudperso.sonycamera.timelapse.ui.connection;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+
+import androidx.fragment.app.Fragment;
 
 import com.thibaudperso.sonycamera.R;
 import com.thibaudperso.sonycamera.timelapse.ui.SingleFragmentActivity;
@@ -27,6 +28,7 @@ public class ConnectionActivity extends SingleFragmentActivity {
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         mApplication.getCameraAPI().closeConnection();
         mApplication.getWifiHandler().disconnect();
         mStateMachineConnection.reset();

@@ -11,10 +11,9 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import com.thibaudperso.sonycamera.BuildConfig;
+import com.android.volley.BuildConfig;
 import com.thibaudperso.sonycamera.sdk.CameraAPI;
 import com.thibaudperso.sonycamera.sdk.model.Device;
 import com.thibaudperso.sonycamera.timelapse.TimelapseApplication;
@@ -32,6 +31,8 @@ import static com.thibaudperso.sonycamera.timelapse.control.connection.StateMach
 import static com.thibaudperso.sonycamera.timelapse.control.connection.StateMachineConnection.State.TRY_TO_CONNECT_TO_SSID;
 import static com.thibaudperso.sonycamera.timelapse.control.connection.StateMachineConnection.State.WIFI_DISABLED;
 import static com.thibaudperso.sonycamera.timelapse.control.connection.StateMachineConnection.State.WIFI_SCAN;
+
+import androidx.core.content.ContextCompat;
 
 
 public class StateMachineConnection {

@@ -37,7 +37,8 @@ public class NFCHandler {
     public static PendingIntent getPendingIntent(Activity activity) {
         return PendingIntent.getActivity(activity, 0,
                 new Intent(activity, activity.getClass())
-                        .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+                        .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+                PendingIntent.FLAG_IMMUTABLE);
     }
 
     public static Pair<String, String> parseIntent(Intent intent) throws Exception {

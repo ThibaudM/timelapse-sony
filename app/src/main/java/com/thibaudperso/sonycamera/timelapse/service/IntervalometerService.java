@@ -11,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
 
 import com.thibaudperso.sonycamera.R;
 import com.thibaudperso.sonycamera.sdk.CameraAPI;
@@ -27,6 +26,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static com.thibaudperso.sonycamera.sdk.CameraWS.ResponseCode.OK;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class IntervalometerService extends Service {
 
@@ -140,12 +141,12 @@ public class IntervalometerService extends Service {
 
                 Intent notificationIntent = new Intent(this, ProcessingActivity.class);
                 PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-                        notificationIntent, 0);
+                        notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
                 Intent stopIntent = new Intent(this, ProcessingActivity.class);
                 stopIntent.setAction(ProcessingActivity.ACTION_STOP);
                 PendingIntent pStopIntent = PendingIntent.getActivity(this, 0,
-                        stopIntent, 0);
+                        stopIntent, PendingIntent.FLAG_IMMUTABLE);
 
                 Bitmap icon = BitmapFactory.decodeResource(getResources(),
                         R.drawable.ic_timer);
@@ -174,7 +175,7 @@ public class IntervalometerService extends Service {
                 Intent removeWarningIntent = new Intent(this, IntervalometerService.class);
                 removeWarningIntent.setAction(ACTION_REMOVE_WARNING_NOTIFICATIONS);
                 PendingIntent pRemoveWarningIntent = PendingIntent.getService(this, 0,
-                        removeWarningIntent, 0);
+                        removeWarningIntent, PendingIntent.FLAG_IMMUTABLE);
 
                 mNotificationBuilderWarning = new Notification.Builder(this)
                         .setContentTitle(getString(R.string.notification_warning_title))
@@ -318,7 +319,7 @@ public class IntervalometerService extends Service {
 
         Intent notificationIntent = new Intent(this, ProcessingActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-                notificationIntent, 0);
+                notificationIntent, PendingIntent.FLAG_IMMUTABLE);
         endNotificationBuilder.setContentIntent(pendingIntent);
 
 

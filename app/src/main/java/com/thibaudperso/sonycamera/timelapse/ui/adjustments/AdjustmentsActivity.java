@@ -1,12 +1,13 @@
 package com.thibaudperso.sonycamera.timelapse.ui.adjustments;
 
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 
 import com.thibaudperso.sonycamera.R;
 import com.thibaudperso.sonycamera.timelapse.ui.SingleFragmentActivity;
 
 import static com.thibaudperso.sonycamera.timelapse.ui.connection.ConnectionFragment.EXTRA_EXIT;
+
+import androidx.fragment.app.Fragment;
 
 public class AdjustmentsActivity extends SingleFragmentActivity {
 
