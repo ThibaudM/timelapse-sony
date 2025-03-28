@@ -34,6 +34,7 @@ import com.thibaudperso.sonycamera.timelapse.ui.connection.ConnectionActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.Objects;
 
 import static com.thibaudperso.sonycamera.R.id.settings_frames_count;
 import static com.thibaudperso.sonycamera.R.id.start_time;
@@ -92,12 +93,12 @@ public class ProcessingFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mBroadcastManager = LocalBroadcastManager.getInstance(getContext());
+        mBroadcastManager = LocalBroadcastManager.getInstance(requireContext());
 
-        mImagesQueue = Volley.newRequestQueue(getActivity());
+        mImagesQueue = Volley.newRequestQueue(requireActivity());
         mServiceIntent = new Intent(getActivity(), IntervalometerService.class);
 
-        mTimelapseData = ((TimelapseApplication) getActivity().getApplication()).getTimelapseData();
+        mTimelapseData = ((TimelapseApplication) requireActivity().getApplication()).getTimelapseData();
         mSettings = mTimelapseData.getSettings();
         mApiRequestsList = mTimelapseData.getApiRequestsList();
     }
@@ -145,7 +146,7 @@ public class ProcessingFragment extends Fragment {
         mRestartView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().finish();
+                requireActivity().finish();
                 Intent intent = new Intent(getContext(), ConnectionActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
@@ -209,7 +210,7 @@ public class ProcessingFragment extends Fragment {
 
     void askToStopProcessing(final TimelapseStopListener listener) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
                 .setTitle(R.string.processing_stop)
                 .setMessage(R.string.processing_stop_confirmation_message)
                 .setPositiveButton(R.string.processing_stop_confirmation_message_ok, new DialogInterface.OnClickListener() {
@@ -232,7 +233,7 @@ public class ProcessingFragment extends Fragment {
 
     void stopProcessing() {
         mServiceIntent.setAction(IntervalometerService.ACTION_STOP);
-        getActivity().startService(mServiceIntent);
+        requireActivity().startService(mServiceIntent);
 
         if (mCountDownTimer != null) {
             mCountDownTimer.cancel();
@@ -244,14 +245,14 @@ public class ProcessingFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            switch (intent.getAction()) {
+            switch (Objects.requireNonNull(intent.getAction())) {
 
                 case ACTION_REQUEST_SENT:
-                    onRequestSentToCamera(intent.getExtras());
+                    onRequestSentToCamera(Objects.requireNonNull(intent.getExtras()));
                     break;
 
                 case ACTION_API_RESPONSE:
-                    onPictureReceived(intent.getExtras());
+                    onPictureReceived(Objects.requireNonNull(intent.getExtras()));
                     break;
 
                 case ACTION_FINISHED:
@@ -265,8 +266,8 @@ public class ProcessingFragment extends Fragment {
     private void setSpecificDisplay() {
 
 
-        long initialDelayMillis = mSettings.initialDelay * 1000;
-        long intervalTimeMillis = mSettings.intervalTime * 1000;
+        long initialDelayMillis = mSettings.initialDelay * 1000L;
+        long intervalTimeMillis = mSettings.intervalTime * 1000L;
 
         /*
          * Set progress bar
@@ -323,7 +324,7 @@ public class ProcessingFragment extends Fragment {
          */
         else {
 
-            getActivity().setTitle(R.string.title_finish);
+            requireActivity().setTitle(R.string.title_finish);
             mNextPictureLayout.setVisibility(View.GONE);
             mStopView.setVisibility(View.GONE);
             mImageReviewView.setVisibility(View.GONE);
@@ -359,7 +360,7 @@ public class ProcessingFragment extends Fragment {
 
         long offset = System.currentTimeMillis() - mTimelapseData.getApiRequestsList()
                 .getLastRequestSent();
-        startTimer(mSettings.intervalTime * 1000 - offset, offset);
+        startTimer(mSettings.intervalTime * 1000L - offset, offset);
     }
 
 
@@ -441,7 +442,7 @@ public class ProcessingFragment extends Fragment {
                  */
                 long totalElapsedTime = System.currentTimeMillis() - mTimelapseData.getStartTime();
                 long elapsedTimeFromFirstFrame = Math.max(totalElapsedTime - mSettings
-                        .initialDelay * 1000, 0);
+                        .initialDelay * 1000L, 0);
                 mChronometerTextView.setText(DateUtils.formatElapsedTime
                         (elapsedTimeFromFirstFrame / 1000));
 
