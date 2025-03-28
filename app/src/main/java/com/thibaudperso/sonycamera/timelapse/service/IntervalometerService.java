@@ -22,6 +22,7 @@ import com.thibaudperso.sonycamera.timelapse.model.IntervalometerSettings;
 import com.thibaudperso.sonycamera.timelapse.model.TimelapseData;
 import com.thibaudperso.sonycamera.timelapse.ui.processing.ProcessingActivity;
 
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -112,7 +113,7 @@ public class IntervalometerService extends Service {
             return super.onStartCommand(intent, flags, startId);
         }
 
-        switch (intent.getAction()) {
+        switch (Objects.requireNonNull(intent.getAction())) {
 
             case ACTION_START:
 
@@ -131,9 +132,10 @@ public class IntervalometerService extends Service {
                  * Initialize and start the timer task
                  */
 
-                mTakePictureTimer.scheduleAtFixedRate(mTakePictureTask,
-                        settings.initialDelay * 1000,
-                        settings.intervalTime * 1000);
+                assert settings != null;
+                mTakePictureTimer.schedule(mTakePictureTask,
+                        settings.initialDelay * 1000L,
+                        settings.intervalTime * 1000L);
 
                 /*
                  * Initialize monitoring notification
